@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HairCutAPI.Entities
 {
-    public class AppUser : IdentityUser<int>
+    public class AppRole : IdentityRole<int>
     {
         public ICollection<AppUserRole> UserRole { get; set; }
     }

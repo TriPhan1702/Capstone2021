@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HairCutAPI.Data;
+using HairCutAPI.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace HairCutAPI
@@ -29,18 +30,17 @@ namespace HairCutAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //Inject dbcontext and add connection string
-            services.AddDbContext<HDBContext>(options =>
-            {
-                options.UseSqlServer(_config.GetConnectionString("DefaultConnection"));
-            });
+            services.AddApplicationServices(_config);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HairCutAPI", Version = "v1" });
             });
+
             //Use cross origin service
             services.AddCors();
+            services.AddIdentityServices(_config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,6 +60,9 @@ namespace HairCutAPI
             //Have to between UseRouting and UseEndpoints
             //Allow any methods from 4200
             app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
+           
+            //After Cors and before UseAuthorization
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
