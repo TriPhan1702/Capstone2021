@@ -102,6 +102,9 @@ namespace HairCutAPI.Data.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<int>("UserRoleId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -112,22 +115,9 @@ namespace HairCutAPI.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
+                    b.HasIndex("UserRoleId");
+
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("HairCutAPI.Entities.AppUserRole", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("AspNetUserRoles");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -197,6 +187,21 @@ namespace HairCutAPI.Data.Migrations
                     b.ToTable("AspNetUserLogins");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.Property<int>("UserId")
@@ -216,29 +221,15 @@ namespace HairCutAPI.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("HairCutAPI.Entities.AppUserRole", b =>
+            modelBuilder.Entity("HairCutAPI.Entities.AppUser", b =>
                 {
-                    b.HasOne("HairCutAPI.Entities.AppRole", null)
-                        .WithMany()
-                        .HasForeignKey("RoleId")
+                    b.HasOne("HairCutAPI.Entities.AppRole", "UserRole")
+                        .WithMany("Users")
+                        .HasForeignKey("UserRoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HairCutAPI.Entities.AppRole", "Role")
-                        .WithMany("UserRole")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("HairCutAPI.Entities.AppUser", "User")
-                        .WithMany("UserRole")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
+                    b.Navigation("UserRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -268,6 +259,21 @@ namespace HairCutAPI.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.HasOne("HairCutAPI.Entities.AppRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HairCutAPI.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
                 {
                     b.HasOne("HairCutAPI.Entities.AppUser", null)
@@ -279,12 +285,7 @@ namespace HairCutAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAPI.Entities.AppRole", b =>
                 {
-                    b.Navigation("UserRole");
-                });
-
-            modelBuilder.Entity("HairCutAPI.Entities.AppUser", b =>
-                {
-                    b.Navigation("UserRole");
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }
