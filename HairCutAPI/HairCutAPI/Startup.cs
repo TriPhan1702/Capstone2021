@@ -9,7 +9,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using HairCutAPI.Data;
 using HairCutAPI.Extensions;
@@ -57,6 +59,10 @@ namespace HairCutAPI
                     },
                     new string[]{}
                 }});
+
+                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                option.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
             });
 
             //Use cross origin service
@@ -71,7 +77,11 @@ namespace HairCutAPI
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HairCutAPI v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "HairCutAPI v1");
+                });
+
             }
 
             app.UseHttpsRedirection();
@@ -79,7 +89,7 @@ namespace HairCutAPI
             app.UseRouting();
 
             //Have to between UseRouting and UseEndpoints
-            //Allow any methods from 4200
+            //Allow any methods from 4200 or the The web origin when deployed
             app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
            
             //After Cors and before UseAuthorization
