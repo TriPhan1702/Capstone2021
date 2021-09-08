@@ -6,8 +6,9 @@ using HairCutAPI.Entities;
 
 namespace HairCutAPI.Interfaces
 {
-    interface ITokenService
+    public interface ITokenService
     {
-        string CreateToken(AppUser user);
+        //Take in a user's information and create a token
+        Task<string> CreateToken(AppUser user);
     }
 }
