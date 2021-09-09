@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using HairCutAPI.Data;
+using HairCutAPI.Errors;
 using HairCutAPI.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -73,9 +74,11 @@ namespace HairCutAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //Middleware to handle errors
+            app.UseMiddleware<ExceptionMiddleWare>();
+
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
