@@ -39,15 +39,13 @@ namespace HairCutAPI.Extensions
             services.AddAuthorization(option =>
             {
                 option.AddPolicy("RequireAdminRole", 
-                    policy=>policy.RequireRole("Admin"));
+                    policy=>policy.RequireRole("Administrator"));
                 option.AddPolicy("RequireCustomerRole",
                     policy => policy.RequireRole("Customer"));
                 option.AddPolicy("RequireManagerRole",
                     policy => policy.RequireRole("Manager"));
                 option.AddPolicy("RequireEmployeeRole",
                     policy => policy.RequireRole("Manager"));
-                option.AddPolicy("RequireNewCustomerRole",
-                    policy => policy.RequireRole("NewCustomer"));
             });
 
             return services;

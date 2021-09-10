@@ -15,8 +15,7 @@ namespace HairCutAPI.Data
                 new AppRole{Name = "Administrator"},
                 new AppRole{Name = "Manager"},
                 new AppRole{Name = "Employee"},
-                new AppRole{Name = "Customer"},
-                new AppRole{Name = "NewCustomer"}
+                new AppRole{Name = "Customer"}
             };
 
             foreach (var role in roles)
