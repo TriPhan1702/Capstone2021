@@ -34,35 +34,8 @@ namespace HairCutAPI
             services.AddApplicationServices(_config);
 
             services.AddControllers();
-            services.AddSwaggerGen(option =>
-            {
-                option.SwaggerDoc("v1", new OpenApiInfo { Title = "HairCutAPI", Version = "v1" });
-                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
-                {
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\""
-                });
-                option.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {{
-                    new OpenApiSecurityScheme()
-                    {
-                        Reference = new OpenApiReference()
-                        {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new string[]{}
-                }});
-
-                string xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                string xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                option.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
-            });
+            
+            services.AddSwaggerServices();
 
             //Use cross origin service
             services.AddCors();
@@ -75,15 +48,15 @@ namespace HairCutAPI
             //Middleware to handle errors
             app.UseMiddleware<ExceptionMiddleWare>();
 
-            if (env.IsDevelopment())
-            {
+            // if (env.IsDevelopment())
+            // {
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "HairCutAPI v1");
                 });
 
-            }
+            // }
 
             app.UseHttpsRedirection();
 
