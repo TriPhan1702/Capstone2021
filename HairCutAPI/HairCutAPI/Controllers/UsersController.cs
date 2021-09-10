@@ -9,6 +9,7 @@ using HairCutAPI.Data;
 using HairCutAPI.DTOs;
 using HairCutAPI.Entities;
 using HairCutAPI.Interfaces;
+using HairCutAPI.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,32 +18,28 @@ namespace HairCutAPI.Controllers
 {
     public class UsersController : BaseApiController
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
-        private readonly HDBContext _context;
+        private readonly IRepositoryWrapper _repositoryWrapper;
 
         private readonly ITokenService _tokenService;
 
-        public UsersController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, HDBContext context, ITokenService tokenService)
+        public UsersController(IRepositoryWrapper repositoryWrapper, ITokenService tokenService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _context = context;
+            _repositoryWrapper = repositoryWrapper;
             _tokenService = tokenService;
         }
 
-        [Authorize(Roles = "Admin, Manager")]
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            var users = await _context.Users.ToListAsync();
-            return users;
+            var users = await _repositoryWrapper.User.FindAllAsync();
+            return users.ToList();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u=>u.Id == id);
             return user;
         }
 
@@ -61,14 +58,14 @@ namespace HairCutAPI.Controllers
             };
 
             //Save New User to Database
-            var result = await _userManager.CreateAsync(newUser, dto.Password);
+            var result = await _repositoryWrapper.User.CreateUsingUserManagerAsync(newUser, dto.Password);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Errors);
             }
 
             //Save User's role
-            var roleResult = await _userManager.AddToRoleAsync(newUser, "Customer");
+            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, "Customer");
             if (!roleResult.Succeeded)
             {
                 return BadRequest(result.Errors);
@@ -85,13 +82,13 @@ namespace HairCutAPI.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         {
             //Check if user exists
-            var user = await _userManager.Users.SingleOrDefaultAsync(u => u.UserName == loginDto.UserName.ToLower());
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.UserName == loginDto.UserName.ToLower());
             if (user == null)
             {
                 return Unauthorized("Invalid Username");
             }
 
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+            var result = await _repositoryWrapper.User.CheckPasswordAsync(user, loginDto.Password);
             if (!result.Succeeded)
             {
                 return Unauthorized();
@@ -105,7 +102,7 @@ namespace HairCutAPI.Controllers
 
         private async Task<bool> UserExists(string username)
         {
-            return await _userManager.Users.AnyAsync(u => u.UserName == username.ToLower());
+            return await _repositoryWrapper.User.AnyAsync(u => u.UserName == username.ToLower());
         }
     }
 }
