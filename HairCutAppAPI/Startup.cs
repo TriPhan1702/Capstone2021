@@ -1,11 +1,11 @@
-using HairCutAPI.Errors;
-using HairCutAPI.Extensions;
+using HairCutAppAPI.Utilities.Errors;
+using HairCutAppAPI.Utilities.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HairCutAPI
+namespace HairCutAppAPI
 {
     public class Startup
     {

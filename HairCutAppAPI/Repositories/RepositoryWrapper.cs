@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using HairCutAPI.Data;
-using HairCutAPI.Entities;
+using HairCutAppAPI.Data;
+using HairCutAppAPI.Entities;
+using HairCutAppAPI.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace HairCutAPI.Repositories
+namespace HairCutAppAPI.Repositories
 {
     public class RepositoryWrapper : IRepositoryWrapper
     {
