@@ -9,15 +9,12 @@ namespace HairCutAPI.Repositories
     public class RepositoryWrapper : IRepositoryWrapper
     {
         private readonly HDBContext _context;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signinManager;
-        
         private IUserRepository _user;
-        
-        public RepositoryWrapper(UserManager<AppUser> userManager,SignInManager<AppUser> signinManager, HDBContext context)
+        private readonly UserManager<AppUser> _userManager;
+
+        public RepositoryWrapper(UserManager<AppUser> userManager, HDBContext context)
         {
             _userManager = userManager;
-            _signinManager = signinManager;
             _context = context;
         }
 
@@ -28,6 +25,6 @@ namespace HairCutAPI.Repositories
         }
 
         //Create concrete repositories if there aren't
-        public IUserRepository User => _user ??= new UserRepository(_context, _userManager, _signinManager);
+        public IUserRepository User => _user ??= new UserRepository(_context, _userManager);
     }
 }
