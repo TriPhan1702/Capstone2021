@@ -9,18 +9,30 @@ namespace HairCutAppAPI.Data
     {
         public static async Task SeedData(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
+            //Used to generate test user below
+            const string testPassword = "Test123";
+            const string adminRoleName = "Administrator";
+
             //Seed roles
-            var roles = new List<AppRole>()
+            var roles = new List<AppRole>
             {
-                new AppRole{Name = "Administrator"},
-                new AppRole{Name = "Manager"},
-                new AppRole{Name = "Employee"},
-                new AppRole{Name = "Customer"}
+                new AppRole {Name = "Administrator"},
+                new AppRole {Name = "Manager"},
+                new AppRole {Name = "Employee"},
+                new AppRole {Name = "Customer"}
             };
 
-            foreach (var role in roles)
+            foreach (var role in roles) await roleManager.CreateAsync(role);
+
+            var users = new List<AppUser>
             {
-                await roleManager.CreateAsync(role);
+                new AppUser {UserName = "comradewang"}
+            };
+
+            foreach (var user in users)
+            {
+                await userManager.CreateAsync(user, testPassword);
+                await userManager.AddToRoleAsync(user, adminRoleName);
             }
         }
     }
