@@ -1,3 +1,5 @@
+
+
 using HairCutAppAPI.Utilities.Errors;
 using HairCutAppAPI.Utilities.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -27,7 +29,12 @@ namespace HairCutAppAPI
 
             //Use cross origin service
             services.AddCors();
+            
+            //Use services that handle user authentication and authorization
             services.AddIdentityServices(_config);
+            
+            //Use services that handle business logic
+            services.AddBusinessServices();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

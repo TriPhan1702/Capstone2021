@@ -1,0 +1,16 @@
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using HairCutAppAPI.DTOs;
+using HairCutAppAPI.Entities;
+using Microsoft.AspNetCore.Mvc;
+
+namespace HairCutAppAPI.Services.Interfaces
+{
+    public interface IUserService
+    {
+        Task<ActionResult<IEnumerable<AppUser>>> GetUsers();
+        Task<ActionResult<AppUser>> FindById(int id);
+        Task<ActionResult<UserDTO>> Register(RegisterDTO dto);
+        Task<ActionResult<UserDTO>> Login(LoginDTO loginDto);
+    }
+}
