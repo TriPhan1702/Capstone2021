@@ -21,7 +21,8 @@ namespace HairCutAppAPI.Utilities.Extensions
                 .AddRoleManager<RoleManager<AppRole>>()
                 .AddSignInManager<SignInManager<AppUser>>()
                 .AddRoleValidator<RoleValidator<AppRole>>()
-                .AddEntityFrameworkStores<HDBContext>();
+                .AddEntityFrameworkStores<HDBContext>()
+                .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
             //Authentication middleware
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

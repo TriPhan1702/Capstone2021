@@ -28,12 +28,22 @@ namespace HairCutAppAPI.Controllers
             return await _userService.GetUsers();
         }
 
+        /// <summary>
+        /// Find a user by their Id
+        /// </summary>
+        /// <param name="id">user's id</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {
             return await _userService.FindById(id);
         }
 
+        /// <summary>
+        /// Used by customer to create account
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns></returns>
         [HttpPost("register")]
         public async Task<ActionResult<UserDTO>> Register(RegisterDTO dto)
         {
@@ -44,6 +54,12 @@ namespace HairCutAppAPI.Controllers
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         {
             return await _userService.Login(loginDto);
+        }
+
+        [HttpPost("forgetpassword")]
+        public async Task<ActionResult> ForgetPassword(string email)
+        {
+            return await _userService.ForgetPassword(email);
         }
     }
 }

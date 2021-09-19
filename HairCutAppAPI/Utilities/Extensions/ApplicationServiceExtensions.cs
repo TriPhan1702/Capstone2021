@@ -1,6 +1,7 @@
 ﻿using HairCutAppAPI.Data;
 using HairCutAppAPI.Repositories;
 using HairCutAppAPI.Repositories.Interfaces;
+using HairCutAppAPI.Utilities.Email;
 using HairCutAppAPI.Utilities.JWTToken;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,13 @@ namespace HairCutAppAPI.Utilities.Extensions
 
             //Add Repository Wrapper
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+            
+            //Add Email Configuration
+            var emailConfig = config
+                .GetSection("EmailConfiguration")
+                .Get<EmailConfiguration>();
+            services.AddSingleton(emailConfig);
+            services.AddScoped<IEmailSender, EmailSender>();
 
             return services;
         }

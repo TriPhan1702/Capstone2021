@@ -41,5 +41,9 @@ namespace HairCutAppAPI.Repositories
             return await _signInManager.CheckPasswordSignInAsync(user, password, false);
         }
 
+        public async Task<string> GeneratePasswordResetTokenAsync(AppUser user)
+        {
+            return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
     }
 }

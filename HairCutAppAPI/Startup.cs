@@ -1,5 +1,6 @@
 
 
+using HairCutAppAPI.Utilities.Email;
 using HairCutAppAPI.Utilities.Errors;
 using HairCutAppAPI.Utilities.Extensions;
 using Microsoft.AspNetCore.Builder;
