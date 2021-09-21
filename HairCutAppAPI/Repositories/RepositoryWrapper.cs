@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
+using HairCutAppAPI.Utilities.Email;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairCutAppAPI.Repositories
 {
@@ -20,13 +23,32 @@ namespace HairCutAppAPI.Repositories
             _signInManager = signInManager;
         }
 
-        //If something has been changed, return > 0
-        public async Task<bool> SaveAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
-
         //Create concrete repositories if there aren't
         public IUserRepository User => _user ??= new UserRepository(_context, _userManager, _signInManager);
+        
+        //For saving multiple changes, if lower than 0 -> no changes
+        public async Task<bool> SaveAllAsync()
+        { 
+            return await _context.SaveChangesAsync() > 0;
+        }
+        
+        public bool HasChanged()
+        {
+            return _context.ChangeTracker.HasChanges();
+        }
+
+        
+        public void DeleteChanges()
+        {
+            var changedEntriesCopy = _context.ChangeTracker.Entries()
+                .Where(e => e.State == EntityState.Added ||
+                            e.State == EntityState.Modified ||
+                            e.State == EntityState.Deleted)
+                .ToList();
+
+            foreach (var entry in changedEntriesCopy)
+                entry.State = EntityState.Detached;
+        }
+        
     }
 }

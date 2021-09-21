@@ -11,5 +11,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<IdentityResult> AddToRoleAsync(AppUser user, string role);
         Task<SignInResult> CheckPasswordAsync(AppUser user, string password);
         Task<string> GeneratePasswordResetTokenAsync(AppUser user);
+        Task<AppUser> FindByEmailAsync(string email);
+        Task<IdentityResult> ResetPasswordAsync(AppUser user, string token, string password);
     }
 }

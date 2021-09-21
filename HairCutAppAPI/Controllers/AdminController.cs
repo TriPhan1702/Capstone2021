@@ -1,19 +1,24 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Controllers
 {
+    //TODO: Rewrite this
     public class AdminController : BaseApiController
     {
         private readonly UserManager<AppUser> _userManager;
+        private readonly IAdminService _adminService;
 
-        public AdminController(UserManager<AppUser> userManager)
+        public AdminController(UserManager<AppUser> userManager, IAdminService adminService)
         {
             _userManager = userManager;
+            _adminService = adminService;
         }
 
         /// <summary>
@@ -44,6 +49,19 @@ namespace HairCutAppAPI.Controllers
             }
 
             return Ok();
+        }
+
+        [Authorize(Policy = "RequireAdminRole")]
+        [HttpPost("create_user")]
+        public async Task<ActionResult> CreateStaff(CreateStaffDTO createStaffDTO)
+        {
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _adminService.CreateStaff(createStaffDTO);
         }
     }
 }

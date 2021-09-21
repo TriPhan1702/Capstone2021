@@ -42,6 +42,12 @@ namespace HairCutAppAPI.Repositories
             await HDBContext.Set<T>().AddAsync(entity);
             return entity;
         }
+        
+        public T CreateWithoutSave(T t)
+        {
+            HDBContext.Set<T>().Add(t);
+            return t;
+        }
 
         public async Task<T> UpdateAsync(T entity)
         {
@@ -51,11 +57,26 @@ namespace HairCutAppAPI.Repositories
             await HDBContext.SaveChangesAsync();
             return exist;
         }
+        
+        public async Task<T> UpdateAsyncWithoutSave(T entity, object key)
+        {
+            if (entity == null)
+                return null;
+            var exist = await HDBContext.Set<T>().FindAsync(key);
+            if (exist == null) return null;
+            HDBContext.Entry(exist).CurrentValues.SetValues(entity);
+            return exist;
+        }
 
         public async Task<int> DeleteAsync(T entity)
         {
             HDBContext.Set<T>().Remove(entity);
             return await HDBContext.SaveChangesAsync();
+        }
+        
+        public  void DeleteWithoutSave(T entity)
+        {
+            HDBContext.Set<T>().Remove(entity);
         }
     }
 }

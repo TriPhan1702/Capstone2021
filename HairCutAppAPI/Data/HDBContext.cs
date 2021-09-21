@@ -10,6 +10,8 @@ namespace HairCutAppAPI.Data
         , IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
         IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
+        public DbSet<Salon> Salons { get; set; }
+        
         public HDBContext(DbContextOptions options) : base(options)
         {
         }

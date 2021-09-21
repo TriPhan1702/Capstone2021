@@ -1,4 +1,5 @@
-﻿using HairCutAppAPI.Data;
+﻿using AutoMapper;
+using HairCutAppAPI.Data;
 using HairCutAppAPI.Repositories;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Utilities.Email;
@@ -22,6 +23,9 @@ namespace HairCutAppAPI.Utilities.Extensions
 
             //Add Repository Wrapper
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+
+            //Add AutoMapper
+            services.AddAutoMapper(typeof(AutoMapperProfiles));
             
             //Add Email Configuration
             var emailConfig = config

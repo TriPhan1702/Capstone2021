@@ -13,5 +13,7 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<UserDTO>> Register(RegisterDTO dto);
         Task<ActionResult<UserDTO>> Login(LoginDTO loginDto);
         Task<ActionResult> ForgetPassword(string email);
+        Task<ActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO);
+        Task<ActionResult<UserDTO>> LoginByGoogle(string idToken, string email);
     }
 }

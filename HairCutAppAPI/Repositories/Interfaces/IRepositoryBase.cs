@@ -13,6 +13,10 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression);
         Task<T> CreateAsync(T entity);
         Task<T> UpdateAsync(T entity);
+        Task<T> UpdateAsyncWithoutSave(T entity, object key);
+        T CreateWithoutSave(T t);
         Task<int> DeleteAsync(T entity);
+        void DeleteWithoutSave(T entity);
+
     }
 }

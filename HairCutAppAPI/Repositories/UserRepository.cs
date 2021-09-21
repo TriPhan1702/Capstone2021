@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
@@ -44,6 +45,16 @@ namespace HairCutAppAPI.Repositories
         public async Task<string> GeneratePasswordResetTokenAsync(AppUser user)
         {
             return await _userManager.GeneratePasswordResetTokenAsync(user);
+        }
+
+        public async Task<AppUser> FindByEmailAsync(string email)
+        {
+            return await _userManager.FindByEmailAsync(email);
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(AppUser user, string token, string password)
+        {
+            return await _userManager.ResetPasswordAsync(user, token, password);
         }
     }
 }

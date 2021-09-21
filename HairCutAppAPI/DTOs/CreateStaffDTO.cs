@@ -2,8 +2,7 @@
 
 namespace HairCutAppAPI.DTOs
 {
-    //many-many table between user and role in database
-    public class RegisterDTO
+    public class CreateStaffDTO
     {
         [Required]
         [MinLength(3), MaxLength(100)]
@@ -28,5 +27,7 @@ namespace HairCutAppAPI.DTOs
         [DataType(DataType.PhoneNumber)]
         [RegularExpression(@"^(?:[0-9]{10})$", ErrorMessage = "Phone Number has to have 10 numeric characters")]
         public string PhoneNumber { get; set; }
+        
+        public int SalonId { get; set; }
     }
 }

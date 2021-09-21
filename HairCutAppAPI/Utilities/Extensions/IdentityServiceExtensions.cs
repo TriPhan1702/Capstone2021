@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -49,6 +50,10 @@ namespace HairCutAppAPI.Utilities.Extensions
                 option.AddPolicy("RequireEmployeeRole",
                     policy => policy.RequireRole("Manager"));
             });
+            
+            //Token generated will last for 1 hour
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromHours(1));
 
             return services;
         }

@@ -10,6 +10,7 @@ namespace HairCutAppAPI.Utilities.Extensions
         public static IServiceCollection AddBusinessServices(this IServiceCollection services)
         {
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAdminService, AdminService>();
             return services;
         }
     }
