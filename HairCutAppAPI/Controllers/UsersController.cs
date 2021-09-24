@@ -6,6 +6,7 @@ using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.JWTToken;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,8 @@ namespace HairCutAppAPI.Controllers
             _userService = userService;
         }
 
-        [Authorize(Policy = "RequireAdminRole")]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
@@ -33,7 +35,8 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="id">user's id</param>
         /// <returns></returns>
-        [Authorize(Policy = "RequireAdminRole")]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {

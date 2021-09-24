@@ -11,6 +11,7 @@ using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Email;
 using HairCutAppAPI.Utilities.Errors;
 using HairCutAppAPI.Utilities.GoogleAuth;
@@ -58,7 +59,7 @@ namespace HairCutAppAPI.Services
             {
                 return new BadRequestObjectResult("User Already Exists");
             }
-
+            
             var newUser = _mapper.Map<AppUser>(dto);
 
             //Save New User to Database
@@ -68,8 +69,8 @@ namespace HairCutAppAPI.Services
                 return new BadRequestObjectResult(result.Errors);
             }
 
-            //Save User's role
-            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, "Customer");
+            //Save Customer's role
+            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, GlobalVariables.CustomerRole);
             if (!roleResult.Succeeded)
             {
                 return new BadRequestObjectResult(result.Errors);
@@ -154,11 +155,11 @@ namespace HairCutAppAPI.Services
             {
                 using (var response = await httpClient.GetAsync(_configuration["GoogleApiTokenInfoUrl"] + idToken))
                 {
-                    var test = await response.Content.ReadAsStringAsync();
+                    var idTokenResponseJson = await response.Content.ReadAsStringAsync();
                     try
                     {
                         //Covert Json to IdToken
-                        var idTokenResponse = JsonConvert.DeserializeObject<GoogleIdTokenResponse>(test);
+                        var idTokenResponse = JsonConvert.DeserializeObject<GoogleIdTokenResponse>(idTokenResponseJson);
 
                         //TODO: Delete when released
                         //Log for debug
@@ -172,7 +173,7 @@ namespace HairCutAppAPI.Services
                         }
                     }
 
-                    catch (JsonSerializationException)
+                    catch (JsonSerializationException e)
                     {
                         return new BadRequestObjectResult("UserService: Could not deserialize Json message from Google API");
                     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
 
 namespace HairCutAppAPI.Data
@@ -16,10 +17,10 @@ namespace HairCutAppAPI.Data
             //Seed roles
             var roles = new List<AppRole>
             {
-                new AppRole {Name = "Administrator"},
-                new AppRole {Name = "Manager"},
-                new AppRole {Name = "Employee"},
-                new AppRole {Name = "Customer"}
+                new AppRole {Name = GlobalVariables.AdministratorRole},
+                new AppRole {Name = GlobalVariables.ManagerRole},
+                new AppRole {Name = GlobalVariables.StaffRole},
+                new AppRole {Name = GlobalVariables.CustomerRole}
             };
 
             foreach (var role in roles) await roleManager.CreateAsync(role);

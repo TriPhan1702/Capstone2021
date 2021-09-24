@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="username"></param>
         /// <param name="roles">Can have many roles, each role name is separated by ","</param>
         /// <returns></returns>
-        [Authorize(Policy = "RequireAdminRole")]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("edit-role/{username}")]
         public async Task<ActionResult> EditRoles(string username, [FromQuery] string roles)
         {
@@ -51,7 +52,7 @@ namespace HairCutAppAPI.Controllers
             return Ok();
         }
 
-        [Authorize(Policy = "RequireAdminRole")]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_user")]
         public async Task<ActionResult> CreateStaff(CreateStaffDTO createStaffDTO)
         {

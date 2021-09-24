@@ -41,14 +41,14 @@ namespace HairCutAppAPI.Utilities.Extensions
             //Add authorization policies
             services.AddAuthorization(option =>
             {
-                option.AddPolicy("RequireAdminRole",
-                    policy => policy.RequireRole("Administrator"));
-                option.AddPolicy("RequireCustomerRole",
-                    policy => policy.RequireRole("Customer"));
-                option.AddPolicy("RequireManagerRole",
-                    policy => policy.RequireRole("Manager"));
-                option.AddPolicy("RequireEmployeeRole",
-                    policy => policy.RequireRole("Manager"));
+                option.AddPolicy(GlobalVariables.RequireAdministratorRole,
+                    policy => policy.RequireRole(GlobalVariables.AdministratorRole));
+                option.AddPolicy(GlobalVariables.RequireCustomerRole,
+                    policy => policy.RequireRole(GlobalVariables.CustomerRole));
+                option.AddPolicy(GlobalVariables.RequireManagerRole,
+                    policy => policy.RequireRole(GlobalVariables.ManagerRole));
+                option.AddPolicy(GlobalVariables.RequireStaffRole,
+                    policy => policy.RequireRole(GlobalVariables.StaffRole));
             });
             
             //Token generated will last for 1 hour

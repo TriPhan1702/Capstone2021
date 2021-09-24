@@ -4,6 +4,7 @@ using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Email;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +39,7 @@ namespace HairCutAppAPI.Services
             }
 
             //Save User's role
-            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, "Customer");
+            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, GlobalVariables.StaffRole);
             if (!roleResult.Succeeded)
             {
                 return new BadRequestObjectResult(result.Errors);
