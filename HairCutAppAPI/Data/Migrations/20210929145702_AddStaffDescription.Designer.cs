@@ -4,14 +4,16 @@ using HairCutAppAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HairCutAppAPI.Data.Migrations
 {
     [DbContext(typeof(HDBContext))]
-    partial class HDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210929145702_AddStaffDescription")]
+    partial class AddStaffDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

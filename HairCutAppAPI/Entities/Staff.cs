@@ -27,6 +27,10 @@ namespace HairCutAppAPI.Entities
         [MaxLength(20)]
         public string StaffType { get; set; }
         
+        [Required]
+        [MaxLength(500)]
+        public string Description { get; set; }
+        
         //Can be null
         [ForeignKey("Salon")]
         public int? SalonId { get; set; }
