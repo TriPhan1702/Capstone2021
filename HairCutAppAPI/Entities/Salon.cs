@@ -14,6 +14,9 @@ namespace HairCutAppAPI.Entities
         public string Name { get; set; }
         
         public string Description { get; set; }
+        
+        [Url]
+        public string AvatarUrl { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }
