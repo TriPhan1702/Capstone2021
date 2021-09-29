@@ -24,8 +24,10 @@ namespace HairCutAppAPI.Entities
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         
-        // public ICollection<AppUser> Managers { get; set; }
-        // public ICollection<AppUser> Staff { get; set; }
+        public ICollection<Staff> Staffs { get; set; }
         public ICollection<Review> Reviews { get; set; }
+        
+        //Many-Many
+        public ICollection<SalonsCodes> SalonsCodes { get; set; }
     }
 }
