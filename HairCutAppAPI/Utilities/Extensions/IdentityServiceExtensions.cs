@@ -14,7 +14,7 @@ namespace HairCutAppAPI.Utilities.Extensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddIdentity<AppUser, AppRole>(opt =>
+            services.AddIdentityCore<AppUser>(opt =>
                 {
                     opt.Password.RequireNonAlphanumeric = false;
                 })

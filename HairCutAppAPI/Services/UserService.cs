@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -60,7 +62,12 @@ namespace HairCutAppAPI.Services
                 return new BadRequestObjectResult("User Already Exists");
             }
             
+            System.Diagnostics.Debug.WriteLine("Ran Here");
+            
             var newUser = _mapper.Map<AppUser>(dto);
+            newUser.Status = "New";
+            
+            System.Diagnostics.Debug.WriteLine("NewUser: " + newUser.Email);
 
             //Save New User to Database
             var result = await _repositoryWrapper.User.CreateUsingUserManagerAsync(newUser, dto.Password);
@@ -148,45 +155,38 @@ namespace HairCutAppAPI.Services
             return new OkObjectResult("User's Password Changed");
         }
 
-        public async Task<ActionResult<UserDTO>> LoginByGoogle(string idToken, string email)
+        public async Task<ActionResult<UserDTO>> LoginByGoogle(string idToken)
         {
-            //Call Google API with Id Token
-            using (var httpClient = new HttpClient())
+            var user = await CheckGoogleIdToken(idToken);
+
+            //Check if user is found in database
+            if (user is null)
             {
-                using (var response = await httpClient.GetAsync(_configuration["GoogleApiTokenInfoUrl"] + idToken))
-                {
-                    var idTokenResponseJson = await response.Content.ReadAsStringAsync();
-                    try
-                    {
-                        //Covert Json to IdToken
-                        var idTokenResponse = JsonConvert.DeserializeObject<GoogleIdTokenResponse>(idTokenResponseJson);
-
-                        //TODO: Delete when released
-                        //Log for debug
-                        System.Diagnostics.Debug.WriteLine("idToken.Email: " + idTokenResponse.Email);
-                        System.Diagnostics.Debug.WriteLine("Sent Email: " + email);
-
-                        //Check if email sent and email form Google API are the same
-                        if (idTokenResponse.Email != email || string.IsNullOrEmpty(idTokenResponse.Email))
-                        {
-                            return new BadRequestObjectResult("UserService: Email is not the same from Google API");
-                        }
-                    }
-
-                    catch (JsonSerializationException e)
-                    {
-                        return new BadRequestObjectResult("UserService: Could not deserialize Json message from Google API");
-                    }
-                }
+                return new BadRequestObjectResult("This account doesn't exist");
             }
             
-            //Find User with the same email in database
-            var user = await _repositoryWrapper.User.FindByEmailAsync(email);
-
-            //Check if user is null
-            if (user == null)
+            //Return Ok Result
+            return new UserDTO()
             {
-                throw new HttpStatusCodeException(HttpStatusCode.NotFound, "This account doesn't exist'");
+                Username = user.UserName,
+                Token = await _tokenService.CreateToken(user)
+            };
+        }
+
+        //TODO: Not done
+        public async Task<ActionResult<UserDTO>> LoginByFacebook(string accessToken)
+        {
+            var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
+
+            if (!tokenValidationResult)
+            {
+                return new BadRequestObjectResult("Access Token is not from a valid app");
+            }
+
+            var user = await CheckFacebookAccessToken(accessToken);
+            if (user is null)
+            {
+                return new BadRequestObjectResult("User with this email not found");
             }
             
             //Return Ok Result
@@ -217,6 +217,102 @@ namespace HairCutAppAPI.Services
             var decodedToken = WebEncoders.Base64UrlDecode(token);
             var originalToken = Encoding.UTF8.GetString(decodedToken);
             return originalToken;
+        }
+
+        /// <summary>
+        /// Send idToken to google api, check the response if idToken came from the right Client, and return user from database with the same email
+        /// </summary>
+        private async Task<AppUser> CheckGoogleIdToken(string idToken)
+        {
+            var idTokenResponseJson = await CallSocialAuthenticationApis(_configuration["GoogleApiTokenInfoUrl"] + idToken);
+            
+            try
+            {
+                //Covert Json to IdToken
+                var idTokenResponse = JsonConvert.DeserializeObject<GoogleIdTokenResponse>(idTokenResponseJson);
+
+                //TODO: Delete debug when released
+                //Log for debug
+                System.Diagnostics.Debug.WriteLine("idToken.Email: " + idTokenResponse.Email);
+
+                //Check if AppId for response is the same as AppId of client app
+                if (idTokenResponse.Aud != _configuration["GoogleClientId"])
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Google API Token Info aud not containing the required client i");
+                }
+                
+                //Find User with the same email in database
+                return await _repositoryWrapper.User.FindByEmailAsync(idTokenResponse.Email);
+            }
+
+            catch (JsonSerializationException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"UserService: Could not deserialize Json message from Google API");
+            }
+        }
+
+        private async Task<bool> ValidateFacebookAccessToken(string accessToken)
+        {
+            var result = false;
+            
+            //Prepare Url with access token, App Id, App Secret
+            var formattedUrl = string.Format(_configuration["FacebookApiTokenValidationUrl"], accessToken,
+                _configuration["FacebookAppId"], _configuration["FacebookAppSecret"]);
+
+            var idTokenValidationResponseJson = await CallSocialAuthenticationApis(formattedUrl);
+            
+            try
+            {
+                //Covert Json to IdToken
+                var accessTokenValidationResponse = JsonConvert.DeserializeObject<FacebookTokenValidationResponse>(idTokenValidationResponseJson);
+
+                //TODO: Delete debug when released
+                //Log for debug
+                System.Diagnostics.Debug.WriteLine("AppId: " + accessTokenValidationResponse.Data.AppId);
+
+                //True if the app id matches
+                result = accessTokenValidationResponse.Data.AppId == _configuration["FacebookAppId"];
+            }
+            catch (JsonSerializationException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"UserService: Could not deserialize Json message from Facebook API");
+            }
+
+            return result;
+        }
+
+        private async Task<AppUser> CheckFacebookAccessToken(string accessToken)
+        {
+            var url = string.Format(_configuration["FacebookApiTokenInfoUrl"] + accessToken);
+
+            var accessTokenResponseJson = await CallSocialAuthenticationApis(url);
+            
+            try
+            {
+                //Covert Json
+                var accessTokenResponse = JsonConvert.DeserializeObject<FacebookAccessTokenResponse>(accessTokenResponseJson);
+
+                //TODO: Delete debug when released
+                //Log for debug
+                System.Diagnostics.Debug.WriteLine("idToken.Email: " + accessTokenResponse.Email);
+
+                //Find User with the same email in database
+                return await _repositoryWrapper.User.FindByEmailAsync(accessTokenResponse.Email);
+            }
+            catch (JsonSerializationException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"UserService: Could not deserialize Json message from Facebook API");
+            }
+        }
+
+        /// <summary>
+        /// Call api and return response as string
+        /// </summary>
+        private async Task<string> CallSocialAuthenticationApis(string url)
+        {
+            using var httpClient = new HttpClient();
+            using var response = await httpClient.GetAsync(url);
+            return await response.Content.ReadAsStringAsync();
         }
     }
 }

@@ -107,7 +107,7 @@ namespace HairCutAppAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("google_login")]
-        public async Task<ActionResult<UserDTO>> GoogleLogin([FromForm] SocialUserDTO socialUserDTO)
+        public async Task<ActionResult<UserDTO>> GoogleLogin([FromForm] GoogleUserDTO googleUserDTO)
         {
             //Check input server side
             if (!ModelState.IsValid)
@@ -115,7 +115,20 @@ namespace HairCutAppAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            return await _userService.LoginByGoogle(socialUserDTO.IdToken, socialUserDTO.Email);
+            return await _userService.LoginByGoogle(googleUserDTO.IdToken);
+        }
+        
+        [AllowAnonymous]
+        [HttpPost("facebook_login")]
+        public async Task<ActionResult<UserDTO>> FacebookLogin([FromForm] FacebookUserDTO facebookUserDTO)
+        {
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _userService.LoginByGoogle(facebookUserDTO.AccessToken);
         }
     }
 }
