@@ -12,5 +12,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         bool HasChanged();
 
         IUserRepository User { get; }
+        
+        ICustomerRepository Customer { get; }
     }
 }

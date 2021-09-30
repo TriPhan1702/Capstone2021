@@ -27,7 +27,7 @@ namespace HairCutAppAPI.Data
 
             var users = new List<AppUser>
             {
-                new AppUser {UserName = "comradewang"}
+                new AppUser {UserName = "comradewang", Status = "Active"}
             };
 
             foreach (var user in users)

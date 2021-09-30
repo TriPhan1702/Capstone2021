@@ -53,42 +53,6 @@ namespace HairCutAppAPI.Services
             var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Id == id);
             return user;
         }
-        
-        public async Task<ActionResult<UserDTO>> Register(RegisterDTO dto)
-        {
-            //Check if User exists
-            if (await UserExists(dto.UserName))
-            {
-                return new BadRequestObjectResult("User Already Exists");
-            }
-            
-            System.Diagnostics.Debug.WriteLine("Ran Here");
-            
-            var newUser = _mapper.Map<AppUser>(dto);
-            newUser.Status = "New";
-            
-            System.Diagnostics.Debug.WriteLine("NewUser: " + newUser.Email);
-
-            //Save New User to Database
-            var result = await _repositoryWrapper.User.CreateUsingUserManagerAsync(newUser, dto.Password);
-            if (!result.Succeeded)
-            {
-                return new BadRequestObjectResult(result.Errors);
-            }
-
-            //Save Customer's role
-            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, GlobalVariables.CustomerRole);
-            if (!roleResult.Succeeded)
-            {
-                return new BadRequestObjectResult(result.Errors);
-            }
-
-            return new UserDTO()
-            {
-                Username = newUser.UserName,
-                Token = await _tokenService.CreateToken(newUser)
-            };
-        }
 
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         {
@@ -231,10 +195,6 @@ namespace HairCutAppAPI.Services
                 //Covert Json to IdToken
                 var idTokenResponse = JsonConvert.DeserializeObject<GoogleIdTokenResponse>(idTokenResponseJson);
 
-                //TODO: Delete debug when released
-                //Log for debug
-                System.Diagnostics.Debug.WriteLine("idToken.Email: " + idTokenResponse.Email);
-
                 //Check if AppId for response is the same as AppId of client app
                 if (idTokenResponse.Aud != _configuration["GoogleClientId"])
                 {
@@ -245,7 +205,7 @@ namespace HairCutAppAPI.Services
                 return await _repositoryWrapper.User.FindByEmailAsync(idTokenResponse.Email);
             }
 
-            catch (JsonSerializationException e)
+            catch (JsonSerializationException)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"UserService: Could not deserialize Json message from Google API");
             }
@@ -266,14 +226,10 @@ namespace HairCutAppAPI.Services
                 //Covert Json to IdToken
                 var accessTokenValidationResponse = JsonConvert.DeserializeObject<FacebookTokenValidationResponse>(idTokenValidationResponseJson);
 
-                //TODO: Delete debug when released
-                //Log for debug
-                System.Diagnostics.Debug.WriteLine("AppId: " + accessTokenValidationResponse.Data.AppId);
-
                 //True if the app id matches
                 result = accessTokenValidationResponse.Data.AppId == _configuration["FacebookAppId"];
             }
-            catch (JsonSerializationException e)
+            catch (JsonSerializationException)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"UserService: Could not deserialize Json message from Facebook API");
             }
@@ -292,14 +248,10 @@ namespace HairCutAppAPI.Services
                 //Covert Json
                 var accessTokenResponse = JsonConvert.DeserializeObject<FacebookAccessTokenResponse>(accessTokenResponseJson);
 
-                //TODO: Delete debug when released
-                //Log for debug
-                System.Diagnostics.Debug.WriteLine("idToken.Email: " + accessTokenResponse.Email);
-
                 //Find User with the same email in database
                 return await _repositoryWrapper.User.FindByEmailAsync(accessTokenResponse.Email);
             }
-            catch (JsonSerializationException e)
+            catch (JsonSerializationException)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"UserService: Could not deserialize Json message from Facebook API");
             }

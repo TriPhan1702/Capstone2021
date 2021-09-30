@@ -43,21 +43,7 @@ namespace HairCutAppAPI.Controllers
             return await _userService.FindById(id);
         }
 
-        /// <summary>
-        /// Used by customer to create account
-        /// </summary>
-        /// <param name="dto"></param>
-        /// <returns></returns>
-        [AllowAnonymous]
-        [HttpPost("register")]
-        public async Task<ActionResult<UserDTO>> Register([FromForm]RegisterDTO dto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            return await _userService.Register(dto);
-        }
+        
 
         /// <summary>
         /// For all users to login

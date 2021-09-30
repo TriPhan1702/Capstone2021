@@ -10,7 +10,6 @@ namespace HairCutAppAPI.Services.Interfaces
     {
         Task<ActionResult<IEnumerable<AppUser>>> GetUsers();
         Task<ActionResult<AppUser>> FindById(int id);
-        Task<ActionResult<UserDTO>> Register(RegisterDTO dto);
         Task<ActionResult<UserDTO>> Login(LoginDTO loginDto);
         Task<ActionResult> ForgetPassword(string email);
         Task<ActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO);

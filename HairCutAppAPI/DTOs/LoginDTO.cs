@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace HairCutAppAPI.DTOs
 {
@@ -6,7 +7,9 @@ namespace HairCutAppAPI.DTOs
     {
         [Required]
         public string UserName { get; set; }
+        
         [Required]
+        [DataType(DataType.Password)]
         public string Password { get; set; }
     }
 }
