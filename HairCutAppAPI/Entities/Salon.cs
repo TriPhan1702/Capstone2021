@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using HairCutAppAPI.DTOs.SalonDTOs;
 
 namespace HairCutAppAPI.Entities
 {
@@ -24,13 +25,36 @@ namespace HairCutAppAPI.Entities
         [Required]
         public DateTime LastUpdate { get; set; }
         
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
         
         public ICollection<Staff> Staffs { get; set; }
         public ICollection<Review> Reviews { get; set; }
         
         //Many-Many
         public ICollection<SalonsCodes> SalonsCodes { get; set; }
+        
+        public CreateSalonResponseDTO ToCreateSalonResponseDTO()
+        {
+            
+            var now = DateTime.Now;
+            var result = new CreateSalonResponseDTO()
+            {
+                Id = Id,
+                Name = Name,
+                Description = Description,
+                AvatarUrl = AvatarUrl,
+            };
+            if (Longitude != null)
+            {
+                result.Longitude = Longitude.ToString();
+            }
+            if (Latitude != null)
+            {
+                result.Longitude = Longitude.ToString();
+            }
+
+            return result;
+        }
     }
 }

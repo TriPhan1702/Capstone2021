@@ -20,17 +20,17 @@ namespace HairCutAppAPI.DTOs
         [DataType(DataType.Password)]
         public string Password { get; set; }
         
-        [MaxLength(500)]
-        public string Description { get; set; }
-        
         [Required]
         [MinLength(3), MaxLength(50)]
         [DataType(DataType.Password)]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
         
+        [MaxLength(500)]
+        public string Description { get; set; }
+        
         [Required]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
         
         [Required]

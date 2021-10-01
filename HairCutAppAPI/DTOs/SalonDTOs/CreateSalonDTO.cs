@@ -1,13 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using HairCutAppAPI.Entities;
 
 namespace HairCutAppAPI.DTOs.SalonDTOs
 {
     public class CreateSalonDTO
     {
-        [Key]
-        public int Id { get; set; }
-        
         [Required]
         [MinLength(3), MaxLength(255)]
         public string Name { get; set; }
@@ -17,7 +15,30 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
         [Url]
         public string AvatarUrl { get; set; }
         
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        //TODO: Validate coordinate
+        public string Longitude { get; set; }
+        public string Latitude { get; set; }
+
+        public Salon ToNewSalon()
+        {
+            var now = DateTime.Now;
+            
+            var result = new Salon()
+            {
+                Name = Name,
+                Description = Description,
+                AvatarUrl = AvatarUrl,
+                CreatedDate = now,
+                LastUpdate = now,
+            };
+
+            if (!string.IsNullOrWhiteSpace(Longitude) && !string.IsNullOrWhiteSpace(Latitude))
+            {
+                result.Longitude = double.Parse(Longitude);
+                result.Latitude = double.Parse(Latitude);
+            }
+
+            return result;
+        }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Controllers
 {
-    public class CustomerController : Controller
+    public class CustomerController : BaseApiController
     {
         private readonly ICustomerService _customerService;
 

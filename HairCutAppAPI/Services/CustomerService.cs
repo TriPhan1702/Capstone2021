@@ -70,12 +70,7 @@ namespace HairCutAppAPI.Services
         //Check if user exists by username and email
         private async Task<bool> UserExists(string username)
         {
-            return await _repositoryWrapper.User.AnyAsync(u => u.UserName == username.ToLower() || u.Email == username);
+            return await _repositoryWrapper.User.AnyAsync(u => u.UserName == username.ToLower());
         }
-        
-        
-        
     }
-    
-    
 }
