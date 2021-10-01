@@ -20,6 +20,7 @@ namespace HairCutAppAPI.Services
             var newSalon = salonDTO.ToNewSalon();
 
             var result = await _repositoryWrapper.Salon.CreateAsync(newSalon);
+            await _repositoryWrapper.SaveAllAsync();
 
             return new OkObjectResult(result.ToCreateSalonResponseDTO());
         }
