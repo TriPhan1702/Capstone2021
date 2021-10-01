@@ -19,8 +19,9 @@ namespace HairCutAppAPI.Data
             {
                 new AppRole {Name = GlobalVariables.AdministratorRole},
                 new AppRole {Name = GlobalVariables.ManagerRole},
-                new AppRole {Name = GlobalVariables.StaffRole},
-                new AppRole {Name = GlobalVariables.CustomerRole}
+                new AppRole {Name = GlobalVariables.StylistRole},
+                new AppRole {Name = GlobalVariables.CustomerRole},
+                new AppRole {Name = GlobalVariables.BeauticianRole}
             };
 
             foreach (var role in roles) await roleManager.CreateAsync(role);

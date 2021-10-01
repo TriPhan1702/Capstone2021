@@ -53,8 +53,8 @@ namespace HairCutAppAPI.Controllers
         }
 
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [HttpPost("create_user")]
-        public async Task<ActionResult> CreateStaff(CreateStaffDTO createStaffDTO)
+        [HttpPost("create_staff")]
+        public async Task<ActionResult<int>> CreateStaff([FromForm] CreateStaffDTO createStaffDTO)
         {
             //Check input server side
             if (!ModelState.IsValid)

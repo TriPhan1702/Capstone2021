@@ -15,6 +15,8 @@ namespace HairCutAppAPI.Repositories
         private readonly SignInManager<AppUser> _signInManager;
         private IUserRepository _user;
         private ICustomerRepository _customer;
+        private IStaffRepository _staff;
+        private ISalonRepository _salon;
         private readonly UserManager<AppUser> _userManager;
 
         public RepositoryWrapper(UserManager<AppUser> userManager, HDBContext context, SignInManager<AppUser> signInManager)
@@ -27,7 +29,9 @@ namespace HairCutAppAPI.Repositories
         //Create concrete repositories if there aren't
         public IUserRepository User => _user ??= new UserRepository(_context, _userManager, _signInManager);
         public ICustomerRepository Customer => _customer ??= new CustomerRepository(_context, _userManager, _signInManager);
-        
+        public IStaffRepository Staff => _staff ??= new StaffRepository(_context, _userManager, _signInManager);
+        public ISalonRepository Salon => _salon ??= new SalonRepository(_context);
+
         //For saving multiple changes, if lower than 0 -> no changes
         public async Task<bool> SaveAllAsync()
         { 

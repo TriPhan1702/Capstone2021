@@ -37,8 +37,6 @@ namespace HairCutAppAPI.Services
             {
                 return new BadRequestObjectResult("User Already Exists");
             }
-            
-            System.Diagnostics.Debug.WriteLine("Ran Here");
 
             // from Dto to AppUser
             var newUser = dto.ToNewAppUser(_passwordHasher.HashPassword(null, dto.Password));

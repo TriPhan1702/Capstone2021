@@ -47,8 +47,10 @@ namespace HairCutAppAPI.Utilities.Extensions
                     policy => policy.RequireRole(GlobalVariables.CustomerRole));
                 option.AddPolicy(GlobalVariables.RequireManagerRole,
                     policy => policy.RequireRole(GlobalVariables.ManagerRole));
-                option.AddPolicy(GlobalVariables.RequireStaffRole,
-                    policy => policy.RequireRole(GlobalVariables.StaffRole));
+                option.AddPolicy(GlobalVariables.RequireStylistRole,
+                    policy => policy.RequireRole(GlobalVariables.StylistRole));
+                option.AddPolicy(GlobalVariables.RequireBeauticianRole,
+                    policy => policy.RequireRole(GlobalVariables.BeauticianRole));
             });
             
             //Token generated will last for 1 hour

@@ -6,6 +6,6 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IAdminService
     {
-        Task<ActionResult> CreateStaff(CreateStaffDTO createStaffDTO);
+        Task<ActionResult<int>> CreateStaff(CreateStaffDTO dto);
     }
 }
