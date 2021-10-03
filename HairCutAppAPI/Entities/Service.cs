@@ -28,13 +28,10 @@ namespace HairCutAppAPI.Entities
         [Required]
         public DateTime LastUpdated { get; set; }
         
-        //Many-Many
-        public ICollection<ServicesStaffs> ServicesStaffs { get; set; }
+        [Required]
+        public decimal Price { get; set; }
         
         //Many-Many
-        public ICollection<CombosServices> CombosServices { get; set; }
-        
-        //Many-Many
-        public ICollection<AppointmentsServices> AppointmentsServices { get; set; }
+        public ICollection<ComboDetail> ComboDetails { get; set; }
     }
 }

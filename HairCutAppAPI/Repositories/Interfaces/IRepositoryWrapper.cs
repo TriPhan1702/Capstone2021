@@ -18,5 +18,11 @@ namespace HairCutAppAPI.Repositories.Interfaces
         IStaffRepository Staff { get; }
         
         ISalonRepository Salon { get; }
+        
+        IServiceRepository Service { get; }
+        
+        IComboRepository Combo { get; }
+        
+        IReviewRepository Review { get;}
     }
 }

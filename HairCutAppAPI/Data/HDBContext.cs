@@ -18,14 +18,16 @@ namespace HairCutAppAPI.Data
         public DbSet<Combo> Combos { get; set; }
         public DbSet<WorkSlot> WorkSlots { get; set; }
         public DbSet<SlotOfDay> SlotsOfDay { get; set; }
-        public DbSet<ServicesStaffs> ServicesStaffs { get; set; }
-        public DbSet<CombosServices> CombosServices { get; set; }
+        public DbSet<ComboDetail> CombosServices { get; set; }
         public DbSet<PromotionalCode> PromotionalCodes { get; set; }
         public DbSet<CustomersCodes> CustomersCodes { get; set; }
         public DbSet<SalonsCodes> SalonsCodes { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
-        public DbSet<AppointmentsServices> AppointmentsServices { get; set; }
+        public DbSet<AppointmentDetail> AppointmentDetails { get; set; }
+        public DbSet<AppointmentRating> AppointmentRatings { get; set; }
+        public DbSet<Crew> Crews { get; set; }
+        public DbSet<CrewDetail> CrewDetails { get; set; }
         
         public HDBContext(DbContextOptions options) : base(options)
         {
@@ -50,46 +52,20 @@ namespace HairCutAppAPI.Data
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired();
             
-            builder.Entity<Staff>()
-                .HasMany(ur => ur.AppointmentsServices)
-                .WithOne(u => u.Staff)
-                .HasForeignKey(ur => ur.StaffId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
-            
-            builder.Entity<Appointment>()
-                .HasMany(ur => ur.AppointmentsServices)
-                .WithOne(u => u.Appointment)
-                .HasForeignKey(ur => ur.AppointmentId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
-
             builder.Entity<Notification>()
                 .HasOne(c => c.TargetUser)
                 .WithMany()
                 .OnDelete(DeleteBehavior.Restrict);
             
-            //Configure Composite key
-            builder.Entity<AppointmentsServices>().HasKey(x => new {
-                x.AppointmentId,
-                x.ServiceId
-            });
-            builder.Entity<CombosServices>().HasKey(x => new {
-                x.ComboId,
-                x.ServiceId
-            });
-            builder.Entity<CustomersCodes>().HasKey(x => new {
-                x.CustomerId,
-                x.CodeId
-            });
-            builder.Entity<SalonsCodes>().HasKey(x => new {
-                x.SalonId,
-                x.CodeId
-            });
-            builder.Entity<ServicesStaffs>().HasKey(x => new {
-                x.ServiceId,
-                x.StaffId
-            });
+            builder.Entity<Appointment>()
+                .HasOne(a => a.AppointmentDetail)
+                .WithOne(d => d.Appointment)
+                .HasForeignKey<AppointmentDetail>(d => d.AppointmentId);
+            
+            builder.Entity<Appointment>()
+                .HasOne(a => a.Rating)
+                .WithOne(r => r.Appointment)
+                .HasForeignKey<AppointmentRating>(b => b.AppointmentId);
         }
     }
 }

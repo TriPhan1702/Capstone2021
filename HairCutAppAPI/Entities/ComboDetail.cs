@@ -3,14 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HairCutAppAPI.Entities
 {
-    public class ServicesStaffs
+    public class ComboDetail
     {
+        [Key]
+        public int Id { get; set; }
+        
+        [ForeignKey("Combo")]
+        public int ComboId { get; set; }
+        public Combo Combo { get; set; }
+        
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
         public Service Service { get; set; }
-        
-        [ForeignKey("Staff")]
-        public int StaffId { get; set; }
-        public Staff Staff { get; set; }
     }
 }

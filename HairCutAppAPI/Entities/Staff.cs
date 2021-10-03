@@ -35,11 +35,8 @@ namespace HairCutAppAPI.Entities
         public int? SalonId { get; set; }
         public virtual Salon Salon { get; set; }
         
-        //Many-Many
-        public ICollection<ServicesStaffs> ServicesStaffs { get; set; }
-        
         public ICollection<WorkSlot> WorkSlots { get; set; }
         
-        public ICollection<AppointmentsServices> AppointmentsServices { get; set; }
+        public ICollection<CrewDetail> CrewDetails { get; set; }
     }
 }

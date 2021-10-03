@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairCutAppAPI.Data.Migrations
 {
     [DbContext(typeof(HDBContext))]
-    [Migration("20210929130818_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20211003091121_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -154,7 +154,10 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ComboId")
+                    b.Property<int>("AppointmentDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ComboId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
@@ -179,9 +182,6 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Property<decimal>("PaidAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("PaymentDescription")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PaymentType")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -190,12 +190,8 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<decimal>("Rating")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("RatingComment")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<int?>("RatingId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
@@ -217,27 +213,57 @@ namespace HairCutAppAPI.Data.Migrations
                     b.ToTable("Appointments");
                 });
 
-            modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentsServices", b =>
+            modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentDetail", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<int>("AppointmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ServiceId")
+                    b.Property<int>("ComboId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("StaffId")
+                    b.Property<int?>("CrewId")
                         .HasColumnType("int");
 
-                    b.HasKey("AppointmentId", "ServiceId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ServiceId");
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
 
-                    b.HasIndex("StaffId");
+                    b.HasIndex("ComboId");
 
-                    b.ToTable("AppointmentsServices");
+                    b.HasIndex("CrewId");
+
+                    b.ToTable("AppointmentDetails");
+                });
+
+            modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AppointmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RatingComment")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppointmentId")
+                        .IsUnique();
+
+                    b.ToTable("AppointmentRatings");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Combo", b =>
@@ -272,22 +298,71 @@ namespace HairCutAppAPI.Data.Migrations
                     b.ToTable("Combos");
                 });
 
-            modelBuilder.Entity("HairCutAppAPI.Entities.CombosServices", b =>
+            modelBuilder.Entity("HairCutAppAPI.Entities.ComboDetail", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<int>("ComboId")
                         .HasColumnType("int");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                    b.HasKey("Id");
 
-                    b.HasKey("ComboId", "ServiceId");
+                    b.HasIndex("ComboId");
 
                     b.HasIndex("ServiceId");
 
                     b.ToTable("CombosServices");
+                });
+
+            modelBuilder.Entity("HairCutAppAPI.Entities.Crew", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Crews");
+                });
+
+            modelBuilder.Entity("HairCutAppAPI.Entities.CrewDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("CrewId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StaffId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CrewId");
+
+                    b.HasIndex("StaffId");
+
+                    b.ToTable("CrewDetails");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Customer", b =>
@@ -313,10 +388,15 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.CustomersCodes", b =>
                 {
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("CodeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
@@ -327,9 +407,11 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Property<int>("TimesUsed")
                         .HasColumnType("int");
 
-                    b.HasKey("CustomerId", "CodeId");
+                    b.HasKey("Id");
 
                     b.HasIndex("CodeId");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("CustomersCodes");
                 });
@@ -434,13 +516,13 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Content")
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
@@ -467,6 +549,9 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -476,10 +561,10 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
 
-                    b.Property<double>("Latitude")
+                    b.Property<double?>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<double>("Longitude")
+                    b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
@@ -494,15 +579,22 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.SalonsCodes", b =>
                 {
-                    b.Property<int>("SalonId")
-                        .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("CodeId")
                         .HasColumnType("int");
 
-                    b.HasKey("SalonId", "CodeId");
+                    b.Property<int>("SalonId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("CodeId");
+
+                    b.HasIndex("SalonId");
 
                     b.ToTable("SalonsCodes");
                 });
@@ -532,6 +624,9 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -540,21 +635,6 @@ namespace HairCutAppAPI.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Services");
-                });
-
-            modelBuilder.Entity("HairCutAppAPI.Entities.ServicesStaffs", b =>
-                {
-                    b.Property<int>("ServiceId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StaffId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ServiceId", "StaffId");
-
-                    b.HasIndex("StaffId");
-
-                    b.ToTable("ServicesStaffs");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.SlotOfDay", b =>
@@ -582,6 +662,10 @@ namespace HairCutAppAPI.Data.Migrations
 
                     b.Property<int>("AppointmentsNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -749,11 +833,9 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Appointment", b =>
                 {
-                    b.HasOne("HairCutAppAPI.Entities.Combo", "Combo")
+                    b.HasOne("HairCutAppAPI.Entities.Combo", null)
                         .WithMany("Appointments")
-                        .HasForeignKey("ComboId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ComboId");
 
                     b.HasOne("HairCutAppAPI.Entities.Customer", "Customer")
                         .WithMany("Appointments")
@@ -761,48 +843,55 @@ namespace HairCutAppAPI.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Combo");
-
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentsServices", b =>
+            modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentDetail", b =>
                 {
                     b.HasOne("HairCutAppAPI.Entities.Appointment", "Appointment")
-                        .WithMany("AppointmentsServices")
-                        .HasForeignKey("AppointmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("HairCutAppAPI.Entities.Service", "Service")
-                        .WithMany("AppointmentsServices")
-                        .HasForeignKey("ServiceId")
+                        .WithOne("AppointmentDetail")
+                        .HasForeignKey("HairCutAppAPI.Entities.AppointmentDetail", "AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HairCutAppAPI.Entities.Staff", "Staff")
-                        .WithMany("AppointmentsServices")
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("HairCutAppAPI.Entities.Combo", "Combo")
+                        .WithMany()
+                        .HasForeignKey("ComboId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("HairCutAppAPI.Entities.Crew", "Crew")
+                        .WithMany()
+                        .HasForeignKey("CrewId");
 
                     b.Navigation("Appointment");
 
-                    b.Navigation("Service");
+                    b.Navigation("Combo");
 
-                    b.Navigation("Staff");
+                    b.Navigation("Crew");
                 });
 
-            modelBuilder.Entity("HairCutAppAPI.Entities.CombosServices", b =>
+            modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentRating", b =>
+                {
+                    b.HasOne("HairCutAppAPI.Entities.Appointment", "Appointment")
+                        .WithOne("Rating")
+                        .HasForeignKey("HairCutAppAPI.Entities.AppointmentRating", "AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
+                });
+
+            modelBuilder.Entity("HairCutAppAPI.Entities.ComboDetail", b =>
                 {
                     b.HasOne("HairCutAppAPI.Entities.Combo", "Combo")
-                        .WithMany("CombosServices")
+                        .WithMany("ComboDetails")
                         .HasForeignKey("ComboId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("HairCutAppAPI.Entities.Service", "Service")
-                        .WithMany("CombosServices")
+                        .WithMany("ComboDetails")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -810,6 +899,25 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Navigation("Combo");
 
                     b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("HairCutAppAPI.Entities.CrewDetail", b =>
+                {
+                    b.HasOne("HairCutAppAPI.Entities.Crew", "Crew")
+                        .WithMany("CrewDetails")
+                        .HasForeignKey("CrewId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HairCutAppAPI.Entities.Staff", "Staff")
+                        .WithMany("CrewDetails")
+                        .HasForeignKey("StaffId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Crew");
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Customer", b =>
@@ -905,25 +1013,6 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Navigation("Salon");
                 });
 
-            modelBuilder.Entity("HairCutAppAPI.Entities.ServicesStaffs", b =>
-                {
-                    b.HasOne("HairCutAppAPI.Entities.Service", "Service")
-                        .WithMany("ServicesStaffs")
-                        .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HairCutAppAPI.Entities.Staff", "Staff")
-                        .WithMany("ServicesStaffs")
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Service");
-
-                    b.Navigation("Staff");
-                });
-
             modelBuilder.Entity("HairCutAppAPI.Entities.Staff", b =>
                 {
                     b.HasOne("HairCutAppAPI.Entities.AppUser", "User")
@@ -1008,16 +1097,23 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Appointment", b =>
                 {
-                    b.Navigation("AppointmentsServices");
+                    b.Navigation("AppointmentDetail");
 
                     b.Navigation("Notifications");
+
+                    b.Navigation("Rating");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Combo", b =>
                 {
                     b.Navigation("Appointments");
 
-                    b.Navigation("CombosServices");
+                    b.Navigation("ComboDetails");
+                });
+
+            modelBuilder.Entity("HairCutAppAPI.Entities.Crew", b =>
+                {
+                    b.Navigation("CrewDetails");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Customer", b =>
@@ -1043,11 +1139,7 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Service", b =>
                 {
-                    b.Navigation("AppointmentsServices");
-
-                    b.Navigation("CombosServices");
-
-                    b.Navigation("ServicesStaffs");
+                    b.Navigation("ComboDetails");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.SlotOfDay", b =>
@@ -1057,9 +1149,7 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Staff", b =>
                 {
-                    b.Navigation("AppointmentsServices");
-
-                    b.Navigation("ServicesStaffs");
+                    b.Navigation("CrewDetails");
 
                     b.Navigation("WorkSlots");
                 });

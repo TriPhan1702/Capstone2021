@@ -10,7 +10,7 @@ namespace HairCutAppAPI.Entities
         public int Id { get; set; }
         [Required]
         [MinLength(3), MaxLength(255)]
-        public string Content { get; set; }
+        public string Description { get; set; }
         [Required]
         public bool Rating { get; set; }
         [Required]

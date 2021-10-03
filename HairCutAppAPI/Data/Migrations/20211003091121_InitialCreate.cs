@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HairCutAppAPI.Data.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -68,6 +68,21 @@ namespace HairCutAppAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Crews",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Crews", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PromotionalCodes",
                 columns: table => new
                 {
@@ -96,10 +111,11 @@ namespace HairCutAppAPI.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Longitude = table.Column<double>(type: "float", nullable: false),
-                    Latitude = table.Column<double>(type: "float", nullable: false)
+                    Longitude = table.Column<double>(type: "float", nullable: true),
+                    Latitude = table.Column<double>(type: "float", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -117,7 +133,8 @@ namespace HairCutAppAPI.Data.Migrations
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Duration = table.Column<int>(type: "int", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -276,7 +293,7 @@ namespace HairCutAppAPI.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Content = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Rating = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -304,12 +321,14 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "SalonsCodes",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     SalonId = table.Column<int>(type: "int", nullable: false),
                     CodeId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SalonsCodes", x => new { x.SalonId, x.CodeId });
+                    table.PrimaryKey("PK_SalonsCodes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SalonsCodes_PromotionalCodes_CodeId",
                         column: x => x.CodeId,
@@ -333,6 +352,7 @@ namespace HairCutAppAPI.Data.Migrations
                     AppointmentsNumber = table.Column<int>(type: "int", nullable: false),
                     SuccessfulAppointmentsNumber = table.Column<int>(type: "int", nullable: false),
                     StaffType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     SalonId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -356,13 +376,14 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "CombosServices",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ComboId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    ServiceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CombosServices", x => new { x.ComboId, x.ServiceId });
+                    table.PrimaryKey("PK_CombosServices", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CombosServices_Combos_ComboId",
                         column: x => x.ComboId,
@@ -384,12 +405,11 @@ namespace HairCutAppAPI.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
-                    ComboId = table.Column<int>(type: "int", nullable: false),
+                    RatingId = table.Column<int>(type: "int", nullable: true),
+                    AppointmentDetailId = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PaidAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Rating = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    RatingComment = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     Note = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -397,8 +417,8 @@ namespace HairCutAppAPI.Data.Migrations
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentType = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: true),
                     PromotionalCode = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    PaymentDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ComboId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -408,7 +428,7 @@ namespace HairCutAppAPI.Data.Migrations
                         column: x => x.ComboId,
                         principalTable: "Combos",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Appointments_Customers_CustomerId",
                         column: x => x.CustomerId,
@@ -421,6 +441,8 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "CustomersCodes",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     CodeId = table.Column<int>(type: "int", nullable: false),
                     TimesUsed = table.Column<int>(type: "int", nullable: false),
@@ -428,7 +450,7 @@ namespace HairCutAppAPI.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomersCodes", x => new { x.CustomerId, x.CodeId });
+                    table.PrimaryKey("PK_CustomersCodes", x => x.Id);
                     table.ForeignKey(
                         name: "FK_CustomersCodes_Customers_CustomerId",
                         column: x => x.CustomerId,
@@ -444,23 +466,25 @@ namespace HairCutAppAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ServicesStaffs",
+                name: "CrewDetails",
                 columns: table => new
                 {
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CrewId = table.Column<int>(type: "int", nullable: false),
                     StaffId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ServicesStaffs", x => new { x.ServiceId, x.StaffId });
+                    table.PrimaryKey("PK_CrewDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ServicesStaffs_Services_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "Services",
+                        name: "FK_CrewDetails_Crews_CrewId",
+                        column: x => x.CrewId,
+                        principalTable: "Crews",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ServicesStaffs_Staff_StaffId",
+                        name: "FK_CrewDetails_Staff_StaffId",
                         column: x => x.StaffId,
                         principalTable: "Staff",
                         principalColumn: "Id",
@@ -496,35 +520,57 @@ namespace HairCutAppAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AppointmentsServices",
+                name: "AppointmentDetails",
                 columns: table => new
                 {
-                    AppointmentId = table.Column<int>(type: "int", nullable: false),
-                    ServiceId = table.Column<int>(type: "int", nullable: false),
-                    StaffId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ComboId = table.Column<int>(type: "int", nullable: false),
+                    CrewId = table.Column<int>(type: "int", nullable: true),
+                    AppointmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AppointmentsServices", x => new { x.AppointmentId, x.ServiceId });
+                    table.PrimaryKey("PK_AppointmentDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AppointmentsServices_Appointments_AppointmentId",
+                        name: "FK_AppointmentDetails_Appointments_AppointmentId",
                         column: x => x.AppointmentId,
                         principalTable: "Appointments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AppointmentsServices_Services_ServiceId",
-                        column: x => x.ServiceId,
-                        principalTable: "Services",
+                        name: "FK_AppointmentDetails_Combos_ComboId",
+                        column: x => x.ComboId,
+                        principalTable: "Combos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AppointmentsServices_Staff_StaffId",
-                        column: x => x.StaffId,
-                        principalTable: "Staff",
+                        name: "FK_AppointmentDetails_Crews_CrewId",
+                        column: x => x.CrewId,
+                        principalTable: "Crews",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppointmentRatings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Rating = table.Column<int>(type: "int", nullable: false),
+                    RatingComment = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    AppointmentId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppointmentRatings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppointmentRatings_Appointments_AppointmentId",
+                        column: x => x.AppointmentId,
+                        principalTable: "Appointments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -566,6 +612,28 @@ namespace HairCutAppAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AppointmentDetails_AppointmentId",
+                table: "AppointmentDetails",
+                column: "AppointmentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppointmentDetails_ComboId",
+                table: "AppointmentDetails",
+                column: "ComboId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppointmentDetails_CrewId",
+                table: "AppointmentDetails",
+                column: "CrewId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppointmentRatings_AppointmentId",
+                table: "AppointmentRatings",
+                column: "AppointmentId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Appointments_ComboId",
                 table: "Appointments",
                 column: "ComboId");
@@ -574,16 +642,6 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "IX_Appointments_CustomerId",
                 table: "Appointments",
                 column: "CustomerId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppointmentsServices_ServiceId",
-                table: "AppointmentsServices",
-                column: "ServiceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AppointmentsServices_StaffId",
-                table: "AppointmentsServices",
-                column: "StaffId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -624,14 +682,34 @@ namespace HairCutAppAPI.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CombosServices_ComboId",
+                table: "CombosServices",
+                column: "ComboId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CombosServices_ServiceId",
                 table: "CombosServices",
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CrewDetails_CrewId",
+                table: "CrewDetails",
+                column: "CrewId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CrewDetails_StaffId",
+                table: "CrewDetails",
+                column: "StaffId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CustomersCodes_CodeId",
                 table: "CustomersCodes",
                 column: "CodeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CustomersCodes_CustomerId",
+                table: "CustomersCodes",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notifications_AppointmentId",
@@ -664,9 +742,9 @@ namespace HairCutAppAPI.Data.Migrations
                 column: "CodeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ServicesStaffs_StaffId",
-                table: "ServicesStaffs",
-                column: "StaffId");
+                name: "IX_SalonsCodes_SalonId",
+                table: "SalonsCodes",
+                column: "SalonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Staff_SalonId",
@@ -687,7 +765,10 @@ namespace HairCutAppAPI.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AppointmentsServices");
+                name: "AppointmentDetails");
+
+            migrationBuilder.DropTable(
+                name: "AppointmentRatings");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -708,6 +789,9 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "CombosServices");
 
             migrationBuilder.DropTable(
+                name: "CrewDetails");
+
+            migrationBuilder.DropTable(
                 name: "CustomersCodes");
 
             migrationBuilder.DropTable(
@@ -720,22 +804,22 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "SalonsCodes");
 
             migrationBuilder.DropTable(
-                name: "ServicesStaffs");
-
-            migrationBuilder.DropTable(
                 name: "WorkSlots");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "Crews");
+
+            migrationBuilder.DropTable(
                 name: "Appointments");
 
             migrationBuilder.DropTable(
                 name: "PromotionalCodes");
-
-            migrationBuilder.DropTable(
-                name: "Services");
 
             migrationBuilder.DropTable(
                 name: "SlotsOfDay");

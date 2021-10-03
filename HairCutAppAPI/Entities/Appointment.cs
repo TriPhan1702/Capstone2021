@@ -13,11 +13,14 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
+
+        [ForeignKey("Rating")]
+        public int? RatingId { get; set; }
+        public AppointmentRating Rating { get; set; }
         
-        [ForeignKey("Combo")]
-        public int ComboId { get; set; }
-        public Combo Combo { get; set; }
-        
+        [ForeignKey("AppointmentDetail")]
+        public int AppointmentDetailId { get; set; }
+        public AppointmentDetail AppointmentDetail { get; set; }
         [Required]
         [MaxLength(20)]
         public string Status { get; set; }
@@ -27,11 +30,6 @@ namespace HairCutAppAPI.Entities
         
         [Required]
         public decimal PaidAmount { get; set; }
-        
-        public decimal Rating { get; set; }
-        
-        [MaxLength(255)]
-        public string RatingComment { get; set; }
         [MaxLength(255)]
         public string Note { get; set; }
         
@@ -51,14 +49,9 @@ namespace HairCutAppAPI.Entities
         [MinLength(3), MaxLength(255)]
         public string PromotionalCode { get; set; }
         
-        public string PaymentDescription { get; set; }
-        
         [Url]
         public string ImageUrl { get; set; }
         
         public ICollection<Notification> Notifications { get; set; }
-        
-        //Many-Many
-        public ICollection<AppointmentsServices> AppointmentsServices { get; set; }
     }
 }
