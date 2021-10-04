@@ -16,7 +16,7 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<ActionResult<List<CustomerGetSalonListDTO>>> CustomerGetSalonList()
+        public async Task<ActionResult<ICollection<CustomerGetSalonListDTO>>> CustomerGetSalonList()
         {
             var salons = await _repositoryWrapper.Salon.FindAllAsync();
             if (salons is null)

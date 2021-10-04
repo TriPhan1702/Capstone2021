@@ -24,7 +24,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
         [HttpGet]
-        public async Task<ActionResult<List<CustomerGetSalonListDTO>>> CustomerGetSalonList()
+        public async Task<ActionResult<ICollection<CustomerGetSalonListDTO>>> CustomerGetSalonList()
         {
             return await _salonService.CustomerGetSalonList();
         }

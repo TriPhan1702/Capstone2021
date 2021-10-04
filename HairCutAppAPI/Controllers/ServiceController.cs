@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.ServiceDTOs;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
@@ -32,6 +33,17 @@ namespace HairCutAppAPI.Controllers
             }
 
             return await _serviceService.CreateService(createServiceDTO);
+        }
+        
+        /// <summary>
+        /// For Admin to get all services from database
+        /// </summary>
+        /// <returns></returns>
+        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [HttpGet]
+        public async Task<ActionResult<ICollection<ServiceDTO>>> GetAllServices()
+        {
+            return await _serviceService.GetAllServices();
         }
         
     }

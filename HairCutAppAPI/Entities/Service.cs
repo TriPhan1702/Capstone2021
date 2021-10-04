@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using HairCutAppAPI.DTOs.ServiceDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -33,5 +35,20 @@ namespace HairCutAppAPI.Entities
         
         //Many-Many
         public ICollection<ComboDetail> ComboDetails { get; set; }
+
+        public ServiceDTO ToServiceDTO()
+        {
+            return new ServiceDTO()
+            {
+                Id = Id,
+                Description = Description,
+                Duration = Duration,
+                Name = Name,
+                Price = Price,
+                Status = Status,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeResponseFormat),
+                LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeResponseFormat)
+            };
+        }
     }
 }

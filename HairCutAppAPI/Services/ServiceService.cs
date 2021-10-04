@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,6 +19,18 @@ namespace HairCutAppAPI.Services
         public ServiceService(IRepositoryWrapper repositoryWrapper)
         {
             _repositoryWrapper = repositoryWrapper;
+        }
+
+        public async Task<ActionResult<ICollection<ServiceDTO>>> GetAllServices()
+        {
+            var services = await _repositoryWrapper.Service.FindAllAsync();
+            var result = new List<ServiceDTO>();
+            foreach (var service in services)
+            {
+                result.Add(service.ToServiceDTO());
+            }
+
+            return result;
         }
 
         public async Task<ActionResult<int>> CreateService(CreateServiceDTO createServiceDTO)

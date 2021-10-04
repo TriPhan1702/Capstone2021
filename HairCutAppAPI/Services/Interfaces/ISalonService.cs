@@ -7,7 +7,7 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface ISalonService
     {
-        Task<ActionResult<List<CustomerGetSalonListDTO>>> CustomerGetSalonList();
+        Task<ActionResult<ICollection<CustomerGetSalonListDTO>>> CustomerGetSalonList();
         Task<ActionResult<CreateSalonResponseDTO>> CreateSalon(CreateSalonDTO salonDTO);
     }
 }
