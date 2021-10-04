@@ -26,7 +26,7 @@ namespace HairCutAppAPI.Utilities
 
         //Status Lists
         public static readonly string[] StaffTypes = {"Stylist", "Beautician", "Receptionist"};
-        public static readonly string[] ServiceStatuses = {"Active", "InActive"};
-        public static readonly string[] ComboStatuses = {"Active", "InActive"};
+        public static readonly string[] ServiceStatuses = {"active", "inactive"};
+        public static readonly string[] ComboStatuses = {"active", "inactive"};
     }
 }

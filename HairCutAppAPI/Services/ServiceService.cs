@@ -23,7 +23,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<int>> CreateService(CreateServiceDTO createServiceDTO)
         {
             //Check if status is valid
-            if (!GlobalVariables.ServiceStatuses.Contains(createServiceDTO.Status))
+            if (!GlobalVariables.ServiceStatuses.Contains(createServiceDTO.Status.ToLower()))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     "Service Status invalid, must be: " + string.Join(", ", GlobalVariables.ServiceStatuses));

@@ -25,7 +25,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<int>> CreateCombo(CreateComboDTO createComboDTO)
         {
             //Check if status is valid
-            if (!GlobalVariables.ComboStatuses.Contains(createComboDTO.Status))
+            if (!GlobalVariables.ComboStatuses.Contains(createComboDTO.Status.ToLower()))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     "Combo Status invalid, must be: " + string.Join(", ", GlobalVariables.ComboStatuses));

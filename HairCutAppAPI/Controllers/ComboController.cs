@@ -15,6 +15,11 @@ namespace HairCutAppAPI.Controllers
             _comboService = comboService;
         }
         
+        /// <summary>
+        /// For Admin to create new combo
+        /// </summary>
+        /// <param name="createComboDTO">If Services is null, then the combo created will have no service</param>
+        /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost]
         public async Task<ActionResult<int>> CreateService([FromForm] CreateComboDTO createComboDTO)

@@ -16,6 +16,11 @@ namespace HairCutAppAPI.Controllers
             _serviceService = serviceService;
         }
         
+        /// <summary>
+        /// For Admin to create service
+        /// </summary>
+        /// <param name="createServiceDTO"></param>
+        /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost]
         public async Task<ActionResult<int>> CreateService([FromForm] CreateServiceDTO createServiceDTO)
