@@ -18,7 +18,7 @@ namespace HairCutAppAPI.Data
         public DbSet<Combo> Combos { get; set; }
         public DbSet<WorkSlot> WorkSlots { get; set; }
         public DbSet<SlotOfDay> SlotsOfDay { get; set; }
-        public DbSet<ComboDetail> CombosServices { get; set; }
+        public DbSet<ComboDetail> ComboDetails { get; set; }
         public DbSet<PromotionalCode> PromotionalCodes { get; set; }
         public DbSet<CustomersCodes> CustomersCodes { get; set; }
         public DbSet<SalonsCodes> SalonsCodes { get; set; }

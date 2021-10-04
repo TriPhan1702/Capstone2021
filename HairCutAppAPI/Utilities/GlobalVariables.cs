@@ -24,6 +24,9 @@ namespace HairCutAppAPI.Utilities
         public const string RequireStylistRole = "RequireStylistRole";
         public const string RequireBeauticianRole = "RequireBeauticianRole";
 
+        //Status Lists
         public static readonly string[] StaffTypes = {"Stylist", "Beautician", "Receptionist"};
+        public static readonly string[] ServiceStatuses = {"Active", "InActive"};
+        public static readonly string[] ComboStatuses = {"Active", "InActive"};
     }
 }

@@ -29,11 +29,12 @@ namespace HairCutAppAPI.DTOs
         
         [Required]
         [EmailAddress]
+        [RegularExpression(@"^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$", ErrorMessage = "Must be Gmail")]
         public string Email { get; set; }
         
         [Required]
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^(?:[0-9]{10})$", ErrorMessage = "Phone Number has to have 10 numeric characters")]
+        [RegularExpression(@"/^(0?)(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/", ErrorMessage = "Phone Number is Invalid")]
         public string PhoneNumber { get; set; }
 
         public AppUser ToNewAppUser(string password)
