@@ -21,8 +21,8 @@ namespace HairCutAppAPI.Controllers
         /// <param name="createComboDTO">If Services is null, then the combo created will have no service</param>
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [HttpPost]
-        public async Task<ActionResult<int>> CreateService([FromForm] CreateComboDTO createComboDTO)
+        [HttpPost("create_combo")]
+        public async Task<ActionResult<int>> CreateCombo([FromForm] CreateComboDTO createComboDTO)
         {
             //Check input server side
             if (!ModelState.IsValid)

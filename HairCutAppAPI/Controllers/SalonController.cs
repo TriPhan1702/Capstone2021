@@ -18,6 +18,10 @@ namespace HairCutAppAPI.Controllers
             _salonService = salonService;
         }
         
+        /// <summary>
+        /// For Customer see list of available salons
+        /// </summary>
+        /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
         [HttpGet]
         public async Task<ActionResult<List<CustomerGetSalonListDTO>>> CustomerGetSalonList()
@@ -25,6 +29,11 @@ namespace HairCutAppAPI.Controllers
             return await _salonService.CustomerGetSalonList();
         }
 
+        /// <summary>
+        /// For Admin create new salon
+        /// </summary>
+        /// <param name="createSalonDTO"></param>
+        /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_salon")]
         public async Task<ActionResult<CreateSalonResponseDTO>> CreateSalon([FromForm] CreateSalonDTO createSalonDTO)

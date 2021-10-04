@@ -22,7 +22,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="createServiceDTO"></param>
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [HttpPost]
+        [HttpPost("create_service")]
         public async Task<ActionResult<int>> CreateService([FromForm] CreateServiceDTO createServiceDTO)
         {
             //Check input server side
