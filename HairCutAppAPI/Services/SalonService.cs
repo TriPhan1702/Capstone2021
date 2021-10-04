@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.SalonDTOs;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
@@ -13,6 +14,23 @@ namespace HairCutAppAPI.Services
         public SalonService(IRepositoryWrapper repositoryWrapper)
         {
             _repositoryWrapper = repositoryWrapper;
+        }
+
+        public async Task<ActionResult<List<CustomerGetSalonListDTO>>> CustomerGetSalonList()
+        {
+            var salons = await _repositoryWrapper.Salon.FindAllAsync();
+            if (salons is null)
+            {
+                return null;
+            }
+            
+            var result = new List<CustomerGetSalonListDTO>();
+            foreach (var salon in salons)
+            {
+                result.Add(salon.ToCustomerGetSalonListDTO());
+            }
+
+            return result;
         }
 
         public async Task<ActionResult<CreateSalonResponseDTO>> CreateSalon(CreateSalonDTO salonDTO)

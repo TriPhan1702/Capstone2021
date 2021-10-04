@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
 using HairCutAppAPI.DTOs.SalonDTOs;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Controllers
@@ -13,6 +16,13 @@ namespace HairCutAppAPI.Controllers
         public SalonController(ISalonService salonService)
         {
             _salonService = salonService;
+        }
+        
+        // [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
+        [HttpGet]
+        public async Task<ActionResult<List<CustomerGetSalonListDTO>>> CustomerGetSalonList()
+        {
+            return await _salonService.CustomerGetSalonList();
         }
 
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]

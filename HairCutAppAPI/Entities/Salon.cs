@@ -34,6 +34,19 @@ namespace HairCutAppAPI.Entities
         //Many-Many
         public ICollection<SalonsCodes> SalonsCodes { get; set; }
         
+        public CustomerGetSalonListDTO ToCustomerGetSalonListDTO()
+        {
+            return new CustomerGetSalonListDTO()
+            {
+                Id = Id,
+                Description = Description,
+                Name = Name,
+                Latitude = Latitude.ToString(),
+                Longitude = Longitude.ToString(),
+                AvatarUrl = AvatarUrl
+            };
+        } 
+        
         public CreateSalonResponseDTO ToCreateSalonResponseDTO()
         {
             
