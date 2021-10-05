@@ -50,5 +50,18 @@ namespace HairCutAppAPI.Entities
                 LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeResponseFormat)
             };
         }
+
+        public UpdateServiceResponseDto ToUpdateServiceResponseDto()
+        {
+            return new UpdateServiceResponseDto()
+            {
+                Id = Id,
+                Description = Description,
+                Duration = Duration,
+                Name = Description,
+                Price = Duration,
+                Status = Status
+            };
+        }
     }
 }

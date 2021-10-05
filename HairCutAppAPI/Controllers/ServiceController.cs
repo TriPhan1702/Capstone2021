@@ -36,6 +36,24 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For Admin to update a service, empty ot null fields will not be changed
+        /// </summary>
+        /// <param name="updateServiceDto"></param>
+        /// <returns></returns>
+        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [HttpPost("update_service")]
+        public async Task<ActionResult<UpdateServiceResponseDto>> UpdateService([FromForm] UpdateServiceDto updateServiceDto)
+        {
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _serviceService.UpdateService(updateServiceDto);
+        }
+        
+        /// <summary>
         /// For Admin to get all services from database
         /// </summary>
         /// <returns></returns>

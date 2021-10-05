@@ -40,18 +40,27 @@ namespace HairCutAppAPI.Repositories
         public async Task<T> CreateAsync(T entity)
         {
             await HDBContext.Set<T>().AddAsync(entity);
+            await HDBContext.SaveChangesAsync();
             return entity;
         }
-        
+
+        public async Task<T> CreateWithoutSaveAsync(T entity)
+        {
+            await HDBContext.Set<T>().AddAsync(entity);
+            return entity;
+        }
+
         public T CreateWithoutSave(T t)
         {
             HDBContext.Set<T>().Add(t);
             return t;
         }
 
-        public async Task<T> UpdateAsync(T entity)
+        public async Task<T> UpdateAsync(T entity, object key)
         {
-            var exist = await HDBContext.Set<T>().FindAsync(entity);
+            if (entity == null)
+                return null;
+            var exist = await HDBContext.Set<T>().FindAsync(key);
             if (exist == null) return null;
             HDBContext.Entry(entity).CurrentValues.SetValues(entity);
             await HDBContext.SaveChangesAsync();

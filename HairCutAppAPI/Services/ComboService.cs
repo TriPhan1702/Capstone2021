@@ -45,7 +45,6 @@ namespace HairCutAppAPI.Services
             try
             {
                 result = await _repositoryWrapper.Combo.CreateAsync(newCombo);
-                await _repositoryWrapper.SaveAllAsync();
             }
             catch (Exception e)
             {

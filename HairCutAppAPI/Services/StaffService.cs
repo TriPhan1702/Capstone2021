@@ -45,7 +45,6 @@ namespace HairCutAppAPI.Services
 
             //Save New User to Database
             var result = await _repositoryWrapper.Staff.CreateAsync(newStaff);
-            await _repositoryWrapper.SaveAllAsync();
 
             //Save staff's role
             var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newStaff.User, GlobalVariables.StylistRole);
