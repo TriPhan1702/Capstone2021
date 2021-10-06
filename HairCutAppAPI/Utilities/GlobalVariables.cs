@@ -5,6 +5,11 @@ namespace HairCutAppAPI.Utilities
     //Store Variables used throughout the app
     public static class GlobalVariables
     {
+        //Social Login Platforms
+        public const string Google = "google";
+        public const string Facebook = "facebook";
+        public const string Apple = "apple";
+        
         //Date Formats
         public const int TimeZone = 7;
         public const string DateTimeResponseFormat = "dd/MM/yyyy HH:mm:ss";
@@ -28,5 +33,7 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] StaffTypes = {"Stylist", "Beautician", "Receptionist"};
         public static readonly string[] ServiceStatuses = {"active", "inactive"};
         public static readonly string[] ComboStatuses = {"active", "inactive"};
+        public static readonly string[] DeviceStatuses = {"active", "inactive"};
+        public static readonly string[] NotificationStatuses = {"pending","active","canceled","completed"};
     }
 }

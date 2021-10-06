@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using HairCutAppAPI.DTOs.ComboDTOs;
 
 namespace HairCutAppAPI.Entities
 {
@@ -29,5 +30,16 @@ namespace HairCutAppAPI.Entities
         public ICollection<ComboDetail> ComboDetails { get; set; }
         
         public ICollection<Appointment> Appointments { get; set;}
+
+        public ComboDTO ToComboDTO()
+        {
+            return new ComboDTO()
+            {
+                Id = Id,
+                Description = Description,
+                Name = Name,
+                Status = Status
+            };
+        }
     }
 }

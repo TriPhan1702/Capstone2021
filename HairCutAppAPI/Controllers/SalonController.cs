@@ -38,6 +38,9 @@ namespace HairCutAppAPI.Controllers
         [HttpPost("create_salon")]
         public async Task<ActionResult<CreateSalonResponseDTO>> CreateSalon([FromForm] CreateSalonDTO createSalonDTO)
         {
+            //Trim All Strings in object
+            createSalonDTO = ObjectTrimmer.TrimObject(createSalonDTO) as CreateSalonDTO;
+            
             //Check input server side
             if (!ModelState.IsValid)
             {

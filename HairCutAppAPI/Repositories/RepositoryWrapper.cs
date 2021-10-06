@@ -20,6 +20,8 @@ namespace HairCutAppAPI.Repositories
         private IServiceRepository _service;
         private IComboRepository _combo;
         private IReviewRepository _review;
+        private IDeviceRepository _device;
+        private IComboDetailRepository _comboDetail;
         private readonly UserManager<AppUser> _userManager;
 
         public RepositoryWrapper(UserManager<AppUser> userManager, HDBContext context, SignInManager<AppUser> signInManager)
@@ -37,6 +39,8 @@ namespace HairCutAppAPI.Repositories
         public IServiceRepository Service => _service ??= new ServiceRepository(_context);
         public IComboRepository Combo => _combo ??= new ComboRepository(_context);
         public IReviewRepository Review => _review ??= new ReviewRepository(_context);
+        public IDeviceRepository Device => _device ??= new DeviceRepository(_context);
+        public IComboDetailRepository ComboDetail => _comboDetail ??= new ComboDetailRepository(_context);
 
         //For saving multiple changes, if lower than 0 -> no changes
         public async Task<bool> SaveAllAsync()

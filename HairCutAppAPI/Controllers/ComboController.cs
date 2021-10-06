@@ -1,7 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.ComboDTOs;
 using HairCutAppAPI.DTOs.ServiceDTOs;
+using HairCutAppAPI.Entities;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Controllers
@@ -24,6 +28,9 @@ namespace HairCutAppAPI.Controllers
         [HttpPost("create_combo")]
         public async Task<ActionResult<int>> CreateCombo([FromForm] CreateComboDTO createComboDTO)
         {
+            //Trim All Strings in object
+            createComboDTO = ObjectTrimmer.TrimObject(createComboDTO) as CreateComboDTO;
+            
             //Check input server side
             if (!ModelState.IsValid)
             {
@@ -31,6 +38,19 @@ namespace HairCutAppAPI.Controllers
             }
 
             return await _comboService.CreateCombo(createComboDTO);
+        }
+        
+        // [Authorize]
+        [HttpGet("combo_statuses")]
+        public ActionResult<ICollection<string>> GetComboStatuses()
+        {
+            return GlobalVariables.ComboStatuses;
+        }
+        
+        [HttpGet("active_combos")]
+        public async Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos()
+        {
+            return await _comboService.GetAllActiveCombos();
         }
     }
 }

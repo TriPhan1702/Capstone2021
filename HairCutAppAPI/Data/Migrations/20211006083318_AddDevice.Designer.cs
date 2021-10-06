@@ -4,14 +4,16 @@ using HairCutAppAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HairCutAppAPI.Data.Migrations
 {
     [DbContext(typeof(HDBContext))]
-    partial class HDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211006083318_AddDevice")]
+    partial class AddDevice
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -438,8 +440,7 @@ namespace HairCutAppAPI.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("Devices");
                 });
@@ -934,8 +935,8 @@ namespace HairCutAppAPI.Data.Migrations
             modelBuilder.Entity("HairCutAppAPI.Entities.Device", b =>
                 {
                     b.HasOne("HairCutAppAPI.Entities.AppUser", "User")
-                        .WithOne("Device")
-                        .HasForeignKey("HairCutAppAPI.Entities.Device", "UserId")
+                        .WithMany("Devices")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1059,7 +1060,7 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.AppUser", b =>
                 {
-                    b.Navigation("Device");
+                    b.Navigation("Devices");
 
                     b.Navigation("UserRole");
                 });

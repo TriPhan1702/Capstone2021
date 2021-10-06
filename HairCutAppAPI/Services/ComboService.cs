@@ -22,6 +22,14 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
+        public async Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos()
+        {
+            //Get Active Combo
+            var comboDetails = await _repositoryWrapper.Combo.FindByConditionAsync(c=>c.Status == GlobalVariables.ComboStatuses[0]);
+            
+            return comboDetails.Select(c=>c.ToComboDTO()).ToList();
+        }
+
         public async Task<ActionResult<int>> CreateCombo(CreateComboDTO createComboDTO)
         {
             //Check if status is valid

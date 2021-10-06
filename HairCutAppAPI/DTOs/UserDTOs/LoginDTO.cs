@@ -11,5 +11,9 @@ namespace HairCutAppAPI.DTOs
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+        
+        public string DeviceId { get; set; }
+        
+        public string DeviceToken { get; set; }
     }
 }

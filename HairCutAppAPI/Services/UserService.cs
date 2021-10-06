@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace HairCutAppAPI.Services
 {
@@ -57,23 +58,46 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
         {
             //Check if user exists
-            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.UserName == loginDto.UserName.ToLower() || u.Email == loginDto.UserName);
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.UserName.Trim() == loginDto.UserName.ToLower() || u.Email == loginDto.UserName);
             if (user is null)
             {
                 return new BadRequestObjectResult("Invalid UserName or Email");
             }
             
             //Check Password
-            var result = await _repositoryWrapper.User.CheckPasswordAsync(user, loginDto.Password);
+            var result = await _repositoryWrapper.User.CheckPasswordAsync(user, loginDto.Password.Trim());
             if (!result.Succeeded)
             {
                 return new BadRequestObjectResult("Invalid Password");
             }
+            
+            //If Device Token exist, add to user's device
+            if (!string.IsNullOrWhiteSpace(loginDto.DeviceToken))
+            {
+                await CheckUserDevice(loginDto, user.Id);
+            }
+            
             return new UserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
             };
+        }
+
+        private async Task CheckUserDevice(LoginDTO loginDTO, int userId)
+        {
+            var devices = await _repositoryWrapper.Device.FindByConditionAsync(d => d.UserId == userId);
+            //If it hasn't existed, save to database
+            if (devices is null)
+            {
+                await _repositoryWrapper.Device.CreateAsync(new Device()
+                {
+                    Status = GlobalVariables.DeviceStatuses[0],
+                    DeviceToken = loginDTO.DeviceToken,
+                    DeviceId = loginDTO.DeviceId,
+                    UserId = userId
+                });
+            }
         }
 
         public async Task<ActionResult> ForgetPassword(string email)

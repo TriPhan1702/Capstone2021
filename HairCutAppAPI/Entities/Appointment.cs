@@ -51,7 +51,5 @@ namespace HairCutAppAPI.Entities
         
         [Url]
         public string ImageUrl { get; set; }
-        
-        public ICollection<Notification> Notifications { get; set; }
     }
 }

@@ -4,8 +4,7 @@ using HairCutAppAPI.Entities;
 
 namespace HairCutAppAPI.Repositories.Interfaces
 {
-    public interface IComboRepository : IRepositoryBase<Combo>
+    public interface IComboDetailRepository : IRepositoryBase<ComboDetail>
     {
-        Task<IEnumerable<Combo>> GetCombosDetails();
     }
 }

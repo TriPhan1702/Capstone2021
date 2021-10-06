@@ -27,6 +27,8 @@ namespace HairCutAppAPI.Entities
         
         [Required]
         public ICollection<AppUserRole> UserRole { get; set; }
+        
+        public Device Device { get; set; }
 
         //Numeric only, length 10
         [Required]

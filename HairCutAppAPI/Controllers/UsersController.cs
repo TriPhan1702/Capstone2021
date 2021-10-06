@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -46,18 +47,20 @@ namespace HairCutAppAPI.Controllers
         
 
         /// <summary>
-        /// For all users to login
+        /// For all users to login, UserName can be UserName or Email
         /// </summary>
-        /// <param name="loginDto">UserName can be UserName or Email</param>
-        /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login([FromForm] LoginDTO loginDto)
         {
+            //Trim All Strings in object
+            loginDto = ObjectTrimmer.TrimObject(loginDto) as LoginDTO;
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            
             return await _userService.Login(loginDto);
         }
 
@@ -71,12 +74,12 @@ namespace HairCutAppAPI.Controllers
         public async Task<ActionResult> ForgetPassword(string email)
         {
             //Check input server side
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(email.Trim()))
             {
                 return BadRequest("Email is Blank");
             }
             
-            return await _userService.ForgetPassword(email);
+            return await _userService.ForgetPassword(email.Trim());
         }
 
         /// <summary>
@@ -91,30 +94,55 @@ namespace HairCutAppAPI.Controllers
             return await _userService.ResetPassword(resetPasswordDTO);
         }
 
+        // [AllowAnonymous]
+        // [HttpPost("google_login")]
+        // public async Task<ActionResult<UserDTO>> GoogleLogin([FromForm] GoogleUserDTO googleUserDTO)
+        // {
+        //     //Check input server side
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return BadRequest(ModelState);
+        //     }
+        //
+        //     return await _userService.LoginByGoogle(googleUserDTO.IdToken);
+        // }
+        //
+        // [AllowAnonymous]
+        // [HttpPost("facebook_login")]
+        // public async Task<ActionResult<UserDTO>> FacebookLogin([FromForm] FacebookUserDTO facebookUserDTO)
+        // {
+        //     //Check input server side
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return BadRequest(ModelState);
+        //     }
+        //
+        //     return await _userService.LoginByFacebook(facebookUserDTO.AccessToken);
+        // }
+
         [AllowAnonymous]
-        [HttpPost("google_login")]
-        public async Task<ActionResult<UserDTO>> GoogleLogin([FromForm] GoogleUserDTO googleUserDTO)
+        [HttpPost("social_login")]
+        public async Task<ActionResult<UserDTO>> SocialLogin([FromBody] SocialLoginDTO socialLoginDTO)
         {
+            //Trim All Strings in object
+            socialLoginDTO = ObjectTrimmer.TrimObject(socialLoginDTO) as SocialLoginDTO;
+            
             //Check input server side
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            return await _userService.LoginByGoogle(googleUserDTO.IdToken);
-        }
-        
-        [AllowAnonymous]
-        [HttpPost("facebook_login")]
-        public async Task<ActionResult<UserDTO>> FacebookLogin([FromForm] FacebookUserDTO facebookUserDTO)
-        {
-            //Check input server side
-            if (!ModelState.IsValid)
+            switch (socialLoginDTO.Platform.Trim().ToLower())
             {
-                return BadRequest(ModelState);
+                case GlobalVariables.Google: return await _userService.LoginByGoogle(socialLoginDTO.Token);
+                
+                case GlobalVariables.Facebook: return await _userService.LoginByFacebook(socialLoginDTO.Token);
+                
+                case GlobalVariables.Apple: throw new NotImplementedException("Not Implemented yet");
+                
+                default: return BadRequest("Login Platform is invalid");
             }
-
-            return await _userService.LoginByGoogle(facebookUserDTO.AccessToken);
         }
     }
 }

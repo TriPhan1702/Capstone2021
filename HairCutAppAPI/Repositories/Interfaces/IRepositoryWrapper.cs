@@ -24,5 +24,9 @@ namespace HairCutAppAPI.Repositories.Interfaces
         IComboRepository Combo { get; }
         
         IReviewRepository Review { get;}
+        
+        IDeviceRepository Device { get; }
+        
+        IComboDetailRepository ComboDetail { get; }
     }
 }

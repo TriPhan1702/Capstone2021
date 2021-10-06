@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.ServiceDTOs;
 using HairCutAppAPI.Services.Interfaces;
@@ -26,6 +27,9 @@ namespace HairCutAppAPI.Controllers
         [HttpPost("create_service")]
         public async Task<ActionResult<int>> CreateService([FromForm] CreateServiceDTO createServiceDTO)
         {
+            //Trim All Strings in object
+            createServiceDTO = ObjectTrimmer.TrimObject(createServiceDTO) as CreateServiceDTO;
+            
             //Check input server side
             if (!ModelState.IsValid)
             {
@@ -41,9 +45,12 @@ namespace HairCutAppAPI.Controllers
         /// <param name="updateServiceDto"></param>
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [HttpPost("update_service")]
+        [HttpPut("update_service")]
         public async Task<ActionResult<UpdateServiceResponseDto>> UpdateService([FromForm] UpdateServiceDto updateServiceDto)
         {
+            //Trim All Strings in object
+            updateServiceDto = ObjectTrimmer.TrimObject(updateServiceDto) as UpdateServiceDto;
+            
             //Check input server side
             if (!ModelState.IsValid)
             {
@@ -63,6 +70,12 @@ namespace HairCutAppAPI.Controllers
         {
             return await _serviceService.GetAllServices();
         }
-        
+
+        // [Authorize]
+        [HttpGet("service_statuses")]
+        public ActionResult<ICollection<string>> GetServiceStatuses()
+        {
+            return GlobalVariables.ServiceStatuses;
+        }
     }
 }

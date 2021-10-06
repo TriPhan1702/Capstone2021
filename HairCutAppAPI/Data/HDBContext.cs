@@ -14,6 +14,7 @@ namespace HairCutAppAPI.Data
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<Device> Devices { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Combo> Combos { get; set; }
         public DbSet<WorkSlot> WorkSlots { get; set; }
@@ -22,7 +23,6 @@ namespace HairCutAppAPI.Data
         public DbSet<PromotionalCode> PromotionalCodes { get; set; }
         public DbSet<CustomersCodes> CustomersCodes { get; set; }
         public DbSet<SalonsCodes> SalonsCodes { get; set; }
-        public DbSet<Notification> Notifications { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentDetail> AppointmentDetails { get; set; }
         public DbSet<AppointmentRating> AppointmentRatings { get; set; }
@@ -51,11 +51,6 @@ namespace HairCutAppAPI.Data
                 .HasForeignKey(ur => ur.UserId)
                 .OnDelete(DeleteBehavior.Restrict)
                 .IsRequired();
-            
-            builder.Entity<Notification>()
-                .HasOne(c => c.TargetUser)
-                .WithMany()
-                .OnDelete(DeleteBehavior.Restrict);
             
             builder.Entity<Appointment>()
                 .HasOne(a => a.AppointmentDetail)
