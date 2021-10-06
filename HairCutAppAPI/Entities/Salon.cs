@@ -25,6 +25,10 @@ namespace HairCutAppAPI.Entities
         [Required]
         public DateTime LastUpdate { get; set; }
         
+        [Required]
+        [MaxLength(20)]
+        public string Status { get; set; }
+        
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
         

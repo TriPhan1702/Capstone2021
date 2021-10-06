@@ -23,7 +23,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
-        [HttpGet]
+        [HttpGet("active_salons")]
         public async Task<ActionResult<ICollection<CustomerGetSalonListDTO>>> CustomerGetSalonList()
         {
             return await _salonService.CustomerGetSalonList();
