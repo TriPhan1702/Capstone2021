@@ -1,18 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HairCutAppAPI.Entities
 {
     public class SlotOfDay
     {
-        [Key]
+        [Key,DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
         
         [Required]
-        public int StartTime { get; set; }
+        public TimeSpan StartTime { get; set; }
         
         [Required]
-        public int EndTime { get; set; }
+        public TimeSpan EndTime { get; set; }
         
         public ICollection<WorkSlot> WorkSlots { get; set; }
     }

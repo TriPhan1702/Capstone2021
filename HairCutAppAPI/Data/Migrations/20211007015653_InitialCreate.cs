@@ -114,6 +114,7 @@ namespace HairCutAppAPI.Data.Migrations
                     AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Longitude = table.Column<double>(type: "float", nullable: true),
                     Latitude = table.Column<double>(type: "float", nullable: true)
                 },
@@ -145,10 +146,9 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "SlotsOfDay",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StartTime = table.Column<int>(type: "int", nullable: false),
-                    EndTime = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -288,6 +288,28 @@ namespace HairCutAppAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Devices",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DeviceId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeviceToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Devices", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Devices_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Reviews",
                 columns: table => new
                 {
@@ -373,7 +395,7 @@ namespace HairCutAppAPI.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CombosServices",
+                name: "ComboDetails",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -383,15 +405,15 @@ namespace HairCutAppAPI.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CombosServices", x => x.Id);
+                    table.PrimaryKey("PK_ComboDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_CombosServices_Combos_ComboId",
+                        name: "FK_ComboDetails_Combos_ComboId",
                         column: x => x.ComboId,
                         principalTable: "Combos",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CombosServices_Services_ServiceId",
+                        name: "FK_ComboDetails_Services_ServiceId",
                         column: x => x.ServiceId,
                         principalTable: "Services",
                         principalColumn: "Id",
@@ -573,42 +595,50 @@ namespace HairCutAppAPI.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Notifications",
-                columns: table => new
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TargetUserId = table.Column<int>(type: "int", nullable: false),
-                    SecondaryUserId = table.Column<int>(type: "int", nullable: true),
-                    AppointmentId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
+                    { 1, "4d5443ca-d992-488b-8ec9-7253ba95b3c7", "Administrator", "ADMINISTRATOR" },
+                    { 2, "b1eff5db-cf34-4e64-99e0-eb02e4692de1", "Manager", "MANAGER" },
+                    { 3, "1114de4d-4a0b-427c-8f26-650006b5d2f5", "Stylist", "STYLIST" },
+                    { 4, "1fea3a9d-75f0-446d-aa83-ae2a598dccb7", "Beautician", "BEAUTICIAN" },
+                    { 5, "b5653da7-96bd-4305-8149-192fe3821f0d", "Customer", "CUSTOMER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "SlotsOfDay",
+                columns: new[] { "Id", "EndTime", "StartTime" },
+                values: new object[,]
                 {
-                    table.PrimaryKey("PK_Notifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Notifications_Appointments_AppointmentId",
-                        column: x => x.AppointmentId,
-                        principalTable: "Appointments",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Notifications_AspNetUsers_SecondaryUserId",
-                        column: x => x.SecondaryUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Notifications_AspNetUsers_TargetUserId",
-                        column: x => x.TargetUserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                    { 16, new TimeSpan(0, 15, 0, 0, 0), new TimeSpan(0, 14, 30, 0, 0) },
+                    { 17, new TimeSpan(0, 15, 30, 0, 0), new TimeSpan(0, 15, 0, 0, 0) },
+                    { 18, new TimeSpan(0, 16, 0, 0, 0), new TimeSpan(0, 15, 30, 0, 0) },
+                    { 19, new TimeSpan(0, 16, 30, 0, 0), new TimeSpan(0, 16, 0, 0, 0) },
+                    { 20, new TimeSpan(0, 17, 0, 0, 0), new TimeSpan(0, 16, 30, 0, 0) },
+                    { 22, new TimeSpan(0, 18, 0, 0, 0), new TimeSpan(0, 17, 30, 0, 0) },
+                    { 15, new TimeSpan(0, 14, 30, 0, 0), new TimeSpan(0, 14, 0, 0, 0) },
+                    { 23, new TimeSpan(0, 18, 30, 0, 0), new TimeSpan(0, 18, 0, 0, 0) },
+                    { 24, new TimeSpan(0, 19, 0, 0, 0), new TimeSpan(0, 18, 30, 0, 0) },
+                    { 25, new TimeSpan(0, 19, 30, 0, 0), new TimeSpan(0, 19, 0, 0, 0) },
+                    { 21, new TimeSpan(0, 17, 30, 0, 0), new TimeSpan(0, 17, 0, 0, 0) },
+                    { 14, new TimeSpan(0, 14, 0, 0, 0), new TimeSpan(0, 13, 30, 0, 0) },
+                    { 11, new TimeSpan(0, 12, 30, 0, 0), new TimeSpan(0, 12, 0, 0, 0) },
+                    { 12, new TimeSpan(0, 13, 0, 0, 0), new TimeSpan(0, 12, 30, 0, 0) },
+                    { 26, new TimeSpan(0, 20, 0, 0, 0), new TimeSpan(0, 19, 30, 0, 0) },
+                    { 10, new TimeSpan(0, 12, 0, 0, 0), new TimeSpan(0, 11, 30, 0, 0) },
+                    { 9, new TimeSpan(0, 11, 30, 0, 0), new TimeSpan(0, 11, 0, 0, 0) },
+                    { 8, new TimeSpan(0, 11, 0, 0, 0), new TimeSpan(0, 10, 30, 0, 0) },
+                    { 7, new TimeSpan(0, 10, 30, 0, 0), new TimeSpan(0, 10, 0, 0, 0) },
+                    { 6, new TimeSpan(0, 10, 0, 0, 0), new TimeSpan(0, 9, 30, 0, 0) },
+                    { 5, new TimeSpan(0, 9, 30, 0, 0), new TimeSpan(0, 9, 0, 0, 0) },
+                    { 4, new TimeSpan(0, 9, 0, 0, 0), new TimeSpan(0, 8, 30, 0, 0) },
+                    { 3, new TimeSpan(0, 8, 30, 0, 0), new TimeSpan(0, 8, 0, 0, 0) },
+                    { 2, new TimeSpan(0, 8, 0, 0, 0), new TimeSpan(0, 7, 30, 0, 0) },
+                    { 1, new TimeSpan(0, 7, 30, 0, 0), new TimeSpan(0, 7, 0, 0, 0) },
+                    { 13, new TimeSpan(0, 13, 30, 0, 0), new TimeSpan(0, 13, 0, 0, 0) },
+                    { 27, new TimeSpan(0, 20, 30, 0, 0), new TimeSpan(0, 20, 0, 0, 0) }
                 });
 
             migrationBuilder.CreateIndex(
@@ -682,13 +712,13 @@ namespace HairCutAppAPI.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_CombosServices_ComboId",
-                table: "CombosServices",
+                name: "IX_ComboDetails_ComboId",
+                table: "ComboDetails",
                 column: "ComboId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CombosServices_ServiceId",
-                table: "CombosServices",
+                name: "IX_ComboDetails_ServiceId",
+                table: "ComboDetails",
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
@@ -712,19 +742,10 @@ namespace HairCutAppAPI.Data.Migrations
                 column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notifications_AppointmentId",
-                table: "Notifications",
-                column: "AppointmentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notifications_SecondaryUserId",
-                table: "Notifications",
-                column: "SecondaryUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Notifications_TargetUserId",
-                table: "Notifications",
-                column: "TargetUserId");
+                name: "IX_Devices_UserId",
+                table: "Devices",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reviews_AuthorId",
@@ -786,7 +807,7 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "CombosServices");
+                name: "ComboDetails");
 
             migrationBuilder.DropTable(
                 name: "CrewDetails");
@@ -795,7 +816,7 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "CustomersCodes");
 
             migrationBuilder.DropTable(
-                name: "Notifications");
+                name: "Devices");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
@@ -807,6 +828,9 @@ namespace HairCutAppAPI.Data.Migrations
                 name: "WorkSlots");
 
             migrationBuilder.DropTable(
+                name: "Appointments");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -814,9 +838,6 @@ namespace HairCutAppAPI.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Crews");
-
-            migrationBuilder.DropTable(
-                name: "Appointments");
 
             migrationBuilder.DropTable(
                 name: "PromotionalCodes");

@@ -46,6 +46,43 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ConcurrencyStamp = "4d5443ca-d992-488b-8ec9-7253ba95b3c7",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ConcurrencyStamp = "b1eff5db-cf34-4e64-99e0-eb02e4692de1",
+                            Name = "Manager",
+                            NormalizedName = "MANAGER"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ConcurrencyStamp = "1114de4d-4a0b-427c-8f26-650006b5d2f5",
+                            Name = "Stylist",
+                            NormalizedName = "STYLIST"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ConcurrencyStamp = "1fea3a9d-75f0-446d-aa83-ae2a598dccb7",
+                            Name = "Beautician",
+                            NormalizedName = "BEAUTICIAN"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ConcurrencyStamp = "b5653da7-96bd-4305-8149-192fe3821f0d",
+                            Name = "Customer",
+                            NormalizedName = "CUSTOMER"
+                        });
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.AppUser", b =>
@@ -626,19 +663,181 @@ namespace HairCutAppAPI.Data.Migrations
             modelBuilder.Entity("HairCutAppAPI.Entities.SlotOfDay", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("EndTime")
                         .HasColumnType("int");
 
-                    b.Property<int>("StartTime")
-                        .HasColumnType("int");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
                     b.ToTable("SlotsOfDay");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            EndTime = new TimeSpan(0, 7, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 7, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            EndTime = new TimeSpan(0, 8, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 7, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            EndTime = new TimeSpan(0, 8, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            EndTime = new TimeSpan(0, 9, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 8, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            EndTime = new TimeSpan(0, 9, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            EndTime = new TimeSpan(0, 10, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 9, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            EndTime = new TimeSpan(0, 10, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 10, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            EndTime = new TimeSpan(0, 11, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 10, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 9,
+                            EndTime = new TimeSpan(0, 11, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 11, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 10,
+                            EndTime = new TimeSpan(0, 12, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 11, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 11,
+                            EndTime = new TimeSpan(0, 12, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 12, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 12,
+                            EndTime = new TimeSpan(0, 13, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 12, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 13,
+                            EndTime = new TimeSpan(0, 13, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 13, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 14,
+                            EndTime = new TimeSpan(0, 14, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 13, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 15,
+                            EndTime = new TimeSpan(0, 14, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 14, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 16,
+                            EndTime = new TimeSpan(0, 15, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 14, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 17,
+                            EndTime = new TimeSpan(0, 15, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 15, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 18,
+                            EndTime = new TimeSpan(0, 16, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 15, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 19,
+                            EndTime = new TimeSpan(0, 16, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 16, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 20,
+                            EndTime = new TimeSpan(0, 17, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 16, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 21,
+                            EndTime = new TimeSpan(0, 17, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 17, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 22,
+                            EndTime = new TimeSpan(0, 18, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 17, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 23,
+                            EndTime = new TimeSpan(0, 18, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 18, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 24,
+                            EndTime = new TimeSpan(0, 19, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 18, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 25,
+                            EndTime = new TimeSpan(0, 19, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 19, 0, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 26,
+                            EndTime = new TimeSpan(0, 20, 0, 0, 0),
+                            StartTime = new TimeSpan(0, 19, 30, 0, 0)
+                        },
+                        new
+                        {
+                            Id = 27,
+                            EndTime = new TimeSpan(0, 20, 30, 0, 0),
+                            StartTime = new TimeSpan(0, 20, 0, 0, 0)
+                        });
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Staff", b =>

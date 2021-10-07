@@ -20,23 +20,6 @@ namespace HairCutAppAPI
         {
             var host = CreateHostBuilder(args).Build();
 
-            //Seed database
-            using var scope = host.Services.CreateScope();
-            var services = scope.ServiceProvider;
-            try
-            {
-                var context = services.GetRequiredService<HDBContext>();
-                var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-                await context.Database.MigrateAsync();
-                await Seed.SeedData(userManager, roleManager);
-            }
-            catch (Exception e)
-            {
-                var logger = services.GetRequiredService<ILogger<Program>>();
-                logger.LogError(e, "An Error occured during migration");
-            }
-
             await host.RunAsync();
         }
 

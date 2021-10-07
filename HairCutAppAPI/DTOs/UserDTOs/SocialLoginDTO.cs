@@ -10,7 +10,7 @@ namespace HairCutAppAPI.DTOs
         [Required]
         public string Platform { get; set; }
 
-        public string DeviceId;
+        public string DeviceId { get; set; }
         
         public string DeviceToken { get; set; }
     }
