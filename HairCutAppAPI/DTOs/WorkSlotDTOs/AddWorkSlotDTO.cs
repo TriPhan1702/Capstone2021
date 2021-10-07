@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 
@@ -12,7 +13,8 @@ namespace HairCutAppAPI.DTOs.WorkSlotDTOs
         public int SlotOfDayId { get; set; }
         
         [Required]
-        public DateTime Date { get; set; }
+        [RegularExpression(GlobalVariables.DateRegex, ErrorMessage = GlobalVariables.DateRegexMessage)]
+        public string Date { get; set; }
 
         public WorkSlot ToWorkSlot()
         {
@@ -22,7 +24,7 @@ namespace HairCutAppAPI.DTOs.WorkSlotDTOs
                 SlotOfDayId = SlotOfDayId,
                 //Available
                 Status = GlobalVariables.WorkSlotStatuses[0],
-                Date = Date
+                Date = DateTime.ParseExact(Date,GlobalVariables.DayFormat, CultureInfo.InvariantCulture)
             };
         }
     }

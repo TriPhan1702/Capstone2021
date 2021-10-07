@@ -46,8 +46,8 @@ namespace HairCutAppAPI.Entities
                 Name = Name,
                 Price = Price,
                 Status = Status,
-                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeResponseFormat),
-                LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeResponseFormat)
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat)
             };
         }
 

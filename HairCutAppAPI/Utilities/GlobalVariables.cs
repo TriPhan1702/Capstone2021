@@ -6,6 +6,10 @@ namespace HairCutAppAPI.Utilities
     //Store Variables used throughout the app
     public static class GlobalVariables
     {
+        //Regex
+        public const string DateRegex = @"(((0|1)[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/((19|20)\d\d))$";
+        public const string DateRegexMessage = "dd/MM/yyyy";
+        
         //Social Login Platforms
         public const string Google = "google";
         public const string Facebook = "facebook";
@@ -13,8 +17,8 @@ namespace HairCutAppAPI.Utilities
         
         //Date Formats
         public const int TimeZone = 7;
-        public const string DateTimeResponseFormat = "dd/MM/yyyy HH:mm:ss";
-        public const string BirthDayFormat = "dd/MM/yyyy";
+        public const string DateTimeFormat = "dd/MM/yyyy HH:mm:ss";
+        public const string DayFormat = "dd/MM/yyyy";
         public const string TimeFormat = @"hh\:mm";
         
         //Name of roles

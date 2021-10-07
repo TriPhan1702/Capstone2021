@@ -24,9 +24,13 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<GetWorkSlotResponseDTO>> GetWorkSlot(GetWorkSlotDTO getWorkSlotDTO)
         {
+            var date = DateTime.ParseExact(getWorkSlotDTO.Date, GlobalVariables.DayFormat,
+                CultureInfo.InvariantCulture);
+            
+            //Get Work slot with the same staff, slot of day and date
             var slot = await _repositoryWrapper.WorkSlot.FindSingleByConditionAsync(ws =>
                 ws.StaffId == getWorkSlotDTO.StaffId && ws.SlotOfDayId == getWorkSlotDTO.SlotOfDayId &&
-                ws.Date.DayOfYear == getWorkSlotDTO.Date.DayOfYear);
+                ws.Date.DayOfYear == date.DayOfYear);
             if (slot is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Slot not found"); 
@@ -36,14 +40,17 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<int>> AddAvailableWorkSlot(AddWorkSlotDTO addWorkSlotDTO)
         {
+            var date = DateTime.ParseExact(addWorkSlotDTO.Date, GlobalVariables.DayFormat,
+                CultureInfo.InvariantCulture);
+            
             //Check if staff exists
             await CheckStaff(addWorkSlotDTO.StaffId);
             //Check if slot of day exists
             await CheckSlotOfDay(addWorkSlotDTO.SlotOfDayId);
             //Check if work slot already exists
-            await CheckWorkSlot(addWorkSlotDTO.StaffId, addWorkSlotDTO.SlotOfDayId, addWorkSlotDTO.Date);
+            await CheckWorkSlot(addWorkSlotDTO.StaffId, addWorkSlotDTO.SlotOfDayId, date);
             //Check if the inputted date is valid
-            CheckDate(addWorkSlotDTO.Date);
+            CheckDate(date);
 
             //Add work slot
             var newWorkSlot = addWorkSlotDTO.ToWorkSlot();

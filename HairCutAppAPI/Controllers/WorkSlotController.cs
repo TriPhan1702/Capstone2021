@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.WorkSlotDTOs;
 using HairCutAppAPI.Services.Interfaces;
@@ -33,8 +34,6 @@ namespace HairCutAppAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            getWorkSlotDTO.Date = new DateTime(getWorkSlotDTO.Date.Year, getWorkSlotDTO.Date.Month, getWorkSlotDTO.Date.Day);
 
             return await _workSlotService.GetWorkSlot(getWorkSlotDTO);
         }
@@ -55,8 +54,6 @@ namespace HairCutAppAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
-            
-            addWorkSlotDTO.Date = new DateTime(addWorkSlotDTO.Date.Year, addWorkSlotDTO.Date.Month, addWorkSlotDTO.Date.Day);
 
             return await _workSlotService.AddAvailableWorkSlot(addWorkSlotDTO);
         }
@@ -79,6 +76,13 @@ namespace HairCutAppAPI.Controllers
             }
 
             return await _workSlotService.UpdateWorkSlot(updateWorkSlotDTO);
+        }
+        
+        // [Authorize]
+        [HttpGet("work_slot_statuses")]
+        public ActionResult<ICollection<string>> GetWorkSlotStatuses()
+        {
+            return GlobalVariables.WorkSlotStatuses;
         }
     }
 }
