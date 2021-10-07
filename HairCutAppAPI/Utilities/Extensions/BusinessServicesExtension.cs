@@ -17,6 +17,12 @@ namespace HairCutAppAPI.Utilities.Extensions
             services.AddScoped<IServiceService, ServiceService>();
             services.AddScoped<IComboService, ComboService>();
             services.AddScoped<IReviewService, ReviewService>();
+            services.AddScoped<IWorkSlotService, WorkSlotService>();
+            services.AddScoped<ISlotOfDayService, SlotOfDayService>();
+            services.AddScoped<IAppointmentService, AppointmentService>();
+            services.AddScoped<IAppointmentDetailService, AppointmentDetailService>();
+            services.AddScoped<IAppointmentRatingService, AppointmentRatingService>();
+            services.AddScoped<ICrewService, CrewService>();
             return services;
         }
     }

@@ -22,6 +22,14 @@ namespace HairCutAppAPI.Repositories
         private IReviewRepository _review;
         private IDeviceRepository _device;
         private IComboDetailRepository _comboDetail;
+        private ISlotOfDayRepository _slotOfDay;
+        private IWorkSlotRepository _workSlot;
+        private IAppointmentRepository _appointment;
+        private IAppointmentDetailRepository _appointmentDetail;
+        private IAppointmentRatingRepository _appointmentRating;
+        private ICrewRepository _crew;
+        private ICrewDetailRepository _crewDetail;
+            
         private readonly UserManager<AppUser> _userManager;
 
         public RepositoryWrapper(UserManager<AppUser> userManager, HDBContext context, SignInManager<AppUser> signInManager)
@@ -31,7 +39,8 @@ namespace HairCutAppAPI.Repositories
             _signInManager = signInManager;
         }
 
-        //Create concrete repositories if there aren't
+        #region Create concrete repositories if there aren't
+        
         public IUserRepository User => _user ??= new UserRepository(_context, _userManager, _signInManager);
         public ICustomerRepository Customer => _customer ??= new CustomerRepository(_context, _userManager, _signInManager);
         public IStaffRepository Staff => _staff ??= new StaffRepository(_context, _userManager, _signInManager);
@@ -41,6 +50,15 @@ namespace HairCutAppAPI.Repositories
         public IReviewRepository Review => _review ??= new ReviewRepository(_context);
         public IDeviceRepository Device => _device ??= new DeviceRepository(_context);
         public IComboDetailRepository ComboDetail => _comboDetail ??= new ComboDetailRepository(_context);
+        public ISlotOfDayRepository SlotOfDay => _slotOfDay ??= new SlotOfDayRepository(_context);
+        public IWorkSlotRepository WorkSlot => _workSlot ??= new WorkSlotRepository(_context);
+        public IAppointmentRepository Appointment => _appointment ??= new AppointmentRepository(_context);
+        public IAppointmentDetailRepository AppointmentDetail => _appointmentDetail ??= new AppointmentDetailRepository(_context);
+        public IAppointmentRatingRepository AppointmentRating => _appointmentRating ??= new AppointmentRatingRepository(_context);
+        public ICrewRepository Crew => _crew ??= new CrewRepository(_context);
+        public ICrewDetailRepository CrewDetail => _crewDetail ??= new CrewDetailRepository(_context);
+        
+        #endregion Create concrete repositories if there aren't
 
         //For saving multiple changes, if lower than 0 -> no changes
         public async Task<bool> SaveAllAsync()

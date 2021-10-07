@@ -36,5 +36,6 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] DeviceStatuses = {"active", "inactive"};
         public static readonly string[] SalonStatuses = {"active", "inactive"};
         public static readonly string[] NotificationStatuses = {"pending","active","canceled","completed"};
+        public static readonly string[] WorkSlotStatuses = {"available","not available","taken","pending"};
     }
 }
