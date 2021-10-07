@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.WorkSlotDTOs;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +40,7 @@ namespace HairCutAppAPI.Services
             //Check if slot of day exists
             await CheckSlotOfDay(addWorkSlotDTO.SlotOfDayId);
             //Check if work slot already exists
-            await CheckWorkSlot(addWorkSlotDTO);
+            await CheckWorkSlot(addWorkSlotDTO.StaffId, addWorkSlotDTO.SlotOfDayId, addWorkSlotDTO.Date);
             //Check if the inputted date is valid
             CheckDate(addWorkSlotDTO.Date);
 
@@ -46,6 +48,38 @@ namespace HairCutAppAPI.Services
             var newWorkSlot = addWorkSlotDTO.ToWorkSlot();
             var result = await _repositoryWrapper.WorkSlot.CreateAsync(newWorkSlot);
             return result.Id;
+        }
+
+        public async Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
+        {
+            //Get Work slot from Id
+            var workSlot = await _repositoryWrapper.WorkSlot.FindSingleByConditionAsync(ws => ws.Id == updateWorkSlotDTO.Id);
+            //Check if work slot exists
+            if (workSlot == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Work slot doesn't exist"); 
+            }
+            //Check if status is the same
+            if (updateWorkSlotDTO.Status.ToLower() == workSlot.Status)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "The new status is the same as the old one"); 
+            }
+
+            //Check if slot is already taken
+            if (workSlot.Status == GlobalVariables.WorkSlotStatuses[2])
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Cannot change an already taken slot"); 
+            }
+
+            //Check status is a valid status
+            if (!GlobalVariables.WorkSlotStatuses.Contains(updateWorkSlotDTO.Status.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                    "Work SLot Status invalid, must be: " + string.Join(", ", GlobalVariables.WorkSlotStatuses));
+            }
+
+            workSlot.Status = updateWorkSlotDTO.Status.ToLower();
+            return (await _repositoryWrapper.WorkSlot.UpdateAsync(workSlot, workSlot.Id)).ToUpdateWorkSlotDTO();
         }
 
         #region private functions
@@ -77,15 +111,24 @@ namespace HairCutAppAPI.Services
             }
         }
 
+        private async Task CheckWorkSlot(int id)
+        {
+            var workSlot = await _repositoryWrapper.WorkSlot.FindSingleByConditionAsync(ws => ws.Id == id);
+            if (workSlot is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Work slot doesn't exist"); 
+            }
+        }
+
         /// <summary>
         /// Check if the same work slot already exists
         /// </summary>
-        private async Task CheckWorkSlot(AddWorkSlotDTO addWorkSlotDTO)
+        private async Task CheckWorkSlot(int staffId, int slotOfDayId, DateTime date)
         {
             var workSlot = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>
-                ws.StaffId == addWorkSlotDTO.StaffId &&
-                ws.SlotOfDayId == addWorkSlotDTO.SlotOfDayId &&
-                ws.Date == addWorkSlotDTO.Date);
+                ws.StaffId == staffId &&
+                ws.SlotOfDayId == slotOfDayId &&
+                ws.Date == date);
             //If the same work slot already exists
             if (workSlot !=null)
             {

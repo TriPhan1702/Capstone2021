@@ -33,5 +33,14 @@ namespace HairCutAppAPI.Entities
                 Status = Status
             };
         }
+
+        public UpdateWorkSlotDTO ToUpdateWorkSlotDTO()
+        {
+            return new UpdateWorkSlotDTO()
+            {
+                Id = Id,
+                Status = Status
+            };
+        }
     }
 }

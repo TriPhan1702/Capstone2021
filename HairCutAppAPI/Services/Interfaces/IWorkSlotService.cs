@@ -8,5 +8,6 @@ namespace HairCutAppAPI.Services.Interfaces
     {
         Task<ActionResult<GetWorkSlotResponseDTO>> GetWorkSlot(GetWorkSlotDTO getWorkSlotDTO);
         Task<ActionResult<int>> AddAvailableWorkSlot(AddWorkSlotDTO addWorkSlotDTO);
+        Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO);
     }
 }

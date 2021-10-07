@@ -60,5 +60,25 @@ namespace HairCutAppAPI.Controllers
 
             return await _workSlotService.AddAvailableWorkSlot(addWorkSlotDTO);
         }
+
+        /// <summary>
+        /// Update status of a WorkSlot
+        /// </summary>
+        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [HttpPut("update_work_slot")]
+        public async Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
+        {
+            //Trim All Strings in object
+            updateWorkSlotDTO = ObjectTrimmer.TrimObject(updateWorkSlotDTO) as UpdateWorkSlotDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.UpdateWorkSlot(updateWorkSlotDTO);
+        }
     }
 }
