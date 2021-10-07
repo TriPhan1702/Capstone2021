@@ -24,6 +24,29 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
+        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfTimeSpan(FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
+        {
+            var startDate = DateTime.ParseExact(findWorkSlotsOfTimeSpanDTO.StartDate, GlobalVariables.DayFormat,
+                CultureInfo.InvariantCulture);
+            var endDate = DateTime.ParseExact(findWorkSlotsOfTimeSpanDTO.EndDate, GlobalVariables.DayFormat,
+                CultureInfo.InvariantCulture);
+            //if end date is before start date, swap
+            if (endDate<startDate)
+            {
+                var tempDate = startDate;
+                startDate = endDate;
+                endDate = tempDate;
+            }
+            var slots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>
+                ws.StaffId == findWorkSlotsOfTimeSpanDTO.StaffId && ws.Date.DayOfYear >= startDate.DayOfYear && ws.Date.DayOfYear <= endDate.DayOfYear);
+            if (slots is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "WorkSlots not found");
+            }
+
+            return slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList();
+        }
+
         public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
         {
             var date = DateTime.ParseExact(findWorkSlotsOfDayDTO.Date, GlobalVariables.DayFormat,

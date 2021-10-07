@@ -39,13 +39,13 @@ namespace HairCutAppAPI.Controllers
         }
 
         /// <summary>
-        /// Find All WorkSlots in a day of a staff
+        /// Find All WorkSlots in a day of a staff, if end date is before start date then the dates will be swapped
         /// </summary>
         // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
         // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("work_slot_of_day")]
-        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
+        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay([FromBody]FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
         {
             //Trim All Strings in object
             findWorkSlotsOfDayDTO = ObjectTrimmer.TrimObject(findWorkSlotsOfDayDTO) as FindWorkSlotsOfDayDTO;
@@ -56,6 +56,26 @@ namespace HairCutAppAPI.Controllers
             }
 
             return await _workSlotService.FindWorkSlotsOfDay(findWorkSlotsOfDayDTO);
+        }
+        
+        /// <summary>
+        /// Find All WorkSlots in a span of days of a staff
+        /// </summary>
+        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [HttpPost("work_slot_of_time_span")]
+        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsTimeSpan([FromBody] FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
+        {
+            //Trim All Strings in object
+            findWorkSlotsOfTimeSpanDTO = ObjectTrimmer.TrimObject(findWorkSlotsOfTimeSpanDTO) as FindWorkSlotsOfTimeSpanDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.FindWorkSlotsOfTimeSpan(findWorkSlotsOfTimeSpanDTO);
         }
 
         /// <summary>
