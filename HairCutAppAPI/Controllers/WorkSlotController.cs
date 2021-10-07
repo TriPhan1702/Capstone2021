@@ -24,8 +24,8 @@ namespace HairCutAppAPI.Controllers
         // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
         // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
-        [HttpGet("get_work_slot")]
-        public async Task<ActionResult<GetWorkSlotResponseDTO>> GetWorkSlot([FromBody] GetWorkSlotDTO getWorkSlotDTO)
+        [HttpPost("find_work_slot")]
+        public async Task<ActionResult<GetWorkSlotResponseDTO>> FindWorkSlot([FromBody] GetWorkSlotDTO getWorkSlotDTO)
         {
             //Trim All Strings in object
             getWorkSlotDTO = ObjectTrimmer.TrimObject(getWorkSlotDTO) as GetWorkSlotDTO;
@@ -35,7 +35,27 @@ namespace HairCutAppAPI.Controllers
                 return BadRequest(ModelState);
             }
 
-            return await _workSlotService.GetWorkSlot(getWorkSlotDTO);
+            return await _workSlotService.FindWorkSlot(getWorkSlotDTO);
+        }
+
+        /// <summary>
+        /// Find All WorkSlots in a day of a staff
+        /// </summary>
+        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [HttpPost("work_slot_of_day")]
+        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
+        {
+            //Trim All Strings in object
+            findWorkSlotsOfDayDTO = ObjectTrimmer.TrimObject(findWorkSlotsOfDayDTO) as FindWorkSlotsOfDayDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.FindWorkSlotsOfDay(findWorkSlotsOfDayDTO);
         }
 
         /// <summary>

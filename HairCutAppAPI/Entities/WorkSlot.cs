@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using HairCutAppAPI.DTOs.WorkSlotDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -30,7 +31,10 @@ namespace HairCutAppAPI.Entities
             return new GetWorkSlotResponseDTO()
             {
                 Id = Id,
-                Status = Status
+                Status = Status,
+                StaffId = StaffId,
+                SlotOfDayId = SlotOfDayId,
+                Date = Date.ToString(GlobalVariables.DayFormat)
             };
         }
 

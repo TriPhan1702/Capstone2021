@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.WorkSlotDTOs;
+using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
@@ -22,7 +24,21 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<ActionResult<GetWorkSlotResponseDTO>> GetWorkSlot(GetWorkSlotDTO getWorkSlotDTO)
+        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
+        {
+            var date = DateTime.ParseExact(findWorkSlotsOfDayDTO.Date, GlobalVariables.DayFormat,
+                CultureInfo.InvariantCulture);
+            var slots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>
+                ws.StaffId == findWorkSlotsOfDayDTO.StaffId && ws.Date.DayOfYear == date.DayOfYear);
+            if (slots is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "WorkSlots not found");
+            }
+
+            return slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList();
+        }
+
+        public async Task<ActionResult<GetWorkSlotResponseDTO>> FindWorkSlot(GetWorkSlotDTO getWorkSlotDTO)
         {
             var date = DateTime.ParseExact(getWorkSlotDTO.Date, GlobalVariables.DayFormat,
                 CultureInfo.InvariantCulture);
