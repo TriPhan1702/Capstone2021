@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 
 namespace HairCutAppAPI.Utilities
 {
@@ -14,6 +15,7 @@ namespace HairCutAppAPI.Utilities
         public const int TimeZone = 7;
         public const string DateTimeResponseFormat = "dd/MM/yyyy HH:mm:ss";
         public const string BirthDayFormat = "dd/MM/yyyy";
+        public const string TimeFormat = @"hh\:mm";
         
         //Name of roles
         public const string AdministratorRole = "Administrator";

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HairCutAppAPI.DTOs.SlotOfDayDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -17,5 +19,15 @@ namespace HairCutAppAPI.Entities
         public TimeSpan EndTime { get; set; }
         
         public ICollection<WorkSlot> WorkSlots { get; set; }
+
+        public SlotOfDayDTO ToSlotOfDayDTO()
+        {
+            return new SlotOfDayDTO()
+            {
+                Id = Id,
+                EndTime = EndTime.ToString(GlobalVariables.TimeFormat),
+                StartTime = StartTime.ToString(GlobalVariables.TimeFormat),
+            };
+        }
     }
 }

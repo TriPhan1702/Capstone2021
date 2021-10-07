@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HairCutAppAPI.DTOs.WorkSlotDTOs;
 
 namespace HairCutAppAPI.Entities
 {
@@ -23,6 +24,14 @@ namespace HairCutAppAPI.Entities
         
         [Required]
         public DateTime Date { get; set; }
-        
+
+        public GetWorkSlotResponseDTO ToGetWorkSlotResponseDTO()
+        {
+            return new GetWorkSlotResponseDTO()
+            {
+                Id = Id,
+                Status = Status
+            };
+        }
     }
 }
