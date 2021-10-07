@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -70,12 +71,18 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Cannot change an already taken slot"); 
             }
+            
+            //Can't manually change workslot status to taken
+            if (updateWorkSlotDTO.Status == GlobalVariables.WorkSlotStatuses[2])
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Cannot change an already taken slot"); 
+            }
 
             //Check status is a valid status
             if (!GlobalVariables.WorkSlotStatuses.Contains(updateWorkSlotDTO.Status.ToLower()))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    "Work SLot Status invalid, must be: " + string.Join(", ", GlobalVariables.WorkSlotStatuses));
+                    "Work SLot Status invalid, must be: available, not available");
             }
 
             workSlot.Status = updateWorkSlotDTO.Status.ToLower();
@@ -125,7 +132,7 @@ namespace HairCutAppAPI.Services
         /// </summary>
         private async Task CheckWorkSlot(int staffId, int slotOfDayId, DateTime date)
         {
-            var workSlot = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>
+            var workSlot = await _repositoryWrapper.WorkSlot.FindSingleByConditionAsync(ws =>
                 ws.StaffId == staffId &&
                 ws.SlotOfDayId == slotOfDayId &&
                 ws.Date == date);

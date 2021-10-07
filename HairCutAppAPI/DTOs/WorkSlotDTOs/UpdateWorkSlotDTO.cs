@@ -8,6 +8,6 @@ namespace HairCutAppAPI.DTOs.WorkSlotDTOs
 
         [Required] 
         [MaxLength(20)] 
-        public string Status;
+        public string Status { get; set; }
     }
 }
