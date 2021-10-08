@@ -42,6 +42,11 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<int>> CreateCombo(CreateComboDTO createComboDTO)
         {
+            if (createComboDTO.Duration <= 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                    "Com bo duration has to be more than 0");
+            }
             //Check if status is valid
             if (!GlobalVariables.ComboStatuses.Contains(createComboDTO.Status.ToLower()))
             {
