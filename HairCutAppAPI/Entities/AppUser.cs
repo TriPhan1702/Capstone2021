@@ -18,8 +18,6 @@ namespace HairCutAppAPI.Entities
 
         [Required]
         public override string PasswordHash { get; set; }
-        [Required]
-        public override string SecurityStamp { get; set; }
         
         [Required]
         [MinLength(1), MaxLength(20)]
