@@ -31,7 +31,6 @@ namespace HairCutAppAPI.Entities
         public Device Device { get; set; }
 
         //Numeric only, length 10
-        [Required]
         [StringLength(10)]
         [RegularExpression(@"^[0-9]{10}$", ErrorMessage = "Must be 10 digits")]
         public override string PhoneNumber { get; set; }

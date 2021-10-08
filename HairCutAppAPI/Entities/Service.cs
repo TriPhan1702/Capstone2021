@@ -23,9 +23,6 @@ namespace HairCutAppAPI.Entities
         public string Status { get; set; }
         
         [Required]
-        public int Duration { get; set; }
-        
-        [Required]
         public DateTime CreatedDate { get; set; }
         [Required]
         public DateTime LastUpdated { get; set; }
@@ -42,7 +39,6 @@ namespace HairCutAppAPI.Entities
             {
                 Id = Id,
                 Description = Description,
-                Duration = Duration,
                 Name = Name,
                 Price = Price,
                 Status = Status,
@@ -57,9 +53,8 @@ namespace HairCutAppAPI.Entities
             {
                 Id = Id,
                 Description = Description,
-                Duration = Duration,
                 Name = Description,
-                Price = Duration,
+                Price = Price,
                 Status = Status
             };
         }

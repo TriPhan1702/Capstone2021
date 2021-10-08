@@ -23,10 +23,10 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserDTO>> Register([FromForm]RegisterDTO dto)
+        public async Task<ActionResult<UserDTO>> Register([FromForm]CreateCustomerDto dto)
         {
             //Trim All Strings in object
-            dto = ObjectTrimmer.TrimObject(dto) as RegisterDTO;
+            dto = ObjectTrimmer.TrimObject(dto) as CreateCustomerDto;
             
             if (!ModelState.IsValid)
             {

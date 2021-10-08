@@ -18,6 +18,7 @@ using HairCutAppAPI.Utilities.Email;
 using HairCutAppAPI.Utilities.Errors;
 using HairCutAppAPI.Utilities.GoogleAuth;
 using HairCutAppAPI.Utilities.JWTToken;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
@@ -33,14 +34,40 @@ namespace HairCutAppAPI.Services
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
+        private readonly IPasswordHasher<AppUser> _passwordHasher;
 
-        public UserService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService, IConfiguration configuration, IEmailSender emailSender, IMapper mapper)
+        public UserService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService, IConfiguration configuration, IEmailSender emailSender, IMapper mapper, IPasswordHasher<AppUser> passwordHasher)
         {
             _repositoryWrapper = repositoryWrapper;
             _tokenService = tokenService;
             _configuration = configuration;
             _emailSender = emailSender;
             _mapper = mapper;
+            _passwordHasher = passwordHasher;
+        }
+
+        public async Task<ActionResult<int>> CreateUser(CreateUserDTO createUserDTO, string role)
+        {
+            //Check if User exists
+            if (await UserExists(createUserDTO.UserName))
+            {
+                return new BadRequestObjectResult("User Already Exists");
+            }
+
+            // from Dto to AppUser
+            var newUser = createUserDTO.ToNewUser(_passwordHasher.HashPassword(null, createUserDTO.Password));
+
+            //Save New User to Database
+            var result = await _repositoryWrapper.User.CreateAsync(newUser);
+
+            //Save Customer's role
+            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, role);
+            if (!roleResult.Succeeded)
+            {
+                return new BadRequestObjectResult(roleResult.Errors);
+            }
+
+            return result.Id;
         }
 
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
@@ -161,7 +188,6 @@ namespace HairCutAppAPI.Services
             };
         }
 
-        //TODO: Not done
         public async Task<ActionResult<UserDTO>> LoginByFacebook(string accessToken)
         {
             var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
@@ -184,6 +210,8 @@ namespace HairCutAppAPI.Services
                 Token = await _tokenService.CreateToken(user)
             };
         }
+
+        #region private functions
 
         //Check if user exists by username and email
         private async Task<bool> UserExists(string username)
@@ -290,5 +318,7 @@ namespace HairCutAppAPI.Services
             using var response = await httpClient.GetAsync(url);
             return await response.Content.ReadAsStringAsync();
         }
+
+        #endregion private functions
     }
 }

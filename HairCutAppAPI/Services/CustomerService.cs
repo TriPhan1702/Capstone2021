@@ -30,7 +30,7 @@ namespace HairCutAppAPI.Services
             _passwordHasher = passwordHasher;
         }
         
-        public async Task<ActionResult<UserDTO>> Register(RegisterDTO dto)
+        public async Task<ActionResult<UserDTO>> Register(CreateCustomerDto dto)
         {
             //Check if User exists
             if (await UserExists(dto.UserName))

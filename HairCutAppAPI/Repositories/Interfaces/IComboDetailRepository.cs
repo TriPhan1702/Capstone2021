@@ -6,5 +6,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
 {
     public interface IComboDetailRepository : IRepositoryBase<ComboDetail>
     {
+        Task<ICollection<ComboDetail>> FindComboDetailWithService(int id);
     }
 }

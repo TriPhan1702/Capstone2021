@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.DTOs
 {
     //many-many table between user and role in database
-    public class RegisterDTO
+    public class CreateCustomerDto
     {
         [Required]
         [MinLength(3), MaxLength(100)]
@@ -32,7 +33,6 @@ namespace HairCutAppAPI.DTOs
         [RegularExpression(@"^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$", ErrorMessage = "Must be Gmail")]
         public string Email { get; set; }
         
-        [Required]
         [DataType(DataType.PhoneNumber)]
         [RegularExpression(@"^(?:[0-9]{10})$", ErrorMessage = "Phone Number is Invalid")]
         public string PhoneNumber { get; set; }
@@ -48,7 +48,7 @@ namespace HairCutAppAPI.DTOs
                 NormalizedUserName = UserName.ToUpper(),
                 PasswordHash = password,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                Status = "New",
+                Status = GlobalVariables.NewUserStatus,
                 PhoneNumber = PhoneNumber,
                 PhoneNumberConfirmed = false,
                 TwoFactorEnabled = false,

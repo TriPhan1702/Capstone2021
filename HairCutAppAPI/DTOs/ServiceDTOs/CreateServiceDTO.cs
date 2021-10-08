@@ -31,7 +31,6 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
                 Description = Description,
                 Status = Status,
                 Price = Price,
-                Duration = Duration,
                 CreatedDate = DateTime.Now,
                 LastUpdated = DateTime.Now
             };

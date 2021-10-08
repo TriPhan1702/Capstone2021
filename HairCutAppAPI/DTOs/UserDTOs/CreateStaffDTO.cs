@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.DTOs
 {
@@ -33,7 +34,6 @@ namespace HairCutAppAPI.DTOs
         [EmailAddress(ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
         
-        [Required]
         [DataType(DataType.PhoneNumber)]
         [RegularExpression(@"^(?:[0-9]{10})$", ErrorMessage = "Phone Number has to have 10 numeric characters")]
         public string PhoneNumber { get; set; }
@@ -58,7 +58,7 @@ namespace HairCutAppAPI.DTOs
                     NormalizedUserName = UserName.ToUpper(),
                     PasswordHash = passwordHash,
                     SecurityStamp = Guid.NewGuid().ToString(),
-                    Status = "New",
+                    Status = GlobalVariables.NewUserStatus,
                     PhoneNumber = PhoneNumber,
                     PhoneNumberConfirmed = false,
                     TwoFactorEnabled = false,

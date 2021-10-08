@@ -13,13 +13,29 @@ namespace HairCutAppAPI.Controllers
     //TODO: Rewrite this
     public class AdminController : BaseApiController
     {
-        private readonly UserManager<AppUser> _userManager;
-        private readonly IAdminService _adminService;
+        private readonly IUserService _userService;
 
-        public AdminController(UserManager<AppUser> userManager, IAdminService adminService)
+        public AdminController(IUserService userService)
         {
-            _userManager = userManager;
-            _adminService = adminService;
+            _userService = userService;
+        }
+        
+        /// <summary>
+        /// Used by admin to create other admin accounts
+        /// </summary>
+        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [HttpPost("create_admin")]
+        public async Task<ActionResult<int>> CreateAdmin([FromForm]CreateUserDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as CreateUserDTO;
+            //Validate form
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            
+            return await _userService.CreateUser(dto, GlobalVariables.AdministratorRole);
         }
 
         // /// <summary>

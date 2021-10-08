@@ -28,10 +28,6 @@ namespace HairCutAppAPI.Services
             {
                 ValidateServiceStatus(updateServiceDto.Status);
             }
-            if (updateServiceDto.Duration != null)
-            {
-                ValidateServiceDuration(updateServiceDto.Duration.Value);
-            }
             if (updateServiceDto.Price != null)
             {
                 ValidateServicePrice(updateServiceDto.Price.Value);

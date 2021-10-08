@@ -8,6 +8,7 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IUserService
     {
+        Task<ActionResult<int>> CreateUser(CreateUserDTO createUserDTO, string role);
         Task<ActionResult<IEnumerable<AppUser>>> GetUsers();
         Task<ActionResult<AppUser>> FindById(int id);
         Task<ActionResult<UserDTO>> Login(LoginDTO loginDto);

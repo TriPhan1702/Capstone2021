@@ -19,6 +19,13 @@ namespace HairCutAppAPI.Controllers
             _comboService = comboService;
         }
         
+        // [Authorize]
+        [HttpGet("combo_price/{id}")]
+        public async Task<ActionResult<decimal>> GetComboPrice(int id)
+        {
+            return await _comboService.GetComboPrice(id);
+        }
+        
         /// <summary>
         /// For Admin to create new combo
         /// </summary>

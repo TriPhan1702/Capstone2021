@@ -22,6 +22,16 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
+        public async Task<ActionResult<decimal>> GetComboPrice(int id)
+        {
+            if (!await CheckComboExists(id))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Combo not found");
+            }
+
+            return await CalculateComboPrice(id);
+        }
+
         public async Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos()
         {
             //Get Active Combo
@@ -102,6 +112,23 @@ namespace HairCutAppAPI.Services
             }
 
             return comboDetails;
+        }
+
+        private async Task<bool> CheckComboExists(int id)
+        {
+            return await _repositoryWrapper.Combo.AnyAsync(c => c.Id == id);
+        }
+
+        private async Task<decimal> CalculateComboPrice(int id)
+        {
+            var comboDetails = await _repositoryWrapper.ComboDetail.FindComboDetailWithService(id);
+            if (comboDetails is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"ComboDetail not found");
+            }
+
+            var price = comboDetails.Sum(comboDetail => comboDetail.Service.Price);
+            return price;
         }
     }
 }

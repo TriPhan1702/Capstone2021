@@ -32,7 +32,8 @@ namespace HairCutAppAPI.Services
             //Check if staff type exists
             if (!GlobalVariables.StaffTypes.Contains(dto.StaffType))
             {
-                return new BadRequestObjectResult("Staff type is invalid");
+                return new BadRequestObjectResult("Staff type is invalid, must be: " +
+                                                  string.Join(", ", GlobalVariables.StaffTypes));
             }
 
             if (dto.SalonId>=0 && await SalonExists(dto.SalonId) is false)
@@ -47,7 +48,13 @@ namespace HairCutAppAPI.Services
             var result = await _repositoryWrapper.Staff.CreateAsync(newStaff);
 
             //Save staff's role
-            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newStaff.User, GlobalVariables.StylistRole);
+            var role = dto.StaffType switch
+            {
+                GlobalVariables.StylistRole => GlobalVariables.StylistRole,
+                GlobalVariables.BeauticianRole => GlobalVariables.BeauticianRole,
+                _ => ""
+            };
+            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newStaff.User,role);
             if (!roleResult.Succeeded)
             {
                 return new BadRequestObjectResult(roleResult.Errors);

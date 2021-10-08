@@ -20,6 +20,9 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         [MaxLength(20)]
         public string Status { get; set; }
         
+        [Required]
+        public int Duration { get; set; }
+        
         public ICollection<int> Services { get; set;}
 
         public Combo ToNewCombo()
@@ -29,6 +32,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
             {
                 Name = Name,
                 Description = Description,
+                Duration = Duration,
                 Status = Status,
             };
         }

@@ -34,7 +34,7 @@ namespace HairCutAppAPI.Repositories
 
         public async Task<IdentityResult> AddToRoleAsync(AppUser user, string role)
         {
-            return await _userManager.AddToRoleAsync(user, "Customer");
+            return await _userManager.AddToRoleAsync(user, role);
         }
 
         public async Task<SignInResult> CheckPasswordAsync(AppUser user, string password)
