@@ -13,6 +13,10 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
+        
+        [ForeignKey("Salon")]
+        public int SalonId { get; set; }
+        public Salon Salon { get; set; }
 
         [ForeignKey("Rating")]
         public int? RatingId { get; set; }
