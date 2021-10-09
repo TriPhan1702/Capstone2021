@@ -37,7 +37,7 @@ namespace HairCutAppAPI.Utilities.Extensions
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                option.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+                option.IncludeXmlComments(xmlPath);
             });
 
             return services;
