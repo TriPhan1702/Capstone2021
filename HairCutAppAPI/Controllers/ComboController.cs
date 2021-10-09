@@ -54,7 +54,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For Admin to update Combo Info
         /// </summary>
-        /// <param name="updateComboDTO"> Empty ot null fields will not be changed, negative duration = null</param>
+        /// <param name="updateComboDTO"> Empty ot null fields will not be changed, negative duration = null. If Services == null => no change, if Services is empty list => combo has no service</param>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPut("update_combo")]
         public async Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo([FromBody] UpdateComboDTO updateComboDTO)

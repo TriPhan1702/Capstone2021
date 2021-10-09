@@ -94,6 +94,7 @@ namespace HairCutAppAPI.Services
             
             try
             {
+                //Save all changes above to database 
                 await _repositoryWrapper.SaveAllAsync();
             }
             catch (Exception )
