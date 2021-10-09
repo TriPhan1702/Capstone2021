@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using HairCutAppAPI.DTOs.ComboDTOs;
 using HairCutAppAPI.DTOs.ServiceDTOs;
 using HairCutAppAPI.Utilities;
 
@@ -56,6 +57,15 @@ namespace HairCutAppAPI.Entities
                 Name = Description,
                 Price = Price,
                 Status = Status
+            };
+        }
+
+        public UpdateComboResponseServiceDTO ToUpdateComboResponseServiceDTO()
+        {
+            return new UpdateComboResponseServiceDTO()
+            {
+                Id = Id,
+                Name = Name
             };
         }
     }

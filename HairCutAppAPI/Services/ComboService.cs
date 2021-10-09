@@ -37,11 +37,90 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Couldn't Combo in database");
             }
+            
+            // If services in DTO is not empty, check and update ComboDetail List
+            if (updateComboDTO.Services != null)
+            {
+                //Get list of ServiceId of Combo from Database
+                var comboDetails = await _repositoryWrapper.ComboDetail.FindByConditionAsync(cd => cd.ComboId == updateComboDTO.Id) as List<ComboDetail>;
+                //Covert ComboDetails to a list of ComboDetail id
+                var comboDetailsIds = new List<int>();
+                if (comboDetails != null)
+                {
+                     comboDetailsIds = comboDetails.Select(cd => cd.Id).ToList();
+                }
+                //If the combo already has services
+                if (comboDetails != null && comboDetails.Count>0)
+                {
+                    //If combo's service's Id is not in the new service list, delete
+                    foreach (var cd in comboDetails.Where(cd => !updateComboDTO.Services.Contains(cd.Id)))
+                    {
+                        _repositoryWrapper.ComboDetail.DeleteWithoutSave(cd);
+                    }
+                }
 
-            //Map the diffrence
+                var addServicesIds = new List<int>();
+                //Add new services
+                foreach (var serviceId in updateComboDTO.Services)
+                {
+                    //If ids from the new list is not from the old 
+                    if (!comboDetailsIds.Contains(serviceId))
+                    {
+                        addServicesIds.Add(serviceId);
+                    }
+                }
+                //If addServicesIds is not null, add the ComboDetails with the corresponding services
+                if (addServicesIds.Any())
+                {
+                    //Check if the add Services are valid
+                    await CheckValidServices(addServicesIds);
+
+                    //Add combo detail to database for each
+                    foreach (var serviceId in addServicesIds)
+                    {
+                        var addServicesId = _repositoryWrapper.ComboDetail.CreateWithoutSaveAsync(new ComboDetail()
+                        {
+                            ComboId = updateComboDTO.Id,
+                            ServiceId = serviceId,
+                        });
+                    }
+                }
+            }
+
+            //Map the differences from dto to entity
             combo = updateComboDTO.CompareUpdateCombo(combo);
-            combo = await _repositoryWrapper.Combo.UpdateAsync(combo, combo.Id);
-            return combo.ToUpdateComboResponseDTO();
+            
+            await _repositoryWrapper.Combo.UpdateAsyncWithoutSave(combo, combo.Id);
+            
+            try
+            {
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception )
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Some thing went wrong went updating ComboDetail for Combo");
+            }
+
+            combo = await _repositoryWrapper.Combo.GetAComboComboDetails(updateComboDTO.Id);
+            
+            var result = combo.ToUpdateComboResponseDTO();
+            //If the updated combo has ComboDetail, Add to the response DTO
+            if (combo.ComboDetails.Any())
+            {
+                var services = await _repositoryWrapper.Service.FindByConditionAsync(s =>
+                    combo.ComboDetails.Select(cd => cd.ServiceId).ToList().Contains(s.Id));
+                result.Services = services.Select(s => new UpdateComboResponseServiceDTO()
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList();
+            }
+            
+            
+            return result;
         }
 
         public async Task<ActionResult<decimal>> GetComboPrice(int id)

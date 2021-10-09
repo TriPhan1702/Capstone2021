@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Entities;
@@ -14,6 +15,11 @@ namespace HairCutAppAPI.Repositories
         public ComboRepository(HDBContext hdbContext) : base(hdbContext)
         {
             _hdbContext = hdbContext;
+        }
+
+        public async Task<Combo> GetAComboComboDetails(int id)
+        {
+            return (await _hdbContext.Combos.Where(c => c.Id == id).Include(c => c.ComboDetails).ToListAsync()).First();
         }
         
         public async Task<IEnumerable<Combo>> GetCombosDetails()

@@ -83,7 +83,7 @@ namespace HairCutAppAPI.Repositories
             return await HDBContext.SaveChangesAsync();
         }
         
-        public  void DeleteWithoutSave(T entity)
+        public void DeleteWithoutSave(T entity)
         {
             HDBContext.Set<T>().Remove(entity);
         }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Entities;
 
 namespace HairCutAppAPI.DTOs.ComboDTOs
@@ -17,6 +18,8 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         public string Status { get; set; }
         
         public int Duration { get; set; }
+        
+        public ICollection<int> Services { get; set; }
 
         /// <summary>
         /// Find out the difference and update the different field to entity  
