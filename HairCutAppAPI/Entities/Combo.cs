@@ -44,5 +44,17 @@ namespace HairCutAppAPI.Entities
                 Status = Status
             };
         }
+
+        public UpdateComboResponseDTO ToUpdateComboResponseDTO()
+        {
+            return new UpdateComboResponseDTO()
+            {
+                Id = Id,
+                Name = Name,
+                Description = Description,
+                Duration = Duration,
+                Status = Status,
+            };
+        }
     }
 }

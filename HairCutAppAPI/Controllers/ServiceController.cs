@@ -21,8 +21,6 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For Admin to create service
         /// </summary>
-        /// <param name="createServiceDTO"></param>
-        /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_service")]
         public async Task<ActionResult<int>> CreateService([FromForm] CreateServiceDTO createServiceDTO)
@@ -40,7 +38,7 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
-        /// For Admin to update a service, empty ot null fields will not be changed
+        /// For Admin to update a service, empty ot null fields will not be changed, negative price = null
         /// </summary>
         /// <param name="updateServiceDto"></param>
         /// <returns></returns>

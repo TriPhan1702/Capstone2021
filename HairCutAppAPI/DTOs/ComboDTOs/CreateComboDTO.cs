@@ -33,7 +33,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
                 Name = Name,
                 Description = Description,
                 Duration = Duration,
-                Status = Status,
+                Status = Status.ToLower(),
             };
         }
     }

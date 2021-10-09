@@ -22,6 +22,28 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
+        public async Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo(UpdateComboDTO updateComboDTO)
+        {
+            //If Status is not null of empty
+            if (!string.IsNullOrWhiteSpace(updateComboDTO.Status))
+            {
+                //Validate status
+                ValidateComboStatus(updateComboDTO.Status.ToLower());
+            }
+            
+            // Get Combo from database
+            var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(c => c.Id == updateComboDTO.Id);
+            if (combo == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Couldn't Combo in database");
+            }
+
+            //Map the diffrence
+            combo = updateComboDTO.CompareUpdateCombo(combo);
+            combo = await _repositoryWrapper.Combo.UpdateAsync(combo, combo.Id);
+            return combo.ToUpdateComboResponseDTO();
+        }
+
         public async Task<ActionResult<decimal>> GetComboPrice(int id)
         {
             if (!await CheckComboExists(id))
@@ -47,12 +69,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     "Com bo duration has to be more than 0");
             }
-            //Check if status is valid
-            if (!GlobalVariables.ComboStatuses.Contains(createComboDTO.Status.ToLower()))
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    "Combo Status invalid, must be: " + string.Join(", ", GlobalVariables.ComboStatuses));
-            }
+            ValidateComboStatus(createComboDTO.Status.ToLower());
             
             //Prepare new combo
             var newCombo = createComboDTO.ToNewCombo();
@@ -93,6 +110,9 @@ namespace HairCutAppAPI.Services
             return serviceIds.All(i => databaseServiceIds.Contains(i));
         }
 
+        /// <summary>
+        /// Prepare a combo's service list to be inserted
+        /// </summary>
         private async Task<List<ComboDetail>> PrepareComboDetail(ICollection<int> serviceIds, Combo combo)
         {
             //Get Services in dto's service list from Database
@@ -119,11 +139,17 @@ namespace HairCutAppAPI.Services
             return comboDetails;
         }
 
+        /// <summary>
+        /// Check if Combo exist in Database with Id
+        /// </summary>
         private async Task<bool> CheckComboExists(int id)
         {
             return await _repositoryWrapper.Combo.AnyAsync(c => c.Id == id);
         }
 
+        /// <summary>
+        /// Calculate the price of a combo base on comboId from its services
+        /// </summary>
         private async Task<decimal> CalculateComboPrice(int id)
         {
             var comboDetails = await _repositoryWrapper.ComboDetail.FindComboDetailWithService(id);
@@ -134,6 +160,19 @@ namespace HairCutAppAPI.Services
 
             var price = comboDetails.Sum(comboDetail => comboDetail.Service.Price);
             return price;
+        }
+        
+        /// <summary>
+        /// Check if status is valid
+        /// </summary>
+        private void ValidateComboStatus(string status)
+        {
+            //Check if status is valid
+            if (!GlobalVariables.ServiceStatuses.Contains(status.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                    "Combo Status invalid, must be: " + string.Join(", ", GlobalVariables.ComboStatuses));
+            }
         }
     }
 }

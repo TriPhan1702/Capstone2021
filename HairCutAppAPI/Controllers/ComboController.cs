@@ -27,13 +27,11 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
-        /// For Admin to create new combo
+        /// For Admin to create new combo, if Services is null, then the combo created will have no service
         /// </summary>
-        /// <param name="createComboDTO">If Services is null, then the combo created will have no service</param>
-        /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_combo")]
-        public async Task<ActionResult<int>> CreateCombo([FromForm] CreateComboDTO createComboDTO)
+        public async Task<ActionResult<int>> CreateCombo([FromBody] CreateComboDTO createComboDTO)
         {
             //Trim All Strings in object
             createComboDTO = ObjectTrimmer.TrimObject(createComboDTO) as CreateComboDTO;
@@ -45,6 +43,25 @@ namespace HairCutAppAPI.Controllers
             }
 
             return await _comboService.CreateCombo(createComboDTO);
+        }
+        
+        /// <summary>
+        /// For Admin to update Combo Info, empty ot null fields will not be changed, negative duration = null
+        /// </summary>
+        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [HttpPut("update_combo")]
+        public async Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo([FromBody] UpdateComboDTO updateComboDTO)
+        {
+            //Trim All Strings in object
+            updateComboDTO = ObjectTrimmer.TrimObject(updateComboDTO) as UpdateComboDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _comboService.UpdateCombo(updateComboDTO);
         }
         
         // [Authorize]

@@ -16,7 +16,7 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
         [MaxLength(20)]
         public string Status { get; set; }
         
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
 
         public Service CompareUpdateService(Service service)
         {
@@ -35,9 +35,9 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
                 service.Status = Status.ToLower();
             }
             
-            if ( Price != null && Price != service.Price)
+            if ( Price >= 0 && Price != service.Price)
             {
-                service.Price = Price.Value;
+                service.Price = Price;
             }
 
             return service;

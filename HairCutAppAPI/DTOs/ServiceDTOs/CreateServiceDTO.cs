@@ -18,9 +18,6 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
         public string Status { get; set; }
         
         [Required]
-        public int Duration { get; set; }
-        
-        [Required]
         public decimal Price { get; set; }
 
         public Service ToNewService()

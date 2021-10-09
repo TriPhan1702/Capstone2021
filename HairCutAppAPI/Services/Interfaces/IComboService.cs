@@ -8,6 +8,7 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IComboService
     {
+        Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo(UpdateComboDTO updateComboDTO);
         Task<ActionResult<decimal>> GetComboPrice(int id);
         Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos();
         Task<ActionResult<int>> CreateCombo(CreateComboDTO createComboDTO);

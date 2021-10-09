@@ -28,10 +28,6 @@ namespace HairCutAppAPI.Services
             {
                 ValidateServiceStatus(updateServiceDto.Status);
             }
-            if (updateServiceDto.Price != null)
-            {
-                ValidateServicePrice(updateServiceDto.Price.Value);
-            }
 
             //Get service from database
             var service = await _repositoryWrapper.Service.FindSingleByConditionAsync(s => s.Id == updateServiceDto.Id);
@@ -65,7 +61,6 @@ namespace HairCutAppAPI.Services
         {
             //Validate request
             ValidateServiceStatus(createServiceDTO.Status);
-            ValidateServiceDuration(createServiceDTO.Duration);
             ValidateServicePrice(createServiceDTO.Price);
 
             var newService = createServiceDTO.ToNewService();
@@ -76,6 +71,9 @@ namespace HairCutAppAPI.Services
             return new OkObjectResult(result.Id);
         }
 
+        /// <summary>
+        /// Check if status is valid
+        /// </summary>
         private void ValidateServiceStatus(string status)
         {
             //Check if status is valid
@@ -86,15 +84,9 @@ namespace HairCutAppAPI.Services
             }
         }
         
-        private void ValidateServiceDuration(int duration)
-        {
-            //Check Duration
-            if (duration <= 0)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Duration is invalid");
-            }
-        }
-        
+        /// <summary>
+        /// Check if price is positive number
+        /// </summary>
         private void ValidateServicePrice(decimal price)
         {
             //Check Price
