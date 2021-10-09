@@ -29,7 +29,7 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
             {
                 Name = Name,
                 Description = Description,
-                Status = Status,
+                Status = Status.ToLower(),
                 Price = Price,
                 CreatedDate = DateTime.Now,
                 LastUpdated = DateTime.Now

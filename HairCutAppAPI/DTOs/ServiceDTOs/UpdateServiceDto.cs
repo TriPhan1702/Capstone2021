@@ -32,7 +32,7 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
 
             if (!string.IsNullOrWhiteSpace(Status) && Status != service.Status)
             {
-                service.Status = Status;
+                service.Status = Status.ToLower();
             }
             
             if ( Price != null && Price != service.Price)
