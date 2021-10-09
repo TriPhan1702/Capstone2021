@@ -78,6 +78,11 @@ namespace HairCutAppAPI.Controllers
             return GlobalVariables.ComboStatuses;
         }
         
+        /// <summary>
+        /// Get a list of active Combos
+        /// </summary>
+        /// <returns></returns>
+        // [Authorize]
         [HttpGet("active_combos")]
         public async Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos()
         {
