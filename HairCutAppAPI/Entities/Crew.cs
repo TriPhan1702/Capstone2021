@@ -8,10 +8,6 @@ namespace HairCutAppAPI.Entities
     {
         [Key]
         public int Id { get; set; }
-
-        [Required]
-        [MaxLength(20)]
-        public string Status { get; set; }
         
         [Required]
         public DateTime CreatedDate { get; set; }

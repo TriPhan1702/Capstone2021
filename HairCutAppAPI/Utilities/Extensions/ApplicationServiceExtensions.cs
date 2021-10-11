@@ -33,6 +33,9 @@ namespace HairCutAppAPI.Utilities.Extensions
                 .Get<EmailConfiguration>();
             services.AddSingleton(emailConfig);
             services.AddScoped<IEmailSender, EmailSender>();
+            
+            //For getting the current User Id
+            services.AddHttpContextAccessor();
 
             return services;
         }

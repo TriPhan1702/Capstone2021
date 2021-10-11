@@ -19,5 +19,11 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Appointment")]
         public int AppointmentId { get; set; }
         public Appointment Appointment { get; set; }
+        
+        [Required]
+        public decimal TotalPrice { get; set; }
+        
+        [Required]
+        public decimal PaidAmount { get; set; }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -55,6 +57,11 @@ namespace HairCutAppAPI.Repositories
         public async Task<IdentityResult> ResetPasswordAsync(AppUser user, string token, string password)
         {
             return await _userManager.ResetPasswordAsync(user, token, password);
+        }
+
+        public async Task<bool> CheckRole(AppUser user, string role)
+        {
+            return await _userManager.IsInRoleAsync(user, role);
         }
     }
 }

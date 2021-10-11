@@ -37,13 +37,16 @@ namespace HairCutAppAPI.Utilities
 
         //Status Lists
         public static readonly string[] UserStatuses = {"active", "inactive", "new"};
-        public const string NewUserStatus = "active";
         public static readonly string[] StaffTypes = {"Stylist", "Beautician"};
         public static readonly string[] ServiceStatuses = {"active", "inactive"};
         public static readonly string[] ComboStatuses = {"active", "inactive"};
         public static readonly string[] DeviceStatuses = {"active", "inactive"};
         public static readonly string[] SalonStatuses = {"active", "inactive"};
-        public static readonly string[] NotificationStatuses = {"pending","active","canceled","completed"};
+        public static readonly string[] AppointmentStatuses = {"pending","active","canceled","completed"};
         public static readonly string[] WorkSlotStatuses = {"available","not available","taken"};
+        
+        //The Default Status a new account will get
+        public const string NewUserStatus = "active";
+        public const string NewAppointmentStatus = "pending";
     }
 }

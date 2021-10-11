@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HairCutAppAPI.DTOs.AppoinmentDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -29,11 +31,6 @@ namespace HairCutAppAPI.Entities
         [MaxLength(20)]
         public string Status { get; set; }
         
-        [Required]
-        public decimal TotalPrice { get; set; }
-        
-        [Required]
-        public decimal PaidAmount { get; set; }
         [MaxLength(255)]
         public string Note { get; set; }
         
@@ -55,5 +52,27 @@ namespace HairCutAppAPI.Entities
         
         [Url]
         public string ImageUrl { get; set; }
+
+        public CreateAppointmentResponseDTO ToCreateAppointmentResponseDTO(decimal price, int? stylistId = null, string stylistName = null)
+        {
+            return new CreateAppointmentResponseDTO()
+            {
+                Id = Id,
+                Price = price,
+                Status = Status,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DayFormat),
+                PromotionalCode = PromotionalCode,
+                ComboId = AppointmentDetail.ComboId,
+                CustomerId = CustomerId,
+                CustomerName = Customer.FullName,
+                StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
+                EndDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
+                SalonId = SalonId,
+                SalonName = Salon.Name,
+                StylistId = stylistId,
+                StylistName = stylistName,
+                AppointmentDetailId = AppointmentDetailId
+            };
+        }
     }
 }
