@@ -45,8 +45,6 @@ namespace HairCutAppAPI.Services
             {
                 User = newUser,
                 FullName = dto.FullName,
-                AppointmentsNumber = 0,
-                SuccessfulAppointmentsNumber = 0
             };
 
             //Save New User to Database

@@ -1,4 +1,4 @@
-﻿namespace HairCutAppAPI.DTOs.AppoinmentDTOs
+﻿namespace HairCutAppAPI.DTOs.AppointmentDTOs
 {
     public class CreateAppointmentResponseDTO
     {

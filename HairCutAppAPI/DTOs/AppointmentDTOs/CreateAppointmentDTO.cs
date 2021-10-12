@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Utilities;
 
-namespace HairCutAppAPI.DTOs.AppoinmentDTOs
+namespace HairCutAppAPI.DTOs.AppointmentDTOs
 {
     public class CreateAppointmentDTO
     {

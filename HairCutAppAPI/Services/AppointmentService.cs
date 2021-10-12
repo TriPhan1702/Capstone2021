@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using HairCutAppAPI.DTOs.AppoinmentDTOs;
+using HairCutAppAPI.DTOs.AppointmentDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
@@ -29,6 +29,10 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<CreateAppointmentResponseDTO>> CreateAppointment(CreateAppointmentDTO createAppointmentDTO)
         {
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Not current user is active");
+            }
             //Get Current customer Id
             var customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
             //Check if Customer exists, check role
@@ -65,8 +69,8 @@ namespace HairCutAppAPI.Services
                 _repositoryWrapper.SlotOfDay.FindSingleByConditionAsync(sod => sod.Id == chosenSlotsOfDayIds.Last());
 
             
-            //If chosen date less than 2 hours away, abort
-            if (chosenDate.Add(startSlotOfDay.StartTime) < now.AddHours(1))
+            //If chosen date less than TimeToCreateAppointmentInAdvanced(Default 2) hours away, abort
+            if (chosenDate.Add(startSlotOfDay.StartTime) < now.AddHours(GlobalVariables.TimeToCreateAppointmentInAdvanced))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Chosen date has to be at least 2 hours away from now");
             }
@@ -195,6 +199,114 @@ namespace HairCutAppAPI.Services
             return createdAppointment.ToCreateAppointmentResponseDTO(price, stylistId, stylistName);
         }
 
+        public async Task<ActionResult<ChangeAppointmentStatusResponseDTO>> CancelAppointment(int appointmentId)
+        {
+            
+            //Find appointment in database
+            var appointment = await  _repositoryWrapper.Appointment.GetAppointmentWithDetail(appointmentId);
+
+            //If appointment not found
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with Id {appointmentId} doesn't exist");
+            }
+            
+            //Can't cancel already canceled or completed appointments
+            if (appointment.Status == GlobalVariables.CanceledAppointmentStatus || appointment.Status == GlobalVariables.CompleteAppointmentStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Can't cancel already canceled or completed appointments");
+            }
+
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Not current user is active");
+            }
+            //Get Current customer Id
+            var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            
+            //Get User from database
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Current User not found");
+            }
+            //If User is a customer
+            if (await _repositoryWrapper.User.CheckRole(user, GlobalVariables.CustomerRole))
+            {
+                //If Customer Id is not the same as appointment's user id, abort
+                if (userId != appointment.CustomerId)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer Id doesn't match");
+                }
+            }
+
+            //If the appointment already has a crew chosen, change the status of WorkSlots associated with the crew
+            if (appointment.AppointmentDetail.CrewId != null)
+            {
+                //Get start SlotOfDay
+                var startSlotOfDay = await 
+                    _repositoryWrapper.SlotOfDay.FindSingleByConditionAsync(sod =>
+                        sod.StartTime == appointment.StartDate.TimeOfDay);
+                if (startSlotOfDay is null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Start slot not found");
+                }
+                //Get end SlotOfDay
+                var endSlotOfDay = await 
+                    _repositoryWrapper.SlotOfDay.FindSingleByConditionAsync(sod =>
+                        sod.EndTime == appointment.EndDate.TimeOfDay);
+                if (endSlotOfDay is null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"End slot not found");
+                }
+
+                var slotsOfDayIds = new List<int>(){startSlotOfDay.Id};
+                //Get list of Slot Of Day associated with the appointment
+                for (var i = startSlotOfDay.Id; i <= endSlotOfDay.Id; i++)
+                {
+                    slotsOfDayIds.Add(i);
+                }
+            
+                //Get list of staff associated with the appointment
+                var staffIds = (await 
+                    _repositoryWrapper.CrewDetail.FindByConditionAsync(cd =>
+                        cd.CrewId == appointment.AppointmentDetail.CrewId)).Select(d => d.StaffId).ToList();
+                
+                //Get list of work slots associated with the staff and slot Of day list
+                var workSlots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws=>slotsOfDayIds.Contains(ws.SlotOfDayId) && staffIds.Contains(ws.StaffId));
+
+                var now = DateTime.Now;
+                foreach (var slot in workSlots)
+                {
+                    //If this work slot is less than TimeToCreateAppointmentInAdvanced(Default 2 hours) away, change status of that slot to not available, else set available
+                    slot.Status = appointment.StartDate <= now.AddHours(GlobalVariables.TimeToCreateAppointmentInAdvanced) ? GlobalVariables.NotAvailableWorkSlotStatus : GlobalVariables.AvailableWorkSlotStatus;
+
+                    //Pend change
+                    await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
+                }
+            }
+            
+            //Get WorkSlots associated with the appointment
+            appointment.Status = GlobalVariables.CanceledAppointmentStatus;
+            var result = await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
+
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Some thing went wrong went canceling Appointment " + e.Message);
+            }
+            
+            return result.ToChangeAppointmentStatusResponseDTO();
+
+        }
+
         #region private functions
 
         private async Task<bool> SalonExists(int salonId)
@@ -229,8 +341,6 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "SlotOfDay with the id {startSlotOfDayId doesn't exist}");
             }
-            
-            
         }
         
         /// <summary>

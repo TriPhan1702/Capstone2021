@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.DTOs.SalonDTOs
 {
@@ -30,6 +31,7 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
                 AvatarUrl = AvatarUrl,
                 CreatedDate = now,
                 LastUpdate = now,
+                Status = GlobalVariables.NewSalonStatus
             };
 
             if (!string.IsNullOrWhiteSpace(Longitude) && !string.IsNullOrWhiteSpace(Latitude))

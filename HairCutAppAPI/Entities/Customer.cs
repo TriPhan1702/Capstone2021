@@ -17,12 +17,6 @@ namespace HairCutAppAPI.Entities
         [MaxLength(50)]
         public string FullName { get; set; }
         
-        [Required]
-        public int AppointmentsNumber { get; set; }
-        
-        [Required]
-        public int SuccessfulAppointmentsNumber { get; set; }
-        
         public ICollection<Appointment> Appointments { get; set; }
     }
 }

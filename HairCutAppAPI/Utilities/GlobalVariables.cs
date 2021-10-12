@@ -21,6 +21,9 @@ namespace HairCutAppAPI.Utilities
         public const string DayFormat = "dd/MM/yyyy";
         public const string TimeFormat = @"hh\:mm";
         
+        //Time variables
+        public const int TimeToCreateAppointmentInAdvanced = 2;
+        
         //Name of roles
         public const string AdministratorRole = "Administrator";
         public const string ManagerRole = "Manager";
@@ -42,11 +45,16 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] ComboStatuses = {"active", "inactive"};
         public static readonly string[] DeviceStatuses = {"active", "inactive"};
         public static readonly string[] SalonStatuses = {"active", "inactive"};
-        public static readonly string[] AppointmentStatuses = {"pending","active","canceled","completed"};
+        public static readonly string[] AppointmentStatuses = {"pending","approved","ongoing","canceled","completed"};
         public static readonly string[] WorkSlotStatuses = {"available","not available","taken"};
         
-        //The Default Status a new account will get
+        //The Default Status a new entity will get
         public const string NewUserStatus = "active";
         public const string NewAppointmentStatus = "pending";
+        public const string CompleteAppointmentStatus = "completed";
+        public const string CanceledAppointmentStatus = "canceled";
+        public const string NewSalonStatus = "active";
+        public const string AvailableWorkSlotStatus = "available";
+        public const string NotAvailableWorkSlotStatus = "not available";
     }
 }

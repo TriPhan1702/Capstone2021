@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using HairCutAppAPI.DTOs.AppoinmentDTOs;
+using HairCutAppAPI.DTOs.AppointmentDTOs;
 using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
@@ -72,6 +72,15 @@ namespace HairCutAppAPI.Entities
                 StylistId = stylistId,
                 StylistName = stylistName,
                 AppointmentDetailId = AppointmentDetailId
+            };
+        }
+
+        public ChangeAppointmentStatusResponseDTO ToChangeAppointmentStatusResponseDTO()
+        {
+            return new ChangeAppointmentStatusResponseDTO()
+            {
+                AppointmentId = Id,
+                Status = Status
             };
         }
     }
