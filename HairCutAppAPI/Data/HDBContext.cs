@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
@@ -171,8 +172,18 @@ namespace HairCutAppAPI.Data
                     new SlotOfDay() {Id = 26, StartTime = new TimeSpan(19,30,0), EndTime = new TimeSpan(20,00,0)},
                     new SlotOfDay() {Id = 27, StartTime = new TimeSpan(20,00,0), EndTime = new TimeSpan(20,30,0)}
                 );
-            #endregion SeedData
             
+            //Seed Salon
+            builder.Entity<Salon>().HasData
+            (
+                new Salon(){Id = 1, Name = "Salon 1", Description = "Salon 1", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 2, Name = "Salon 2", Description = "Salon 2", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 3, Name = "Salon 3", Description = "Salon 3", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 4, Name = "Salon 4", Description = "Salon 4", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus}
+            );
+
+            #endregion SeedData
+
         }
     }
 }
