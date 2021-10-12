@@ -11,6 +11,7 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO);
         Task<ActionResult<GetWorkSlotResponseDTO>> FindWorkSlot(GetWorkSlotDTO getWorkSlotDTO);
         Task<ActionResult<int>> AddAvailableWorkSlot(AddWorkSlotDTO addWorkSlotDTO);
+        Task<ActionResult<bool>> AddAvailableWorkSlotBulk(ICollection<AddWorkSlotDTO> addWorkSlotsDTO);
         Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO);
     }
 }

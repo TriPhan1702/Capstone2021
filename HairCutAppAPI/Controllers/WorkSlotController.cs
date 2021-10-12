@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.WorkSlotDTOs;
 using HairCutAppAPI.Services.Interfaces;
@@ -96,6 +97,23 @@ namespace HairCutAppAPI.Controllers
             }
 
             return await _workSlotService.AddAvailableWorkSlot(addWorkSlotDTO);
+        }
+        
+        /// <summary>
+        /// Add multiple available slots
+        /// </summary>
+        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [HttpPost("add_available_work_slot_bulk")]
+        public async Task<ActionResult<bool>> AddAvailableWorkSlot([FromBody] ICollection<AddWorkSlotDTO> addWorkSlotsDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.AddAvailableWorkSlotBulk(addWorkSlotsDTO.Select(slot => ObjectTrimmer.TrimObject(slot) as AddWorkSlotDTO).ToList());
         }
 
         /// <summary>

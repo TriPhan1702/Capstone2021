@@ -97,6 +97,56 @@ namespace HairCutAppAPI.Services
             return result.Id;
         }
 
+        public async Task<ActionResult<bool>> AddAvailableWorkSlotBulk(ICollection<AddWorkSlotDTO> addWorkSlotsDTO)
+        {
+            //Check if dto is empty
+            if (addWorkSlotsDTO.Count <= 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "List of WorkSlot is empty"); 
+            }
+            //Check if staff exists
+            await CheckStaff(addWorkSlotsDTO.First().StaffId);
+
+            //Get All SlotOfDay from Database
+            var slotsOfDayIds = (await _repositoryWrapper.SlotOfDay.FindAllAsync()).Select(s => s.Id).ToList();
+            //If any of the SlotOfDay Id is invalid, abort
+            if (addWorkSlotsDTO.Any(slot => !slotsOfDayIds.Contains(slot.SlotOfDayId)))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Slot of day with id {slot.SlotOfDayId} doesn't exist");
+            }
+
+            foreach (var dto in addWorkSlotsDTO)
+            {
+                //Parse date
+                var chosenDate = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+                //Check if There's Duplicate Work Slot
+                var hasDuplicateWorkSlot = await _repositoryWrapper.WorkSlot.AnyAsync(ws =>
+                    ws.StaffId == dto.StaffId && ws.Date == chosenDate && ws.SlotOfDayId == dto.SlotOfDayId);
+                if (hasDuplicateWorkSlot)
+                {
+                    _repositoryWrapper.DeleteChanges();
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"There's already a duplicate slot at {dto.Date} and has SlotOfDay Id {dto.SlotOfDayId}");
+                }
+
+                await _repositoryWrapper.WorkSlot.CreateWithoutSaveAsync(dto.ToWorkSlot());
+            }
+
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Some thing went wrong went creating Work SLot in bulk: " + e.Message);
+            }
+
+            return true;
+        }
+
         public async Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
         {
             //Get Work slot from Id
