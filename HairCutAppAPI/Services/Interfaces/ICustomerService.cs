@@ -6,6 +6,6 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface ICustomerService
     {
-        Task<ActionResult<CurrentUserDTO>> Register(CreateCustomerDto dto);
+        Task<ActionResult<int>> Register(CreateCustomerDto dto);
     }
 }
