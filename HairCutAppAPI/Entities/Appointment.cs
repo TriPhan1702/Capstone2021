@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using HairCutAppAPI.DTOs.AppointmentDTOs;
 using HairCutAppAPI.Utilities;
 
@@ -82,6 +83,49 @@ namespace HairCutAppAPI.Entities
                 AppointmentId = Id,
                 Status = Status
             };
+        }
+
+        public GetAppointmentDetailResponseDTO ToGetAppointmentDetailResponseDTO(Combo combo)
+        {
+            var result = new GetAppointmentDetailResponseDTO();
+            result.Id = Id;
+            result.Note = Note;
+            result.Rating = RatingId;
+            result.Status = Status;
+            result.CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat);
+            result.LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat);
+            result.CustomerId = CustomerId;
+            result.CustomerName = Customer.FullName;
+            result.SalonId = SalonId;
+            result.SalonName = Salon.Name;
+            result.StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat);
+            result.EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat);
+            result.ImageUrl = ImageUrl;
+            result.PaymentType = PaymentType;
+            result.PromotionalCode = PromotionalCode;
+            result.RatingId = RatingId;
+            result.RatingComment = Rating?.RatingComment;
+            result.AppointmentDetailId = AppointmentDetailId;
+            result.ComboId = AppointmentDetail.Combo.Id;
+            result.ComboName = AppointmentDetail.Combo.Name;
+            result.CrewId = AppointmentDetail.CrewId;
+            result.PaidAmount = AppointmentDetail.PaidAmount;
+            result.TotalPrice = AppointmentDetail.TotalPrice;
+            result.Services = combo.ComboDetails.Select(detail =>
+                new GetAppointmentDetailResponseServiceDTO()
+                {
+                    ServiceId = detail.Service.Id,
+                    ServiceName = detail.Service.Name,
+                    ServicePrice = detail.Service.Price
+                }).ToList();
+            result.Staffs = AppointmentDetail.Crew?.CrewDetails.Select(detail =>
+                new GetAppointmentDetailResponseStaffDTO()
+                {
+                    StaffId = detail.Staff.Id,
+                    StaffName = detail.Staff.FullName,
+                    StaffType = detail.Staff.StaffType,
+                }).ToList();
+            return result;
         }
     }
 }

@@ -17,6 +17,18 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Get detail about an appointment
+        /// </summary>
+        /// <param name="id">Appointment Id</param>
+        /// <returns></returns>
+        // [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<GetAppointmentDetailResponseDTO>> GetComboPrice(int id)
+        {
+            return await _appointmentService.GetAppointmentDetail(id);
+        }
+        
+        /// <summary>
         /// For Customer to create appointment
         /// </summary>
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>

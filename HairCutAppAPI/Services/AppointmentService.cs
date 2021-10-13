@@ -185,7 +185,7 @@ namespace HairCutAppAPI.Services
             }
             
             //Get Lasted Appointment of customer
-            var createdAppointment = await _repositoryWrapper.Appointment.GetLastedAppointmentOfCustomer(customerId);
+            var createdAppointment = await _repositoryWrapper.Appointment.GetAppointmentOfCustomer(customerId);
             var price = await CalculateComboPrice(createAppointmentDTO.ComboId);
             int? stylistId = null;
             string stylistName = null;
@@ -305,6 +305,19 @@ namespace HairCutAppAPI.Services
             
             return result.ToChangeAppointmentStatusResponseDTO();
 
+        }
+
+        public async Task<ActionResult<GetAppointmentDetailResponseDTO>> GetAppointmentDetail(int appointmentId)
+        {
+            var appointment = await _repositoryWrapper.Appointment.GetAllAppointmentDetail(appointmentId);
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Appointment not found");
+            }
+
+            var combo = await _repositoryWrapper.Combo.GetComBoWithService(appointment.AppointmentDetail.ComboId);
+
+            return appointment.ToGetAppointmentDetailResponseDTO(combo);
         }
 
         #region private functions

@@ -9,5 +9,7 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CreateAppointmentResponseDTO>> CreateAppointment(CreateAppointmentDTO createAppointmentDTO);
         
         Task<ActionResult<ChangeAppointmentStatusResponseDTO>> CancelAppointment(int appointmentId);
+
+        Task<ActionResult<GetAppointmentDetailResponseDTO>> GetAppointmentDetail(int appointmentId);
     }
 }

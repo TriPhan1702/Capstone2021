@@ -16,10 +16,22 @@ namespace HairCutAppAPI.Repositories
             _hdbContext = hdbContext;
         }
 
-        public async Task<Appointment> GetLastedAppointmentOfCustomer(int customerId)
+        public async Task<Appointment> GetAppointmentOfCustomer(int customerId)
         {
             return await _hdbContext.Appointments.Include(a=>a.AppointmentDetail).Include(a=>a.Customer).Include(a=>a.Salon).OrderByDescending(a => a.CreatedDate)
                 .FirstOrDefaultAsync(a => a.CustomerId == customerId);
+        }
+
+        public async Task<Appointment> GetAllAppointmentDetail(int appointmentId)
+        {
+            return await _hdbContext.Appointments.Include(appointment => appointment.Customer)
+                .Include(appointment => appointment.Rating)
+                .Include(appointment => appointment.Salon)
+                .Include(appointment => appointment.AppointmentDetail)
+                .ThenInclude(detail => detail.Crew)
+                .ThenInclude(c=>c.CrewDetails)
+                .ThenInclude(crewDetail => crewDetail.Staff)
+                .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
 
         public async Task<Appointment> GetAppointmentWithDetail(int appointmentId)

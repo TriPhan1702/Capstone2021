@@ -136,7 +136,10 @@ namespace HairCutAppAPI.Controllers
             return await _workSlotService.UpdateWorkSlot(updateWorkSlotDTO);
         }
         
-        // [Authorize]
+        // [Authorize(Policy = GlobalVariables.AdministratorRole)]
+        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpGet("work_slot_statuses")]
         public ActionResult<ICollection<string>> GetWorkSlotStatuses()
         {
