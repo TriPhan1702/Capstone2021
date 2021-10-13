@@ -40,7 +40,7 @@ namespace HairCutAppAPI.Controllers
         }
 
         /// <summary>
-        /// Find All WorkSlots in a day of a staff, if end date is before start date then the dates will be swapped
+        /// Find All WorkSlots in a day of a staff
         /// </summary>
         // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
         // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
@@ -60,7 +60,7 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
-        /// Find All WorkSlots in a span of days of a staff
+        /// Find All WorkSlots in a span of days of a staff, if end date is before start date then the dates will be swapped
         /// </summary>
         // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
         // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
