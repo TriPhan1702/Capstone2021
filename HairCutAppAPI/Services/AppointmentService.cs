@@ -31,10 +31,19 @@ namespace HairCutAppAPI.Services
         {
             if (_httpContextAccessor.HttpContext == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Not current user is active");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
             }
-            //Get Current customer Id
-            var customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var customerId = -1;
+            try
+            {
+                //Get Current customer Id
+                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current User Id not Found");
+            }
             //Check if Customer exists, check role
             if (! await CheckUserOfRoleExists(customerId, GlobalVariables.CustomerRole))
             {
@@ -219,10 +228,19 @@ namespace HairCutAppAPI.Services
 
             if (_httpContextAccessor.HttpContext == null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Not current user is active");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
             }
-            //Get Current customer Id
-            var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var userId = -1;
+            try
+            {
+                //Get Current customer Id
+                userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current User Id not Found");
+            }
             
             //Get User from database
             var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Id == userId);
@@ -309,10 +327,33 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<GetAppointmentDetailResponseDTO>> GetAppointmentDetail(int appointmentId)
         {
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
+            }
+
+            var userId = -1;
+            try
+            {
+                //Get Current customer Id
+                 userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current User Id not Found");
+            }
+            
+            
             var appointment = await _repositoryWrapper.Appointment.GetAllAppointmentDetail(appointmentId);
             if (appointment is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Appointment not found");
+            }
+
+            //If current User is a customer and the id doesn't match with the appointment's customer Id, abort
+            if ( await CheckUserOfRoleExists(userId, GlobalVariables.CustomerRole) && appointment.CustomerId != userId)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current user is not the owner of this appointment");
             }
 
             var combo = await _repositoryWrapper.Combo.GetComBoWithService(appointment.AppointmentDetail.ComboId);
