@@ -7,5 +7,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
     {
         Task<Appointment> GetLastedAppointmentOfCustomer(int customerId);
         Task<Appointment> GetAppointmentWithDetail(int appointmentId);
+        Task<Appointment> GetAppointmentWithDetailAndCrewDetail(int appointmentId);
     }
 }

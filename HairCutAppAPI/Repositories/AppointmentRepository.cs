@@ -27,5 +27,11 @@ namespace HairCutAppAPI.Repositories
             return await _hdbContext.Appointments.Include(a => a.AppointmentDetail)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
+        
+        public async Task<Appointment> GetAppointmentWithDetailAndCrewDetail(int appointmentId)
+        {
+            return await _hdbContext.Appointments.Include(a => a.AppointmentDetail).ThenInclude(ad=>ad.Crew).ThenInclude(c=>c.CrewDetails)
+                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+        }
     }
 }

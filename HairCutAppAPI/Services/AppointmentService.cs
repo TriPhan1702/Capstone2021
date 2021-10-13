@@ -41,6 +41,15 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Customer  with Id {customerId} doesn't exist");
             }
             
+            //Check if this customer already have an active appointment
+            var existedAppointment =
+                await _repositoryWrapper.Appointment.FindByConditionAsync(a => a.CustomerId == customerId && GlobalVariables.ActiveAppointmentStatuses.Contains(a.Status));
+            //If there's such an appointment, abort
+            if (existedAppointment != null && existedAppointment.Any())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Customer with Id {customerId} already has an appointment");
+            }
+            
             //Convert the chosen date from DTO from string to DateTime
             var chosenDate = DateTime.ParseExact(createAppointmentDTO.Date, GlobalVariables.DayFormat,
                 CultureInfo.InvariantCulture);
@@ -73,15 +82,6 @@ namespace HairCutAppAPI.Services
             if (chosenDate.Add(startSlotOfDay.StartTime) < now.AddHours(GlobalVariables.TimeToCreateAppointmentInAdvanced))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Chosen date has to be at least 2 hours away from now");
-            }
-            
-            //Check if this customer already have an appointment on the same day
-            var existedAppointment =
-                await _repositoryWrapper.Appointment.FindSingleByConditionAsync(a => a.CustomerId == customerId && a.StartDate.DayOfYear == chosenDate.DayOfYear);
-            //If there's such a appointment, abort
-            if (existedAppointment != null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Customer with Id {customerId} already has an appointment on the same date");
             }
             
             //Check if Salon exists
