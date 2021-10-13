@@ -29,21 +29,9 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<CreateAppointmentResponseDTO>> CreateAppointment(CreateAppointmentDTO createAppointmentDTO)
         {
-            if (_httpContextAccessor.HttpContext == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
-            }
-
-            var customerId = -1;
-            try
-            {
-                //Get Current customer Id
-                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            }
-            catch (ArgumentNullException e)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current User Id not Found");
-            }
+            //Get Current User's Id
+            var customerId = GetCurrentUserId();
+            
             //Check if Customer exists, check role
             if (! await CheckUserOfRoleExists(customerId, GlobalVariables.CustomerRole))
             {
@@ -225,22 +213,8 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Can't cancel already canceled or completed appointments");
             }
-
-            if (_httpContextAccessor.HttpContext == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
-            }
-
-            var userId = -1;
-            try
-            {
-                //Get Current customer Id
-                userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            }
-            catch (ArgumentNullException e)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current User Id not Found");
-            }
+            //Get Current User's Id
+            var userId = GetCurrentUserId();
             
             //Get User from database
             var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Id == userId);
@@ -327,22 +301,8 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<GetAppointmentDetailResponseDTO>> GetAppointmentDetail(int appointmentId)
         {
-            if (_httpContextAccessor.HttpContext == null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
-            }
-
-            var userId = -1;
-            try
-            {
-                //Get Current customer Id
-                 userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
-            }
-            catch (ArgumentNullException e)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current User Id not Found");
-            }
-            
+            //Get Current User's Id
+            var userId = GetCurrentUserId();
             
             var appointment = await _repositoryWrapper.Appointment.GetAllAppointmentDetail(appointmentId);
             if (appointment is null)
@@ -362,6 +322,27 @@ namespace HairCutAppAPI.Services
         }
 
         #region private functions
+        
+        private int GetCurrentUserId()
+        {
+            int customerId;
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
+            }
+
+            try
+            {
+                //Get Current customer Id
+                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Current User Id not Found");
+            }
+
+            return customerId;
+        }
 
         private async Task<bool> SalonExists(int salonId)
         {
