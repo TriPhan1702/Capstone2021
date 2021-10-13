@@ -1,5 +1,7 @@
 ﻿using System.Threading.Tasks;
+using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
 
 namespace HairCutAppAPI.Repositories.Interfaces
@@ -14,5 +16,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<AppUser> FindByEmailAsync(string email);
         Task<IdentityResult> ResetPasswordAsync(AppUser user, string token, string password);
         Task<bool> CheckRole(AppUser user, string role);
+        Task<PagedList<GetUserListResponseDTO>> AdvancedGetUsers(PaginationParams paginationParams);
     }
 }

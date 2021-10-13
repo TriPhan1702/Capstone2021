@@ -21,7 +21,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="id">Appointment Id</param>
         /// <returns></returns>
-        // [Authorize]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<GetAppointmentDetailResponseDTO>> GetComboPrice(int id)
         {
@@ -32,7 +32,7 @@ namespace HairCutAppAPI.Controllers
         /// For Customer to create appointment
         /// </summary>
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>
-        // [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
+        [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
         [HttpPost("create_appointment")]
         public async Task<ActionResult<CreateAppointmentResponseDTO>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
         {
@@ -53,9 +53,9 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="id">Appointment Id</param>
         /// <returns></returns>
-        // [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPut("cancel_appointment/{id}")]
         public async Task<ActionResult<ChangeAppointmentStatusResponseDTO>> CancelAppointment(int id)
         {

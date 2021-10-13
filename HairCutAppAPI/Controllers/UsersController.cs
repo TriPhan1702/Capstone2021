@@ -8,6 +8,7 @@ using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.Extensions;
 using HairCutAppAPI.Utilities.JWTToken;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -24,12 +25,22 @@ namespace HairCutAppAPI.Controllers
             _userService = userService;
         }
 
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
             return await _userService.GetUsers();
+        }
+
+        [HttpPost("advanced_get_users")]
+        public async Task<ActionResult<PagedList<GetUserListResponseDTO>>> AdvancedGetUser(
+            PaginationParams paginationParams)
+        {
+            var users = await _userService.AdvancedGetUsers(paginationParams);
+            
+            Response.AddPaginationHeader(users.Value.CurrentPage, users.Value.PageSize, users.Value.TotalCount, users.Value.TotalPages);
+            return users;
         }
 
         /// <summary>
@@ -52,7 +63,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<UserDTO>> Login([FromForm] LoginDTO loginDto)
+        public async Task<ActionResult<CurrentUserDTO>> Login([FromForm] LoginDTO loginDto)
         {
             //Trim All Strings in object
             loginDto = ObjectTrimmer.TrimObject(loginDto) as LoginDTO;
@@ -123,7 +134,7 @@ namespace HairCutAppAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("social_login")]
-        public async Task<ActionResult<UserDTO>> SocialLogin([FromBody] SocialLoginDTO socialLoginDTO)
+        public async Task<ActionResult<CurrentUserDTO>> SocialLogin([FromBody] SocialLoginDTO socialLoginDTO)
         {
             //Trim All Strings in object
             socialLoginDTO = ObjectTrimmer.TrimObject(socialLoginDTO) as SocialLoginDTO;
@@ -145,5 +156,7 @@ namespace HairCutAppAPI.Controllers
                 default: return BadRequest("Login Platform is invalid");
             }
         }
+        
+        
     }
 }

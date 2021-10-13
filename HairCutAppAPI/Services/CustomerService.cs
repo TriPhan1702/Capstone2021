@@ -30,7 +30,7 @@ namespace HairCutAppAPI.Services
             _passwordHasher = passwordHasher;
         }
         
-        public async Task<ActionResult<UserDTO>> Register(CreateCustomerDto dto)
+        public async Task<ActionResult<CurrentUserDTO>> Register(CreateCustomerDto dto)
         {
             //Check if User exists
             if (await UserExists(dto.UserName))
@@ -57,7 +57,7 @@ namespace HairCutAppAPI.Services
                 return new BadRequestObjectResult(roleResult.Errors);
             }
 
-            return new UserDTO()
+            return new CurrentUserDTO()
             {
                 Username = newUser.UserName,
                 Token = await _tokenService.CreateToken(newUser)

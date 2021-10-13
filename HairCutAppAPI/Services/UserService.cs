@@ -75,6 +75,11 @@ namespace HairCutAppAPI.Services
             var users = await _repositoryWrapper.User.FindAllAsync();
             return users.ToList();
         }
+        
+        public async Task<ActionResult<PagedList<GetUserListResponseDTO>>> AdvancedGetUsers(PaginationParams paginationParams)
+        {
+            return await _repositoryWrapper.User.AdvancedGetUsers(paginationParams);
+        }
 
         public async Task<ActionResult<AppUser>> FindById(int id)
         {
@@ -82,7 +87,7 @@ namespace HairCutAppAPI.Services
             return user;
         }
 
-        public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDto)
+        public async Task<ActionResult<CurrentUserDTO>> Login(LoginDTO loginDto)
         {
             //Check if user exists
             var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.UserName.Trim() == loginDto.UserName.ToLower() || u.Email == loginDto.UserName);
@@ -104,7 +109,7 @@ namespace HairCutAppAPI.Services
                 await CheckUserDevice(loginDto, user.Id);
             }
             
-            return new UserDTO()
+            return new CurrentUserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
@@ -170,7 +175,7 @@ namespace HairCutAppAPI.Services
             return new OkObjectResult("User's Password Changed");
         }
 
-        public async Task<ActionResult<UserDTO>> LoginByGoogle(string idToken)
+        public async Task<ActionResult<CurrentUserDTO>> LoginByGoogle(string idToken)
         {
             var user = await CheckGoogleIdToken(idToken);
 
@@ -181,14 +186,14 @@ namespace HairCutAppAPI.Services
             }
             
             //Return Ok Result
-            return new UserDTO()
+            return new CurrentUserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
             };
         }
 
-        public async Task<ActionResult<UserDTO>> LoginByFacebook(string accessToken)
+        public async Task<ActionResult<CurrentUserDTO>> LoginByFacebook(string accessToken)
         {
             var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
 
@@ -204,7 +209,7 @@ namespace HairCutAppAPI.Services
             }
             
             //Return Ok Result
-            return new UserDTO()
+            return new CurrentUserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using HairCutAppAPI.DTOs;
 using Microsoft.AspNetCore.Identity;
 
 namespace HairCutAppAPI.Entities
@@ -35,5 +37,21 @@ namespace HairCutAppAPI.Entities
         
         [Url]
         public string AvatarUrl { get; set; }
+
+        public GetUserListResponseDTO ToGetUserListResponseDTO()
+        {
+            var result = new GetUserListResponseDTO
+            {
+                Id = Id,
+                UserName = UserName,
+                Email = Email,
+                Status = Status,
+                AvatarUrl = AvatarUrl,
+                PhoneNumber = PhoneNumber,
+                UserRoles = UserRole.Select(role => role.Role.Name).ToList()
+            };
+
+            return result;
+        }
     }
 }

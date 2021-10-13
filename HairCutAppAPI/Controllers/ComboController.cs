@@ -24,7 +24,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="id">Combo Id</param>
         /// <returns></returns>
-        // [Authorize]
+        [Authorize]
         [HttpGet("combo_price/{id}")]
         public async Task<ActionResult<decimal>> GetComboPrice(int id)
         {
@@ -35,7 +35,7 @@ namespace HairCutAppAPI.Controllers
         /// For Admin to create new combo
         /// </summary>
         /// <param name="createComboDTO">, if Services is null or empty, then the combo created will have no service</param>
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_combo")]
         public async Task<ActionResult<int>> CreateCombo([FromBody] CreateComboDTO createComboDTO)
         {
@@ -55,7 +55,7 @@ namespace HairCutAppAPI.Controllers
         /// For Admin to update Combo Info
         /// </summary>
         /// <param name="updateComboDTO"> Empty ot null fields will not be changed, negative duration = null. If Services == null => no change, if Services is empty list => combo has no service</param>
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPut("update_combo")]
         public async Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo([FromBody] UpdateComboDTO updateComboDTO)
         {
@@ -71,7 +71,7 @@ namespace HairCutAppAPI.Controllers
             return await _comboService.UpdateCombo(updateComboDTO);
         }
         
-        // [Authorize]
+        [Authorize]
         [HttpGet("combo_statuses")]
         public ActionResult<ICollection<string>> GetComboStatuses()
         {
@@ -82,7 +82,7 @@ namespace HairCutAppAPI.Controllers
         /// Get a list of active Combos
         /// </summary>
         /// <returns></returns>
-        // [Authorize]
+        [Authorize]
         [HttpGet("active_combos")]
         public async Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos()
         {

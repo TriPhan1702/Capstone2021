@@ -22,9 +22,9 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Get Id and status of a work slot based on staff, which slot, date
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("find_work_slot")]
         public async Task<ActionResult<GetWorkSlotResponseDTO>> FindWorkSlot([FromBody] GetWorkSlotDTO getWorkSlotDTO)
         {
@@ -42,9 +42,9 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Find All WorkSlots in a day of a staff
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("work_slot_of_day")]
         public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay([FromBody]FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
         {
@@ -62,9 +62,9 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Find All WorkSlots in a span of days of a staff, if end date is before start date then the dates will be swapped
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("work_slot_of_time_span")]
         public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsTimeSpan([FromBody] FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
         {
@@ -82,9 +82,9 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Add an available slot if non have existed
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("add_available_work_slot")]
         public async Task<ActionResult<int>> AddAvailableWorkSlot([FromBody] AddWorkSlotDTO addWorkSlotDTO)
         {
@@ -102,9 +102,9 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Add multiple available slots
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("add_available_work_slot_bulk")]
         public async Task<ActionResult<bool>> AddAvailableWorkSlot([FromBody] ICollection<AddWorkSlotDTO> addWorkSlotsDTO)
         {
@@ -119,9 +119,9 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Update status of a WorkSlot
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPut("update_work_slot")]
         public async Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
         {
@@ -136,10 +136,10 @@ namespace HairCutAppAPI.Controllers
             return await _workSlotService.UpdateWorkSlot(updateWorkSlotDTO);
         }
         
-        // [Authorize(Policy = GlobalVariables.AdministratorRole)]
-        // [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        // [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.AdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpGet("work_slot_statuses")]
         public ActionResult<ICollection<string>> GetWorkSlotStatuses()
         {

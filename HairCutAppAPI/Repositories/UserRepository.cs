@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using AutoMapper.QueryableExtensions;
 using HairCutAppAPI.Data;
+using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.WorkSlotDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +27,13 @@ namespace HairCutAppAPI.Repositories
             _hdbContext = hdbContext;
             _userManager = userManager;
             _signInManager = signInManager;
+        }
+
+        public async Task<PagedList<GetUserListResponseDTO>> AdvancedGetUsers(PaginationParams paginationParams)
+        {
+            var query = _hdbContext.Users.Include(user => user.UserRole).ThenInclude(userRole => userRole.Role).Select(user => user.ToGetUserListResponseDTO());
+            return await PagedList<GetUserListResponseDTO>.CreateAsync(query, paginationParams.PageNumber,
+                paginationParams.PageSize);
         }
 
         public async Task<AppUser> GetUserByUserNameAsync(string username)

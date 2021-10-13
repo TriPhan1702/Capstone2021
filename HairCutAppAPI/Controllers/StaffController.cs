@@ -21,7 +21,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="createStaffDTO"></param>
         /// <returns></returns>
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_staff")]
         public async Task<ActionResult<int>> CreateStaff([FromForm] CreateStaffDTO createStaffDTO)
         {

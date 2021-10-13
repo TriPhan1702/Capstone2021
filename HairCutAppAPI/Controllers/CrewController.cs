@@ -20,7 +20,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For Manager to assign crew to appointment
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("assign_crew")]
         public async Task<ActionResult<AssignCrewResponseDTO>> AssignCrew([FromBody] AssignCrewDTO assignCrewDTO)
         {

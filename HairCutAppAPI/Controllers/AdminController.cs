@@ -23,7 +23,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Used by admin to create other admin accounts
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_admin")]
         public async Task<ActionResult<int>> CreateAdmin([FromForm]CreateUserDTO dto)
         {

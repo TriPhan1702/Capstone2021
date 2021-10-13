@@ -19,7 +19,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Used Admin the create manager
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_manager")]
         public async Task<ActionResult<int>> CreateManager([FromForm]CreateUserDTO dto)
         {
