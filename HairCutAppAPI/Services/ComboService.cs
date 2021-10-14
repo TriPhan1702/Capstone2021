@@ -22,7 +22,7 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo(UpdateComboDTO updateComboDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO)
         {
             //If Status is not null of empty
             if (!string.IsNullOrWhiteSpace(updateComboDTO.Status))
@@ -121,28 +121,28 @@ namespace HairCutAppAPI.Services
             }
             
             
-            return result;
+            return new CustomHttpCodeResponse(200,"",result);
         }
 
-        public async Task<ActionResult<decimal>> GetComboPrice(int id)
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
         {
             if (!await CheckComboExists(id))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Combo not found");
             }
 
-            return await CalculateComboPrice(id);
+            return new CustomHttpCodeResponse(200,"", await CalculateComboPrice(id));
         }
 
-        public async Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllActiveCombos()
         {
             //Get Active Combo
             var comboDetails = await _repositoryWrapper.Combo.FindByConditionAsync(c=>c.Status == GlobalVariables.ComboStatuses[0]);
             
-            return comboDetails.Select(c=>c.ToComboDTO()).ToList();
+            return new CustomHttpCodeResponse(200, "" , comboDetails.Select(c=>c.ToComboDTO()).ToList());
         }
 
-        public async Task<ActionResult<int>> CreateCombo(CreateComboDTO createComboDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo(CreateComboDTO createComboDTO)
         {
             if (createComboDTO.Duration <= 0)
             {
@@ -174,7 +174,7 @@ namespace HairCutAppAPI.Services
                     "Some thing went wrong went creating ComboDetail for Combo");
             }
             
-            return new OkObjectResult(result.Id);
+            return new CustomHttpCodeResponse(200,"",result.Id);
         }
 
         

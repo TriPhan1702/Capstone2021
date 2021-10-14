@@ -25,17 +25,17 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_admin")]
-        public async Task<ActionResult<int>> CreateAdmin([FromForm]CreateUserDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateAdmin([FromForm]CreateUserDTO dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as CreateUserDTO;
             //Validate form
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
             
-            return await _userService.CreateUser(dto, GlobalVariables.AdministratorRole);
+            return new CustomHttpCodeResponse(200,"", await _userService.CreateUser(dto, GlobalVariables.AdministratorRole));
         }
 
         // /// <summary>

@@ -46,7 +46,7 @@ namespace HairCutAppAPI.Services
             _passwordHasher = passwordHasher;
         }
 
-        public async Task<ActionResult<int>> CreateUser(CreateUserDTO createUserDTO, string role)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateUser(CreateUserDTO createUserDTO, string role)
         {
             //Check if User exists
             if (await UserExists(createUserDTO.UserName))
@@ -67,18 +67,19 @@ namespace HairCutAppAPI.Services
                 return new BadRequestObjectResult(roleResult.Errors);
             }
 
-            return result.Id;
+            return new CustomHttpCodeResponse(200, "Manager Created", result.Id);
         }
 
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetUsers()
         {
             var users = await _repositoryWrapper.User.FindAllAsync();
-            return users.ToList();
+            return new CustomHttpCodeResponse(200, "",users.ToList()); 
         }
         
-        public async Task<ActionResult<PagedList<GetUserListResponseDTO>>> AdvancedGetUsers(PaginationParams paginationParams)
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(PaginationParams paginationParams)
         {
-            return await _repositoryWrapper.User.AdvancedGetUsers(paginationParams);
+            var result = await _repositoryWrapper.User.AdvancedGetUsers(paginationParams);
+            return new CustomHttpCodeResponse(200, "" , result);
         }
 
         public async Task<ActionResult<AppUser>> FindById(int id)
@@ -87,20 +88,20 @@ namespace HairCutAppAPI.Services
             return user;
         }
 
-        public async Task<ActionResult<CurrentUserDTO>> Login(LoginDTO loginDto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> Login(LoginDTO loginDto)
         {
             //Check if user exists
             var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.UserName.Trim() == loginDto.UserName.ToLower() || u.Email == loginDto.UserName);
             if (user is null)
             {
-                return new BadRequestObjectResult("Invalid UserName or Email");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid UserName or Email");
             }
             
             //Check Password
             var result = await _repositoryWrapper.User.CheckPasswordAsync(user, loginDto.Password.Trim());
             if (!result.Succeeded)
             {
-                return new BadRequestObjectResult("Invalid Password");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid Password");
             }
             
             //If Device Token exist, add to user's device
@@ -109,11 +110,11 @@ namespace HairCutAppAPI.Services
                 await CheckUserDevice(loginDto, user.Id);
             }
             
-            return new CurrentUserDTO()
+            return new CustomHttpCodeResponse(200, "User Logged in", new CurrentUserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
-            };
+            });
         }
 
         private async Task CheckUserDevice(LoginDTO loginDTO, int userId)
@@ -132,13 +133,13 @@ namespace HairCutAppAPI.Services
             }
         }
 
-        public async Task<ActionResult> ForgetPassword(string email)
+        public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
         {
             //Search if user with this email exists
             var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Email == email);
             if (user is null)
             {
-                return new BadRequestObjectResult("Invalid Password");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid Password");
             }
             
             //Generate Password Reset Token
@@ -151,11 +152,11 @@ namespace HairCutAppAPI.Services
             var url = $"{_configuration["AppUrl"]}/ResetPassword?email={email}&token={validToken}";
             var message = new EmailMessage(email, "Forget Password for HairCut App", $"To change your password go to the following link: <a href='{url}'>Click Here</a>");
             await _emailSender.SendEmailAsync(message);
-            return new OkResult();
+            return new CustomHttpCodeResponse(200, "Email Sent");
         }
 
         //Reset user's password
-        public async Task<ActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO)
         {
             //Find if user exists
             var user = await _repositoryWrapper.User.FindByEmailAsync(resetPasswordDTO.Email);
@@ -172,10 +173,10 @@ namespace HairCutAppAPI.Services
             {
                 return new BadRequestObjectResult(result.Errors);
             }
-            return new OkObjectResult("User's Password Changed");
+            return new CustomHttpCodeResponse(200,"User's Password Changed");
         }
 
-        public async Task<ActionResult<CurrentUserDTO>> LoginByGoogle(string idToken)
+        public async Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken)
         {
             var user = await CheckGoogleIdToken(idToken);
 
@@ -186,14 +187,14 @@ namespace HairCutAppAPI.Services
             }
             
             //Return Ok Result
-            return new CurrentUserDTO()
+            return new CustomHttpCodeResponse(200,"",new CurrentUserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
-            };
+            }); 
         }
 
-        public async Task<ActionResult<CurrentUserDTO>> LoginByFacebook(string accessToken)
+        public async Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken)
         {
             var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
 
@@ -209,11 +210,11 @@ namespace HairCutAppAPI.Services
             }
             
             //Return Ok Result
-            return new CurrentUserDTO()
+            return new CustomHttpCodeResponse(200,"", new CurrentUserDTO()
             {
                 Username = user.UserName,
                 Token = await _tokenService.CreateToken(user)
-            };
+            });
         }
 
         #region private functions

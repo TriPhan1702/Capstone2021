@@ -23,14 +23,14 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<int>> Register([FromForm]CreateCustomerDto dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> Register([FromForm]CreateCustomerDto dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as CreateCustomerDto;
             
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
             
             return await _customerService.Register(dto);

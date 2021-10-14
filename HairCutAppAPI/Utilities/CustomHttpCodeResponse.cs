@@ -8,17 +8,20 @@ namespace HairCutAppAPI.Utilities
 {
     public class CustomHttpCodeResponse
     {
-        public HttpStatusCode StatusCode { get; set; }
-
-        public string Content { get; set; }
-
-        public bool IsSuccess { get; set; }
+        public int StatusCode { get; set; }
         
-        public CustomHttpCodeResponse(HttpStatusCode statusCode, string content, bool isSuccess)
+        public bool IsSuccess { get; set; }
+
+        public object Data { get; set; }
+        
+        public string Message { get; set; }
+        
+        public CustomHttpCodeResponse(int statusCode, string message = null, object data = null)
         {
             StatusCode = statusCode;
-            Content = content;
-            IsSuccess = isSuccess;
+            IsSuccess = statusCode == 200;
+            Data = data;
+            Message = message;
         }
 
     }

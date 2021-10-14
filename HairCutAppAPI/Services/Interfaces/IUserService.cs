@@ -9,14 +9,14 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IUserService
     {
-        Task<ActionResult<int>> CreateUser(CreateUserDTO createUserDTO, string role);
-        Task<ActionResult<IEnumerable<AppUser>>> GetUsers();
-        Task<ActionResult<PagedList<GetUserListResponseDTO>>> AdvancedGetUsers(PaginationParams paginationParams);
+        Task<ActionResult<CustomHttpCodeResponse>> CreateUser(CreateUserDTO createUserDTO, string role);
+        Task<ActionResult<CustomHttpCodeResponse>> GetUsers();
+        Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(PaginationParams paginationParams);
         Task<ActionResult<AppUser>> FindById(int id);
-        Task<ActionResult<CurrentUserDTO>> Login(LoginDTO loginDto);
-        Task<ActionResult> ForgetPassword(string email);
-        Task<ActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO);
-        Task<ActionResult<CurrentUserDTO>> LoginByGoogle(string idToken);
-        Task<ActionResult<CurrentUserDTO>> LoginByFacebook(string accessToken);
+        Task<ActionResult<CustomHttpCodeResponse>> Login(LoginDTO loginDto);
+        Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email);
+        Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken);
+        Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken);
     }
 }

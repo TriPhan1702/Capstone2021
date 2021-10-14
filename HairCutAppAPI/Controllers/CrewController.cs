@@ -22,12 +22,12 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("assign_crew")]
-        public async Task<ActionResult<AssignCrewResponseDTO>> AssignCrew([FromBody] AssignCrewDTO assignCrewDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> AssignCrew([FromBody] AssignCrewDTO assignCrewDTO)
         {
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             return await _crewService.AssignCrew(assignCrewDTO);

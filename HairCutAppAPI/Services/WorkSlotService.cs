@@ -24,7 +24,7 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfTimeSpan(FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfTimeSpan(FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
         {
             var startDate = DateTime.ParseExact(findWorkSlotsOfTimeSpanDTO.StartDate, GlobalVariables.DayFormat,
                 CultureInfo.InvariantCulture);
@@ -44,10 +44,10 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "WorkSlots not found");
             }
 
-            return slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList();
+            return new CustomHttpCodeResponse(200,"",slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList());
         }
 
-        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
         {
             var date = DateTime.ParseExact(findWorkSlotsOfDayDTO.Date, GlobalVariables.DayFormat,
                 CultureInfo.InvariantCulture);
@@ -58,10 +58,10 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "WorkSlots not found");
             }
 
-            return slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList();
+            return new CustomHttpCodeResponse(200,"",slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList());
         }
 
-        public async Task<ActionResult<GetWorkSlotResponseDTO>> FindWorkSlot(GetWorkSlotDTO getWorkSlotDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlot(GetWorkSlotDTO getWorkSlotDTO)
         {
             var date = DateTime.ParseExact(getWorkSlotDTO.Date, GlobalVariables.DayFormat,
                 CultureInfo.InvariantCulture);
@@ -74,10 +74,10 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Slot not found"); 
             }
-            return slot.ToGetWorkSlotResponseDTO();
+            return new CustomHttpCodeResponse(200,"",slot.ToGetWorkSlotResponseDTO());
         }
 
-        public async Task<ActionResult<int>> AddAvailableWorkSlot(AddWorkSlotDTO addWorkSlotDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> AddAvailableWorkSlot(AddWorkSlotDTO addWorkSlotDTO)
         {
             var date = DateTime.ParseExact(addWorkSlotDTO.Date, GlobalVariables.DayFormat,
                 CultureInfo.InvariantCulture);
@@ -94,10 +94,10 @@ namespace HairCutAppAPI.Services
             //Add work slot
             var newWorkSlot = addWorkSlotDTO.ToWorkSlot();
             var result = await _repositoryWrapper.WorkSlot.CreateAsync(newWorkSlot);
-            return result.Id;
+            return new CustomHttpCodeResponse(200,"",result.Id);
         }
 
-        public async Task<ActionResult<bool>> AddAvailableWorkSlotBulk(ICollection<AddWorkSlotDTO> addWorkSlotsDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> AddAvailableWorkSlotBulk(ICollection<AddWorkSlotDTO> addWorkSlotsDTO)
         {
             //Check if dto is empty
             if (addWorkSlotsDTO.Count <= 0)
@@ -144,10 +144,10 @@ namespace HairCutAppAPI.Services
                     "Some thing went wrong went creating Work SLot in bulk: " + e.Message);
             }
 
-            return true;
+            return new CustomHttpCodeResponse(200,"",true);
         }
 
-        public async Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
         {
             //Get Work slot from Id
             var workSlot = await _repositoryWrapper.WorkSlot.FindSingleByConditionAsync(ws => ws.Id == updateWorkSlotDTO.Id);
@@ -184,7 +184,7 @@ namespace HairCutAppAPI.Services
             }
 
             workSlot.Status = updateWorkSlotDTO.Status.ToLower();
-            return (await _repositoryWrapper.WorkSlot.UpdateAsync(workSlot, workSlot.Id)).ToUpdateWorkSlotDTO();
+            return new CustomHttpCodeResponse(200,"", (await _repositoryWrapper.WorkSlot.UpdateAsync(workSlot, workSlot.Id)).ToUpdateWorkSlotDTO());
         }
 
         #region private functions

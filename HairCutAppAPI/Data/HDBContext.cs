@@ -82,7 +82,7 @@ namespace HairCutAppAPI.Data
                 new AppRole() {Id = 5, Name = "Customer", NormalizedName = "CUSTOMER",}
             );
             
-            //Seed User
+            //Seed Admin
             builder.Entity<AppUser>().HasData
             (
                 new AppUser(){
@@ -100,6 +100,16 @@ namespace HairCutAppAPI.Data
                     AccessFailedCount = 0,
                     PasswordHash = _passwordHasher.HashPassword(null,"Test123"),
                     SecurityStamp = Guid.NewGuid().ToString()
+                }
+            );
+            
+            //Seed Admin Role
+            builder.Entity<AppUserRole>().HasData
+            (
+                new AppUserRole()
+                {
+                    UserId = 1,
+                    RoleId = 1,
                 }
             );
             

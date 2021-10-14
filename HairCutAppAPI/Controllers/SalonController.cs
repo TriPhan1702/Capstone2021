@@ -24,7 +24,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
         [HttpGet("active_salons")]
-        public async Task<ActionResult<ICollection<CustomerGetSalonListDTO>>> CustomerGetSalonList()
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList()
         {
             return await _salonService.CustomerGetSalonList();
         }
@@ -36,7 +36,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_salon")]
-        public async Task<ActionResult<CreateSalonResponseDTO>> CreateSalon([FromForm] CreateSalonDTO createSalonDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon([FromForm] CreateSalonDTO createSalonDTO)
         {
             //Trim All Strings in object
             createSalonDTO = ObjectTrimmer.TrimObject(createSalonDTO) as CreateSalonDTO;
@@ -44,7 +44,7 @@ namespace HairCutAppAPI.Controllers
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             return await _salonService.CreateSalon(createSalonDTO);

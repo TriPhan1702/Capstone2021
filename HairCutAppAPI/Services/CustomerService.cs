@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,18 +31,18 @@ namespace HairCutAppAPI.Services
             _tokenService = tokenService;
             _passwordHasher = passwordHasher;
         }
-        
-        public async Task<ActionResult<int>> Register(CreateCustomerDto dto)
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> Register(CreateCustomerDto dto)
         {
             //Check if User exists
             if (await UserExists(dto.UserName))
             {
-                return new BadRequestObjectResult("User Already Exists");
+                return new CustomHttpCodeResponse(400, "User name already Exists");
             }
 
             // from Dto to AppUser
             var newUser = dto.ToNewAppUser(_passwordHasher.HashPassword(null, dto.Password));
-            
+
             var customer = new Customer()
             {
                 User = newUser,
@@ -54,10 +56,10 @@ namespace HairCutAppAPI.Services
             var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, GlobalVariables.CustomerRole);
             if (!roleResult.Succeeded)
             {
-                return new BadRequestObjectResult(roleResult.Errors);
+                return new CustomHttpCodeResponse(500, "Could not add user to Customer Role", roleResult.Errors);
             }
 
-            return newUser.Id;
+            return new CustomHttpCodeResponse(200, "Customer added", result.Id);
         }
         
         //Check if user exists by username and email

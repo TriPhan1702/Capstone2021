@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.SlotOfDayDTOs;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services
@@ -17,10 +18,10 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<ActionResult<ICollection<SlotOfDayDTO>>> GetAllSlotsOfDay()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllSlotsOfDay()
         {
             var slots = await _repositoryWrapper.SlotOfDay.FindAllAsync();
-            return slots.Select(s => s.ToSlotOfDayDTO()).ToList();
+            return new CustomHttpCodeResponse(200, "", slots.Select(s => s.ToSlotOfDayDTO()).ToList());
         }
     }
 }

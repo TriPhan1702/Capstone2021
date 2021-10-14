@@ -21,7 +21,7 @@ namespace HairCutAppAPI.Services
             _passwordHasher = passwordHasher;
         }
         
-        public async Task<ActionResult<int>> CreateStaff(CreateStaffDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateStaff(CreateStaffDTO dto)
         {
             //Check if User exists
             if (await UserExists(dto.UserName))
@@ -48,19 +48,27 @@ namespace HairCutAppAPI.Services
             var result = await _repositoryWrapper.Staff.CreateAsync(newStaff);
 
             //Save staff's role
-            var role = dto.StaffType switch
+            string role;
+            switch (dto.StaffType)
             {
-                GlobalVariables.StylistRole => GlobalVariables.StylistRole,
-                GlobalVariables.BeauticianRole => GlobalVariables.BeauticianRole,
-                _ => ""
-            };
+                case GlobalVariables.StylistRole:
+                    role = GlobalVariables.StylistRole;
+                    break;
+                case GlobalVariables.BeauticianRole:
+                    role = GlobalVariables.BeauticianRole;
+                    break;
+                default:
+                    return new BadRequestObjectResult("Staff type is invalid, must be: " +
+                                                      string.Join(", ", GlobalVariables.StaffTypes));
+            }
+
             var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newStaff.User,role);
             if (!roleResult.Succeeded)
             {
                 return new BadRequestObjectResult(roleResult.Errors);
             }
 
-            return new OkObjectResult(result.Id);
+            return new CustomHttpCodeResponse(200,"", result.Id);
         }
         
         //Check if user exists by username and email

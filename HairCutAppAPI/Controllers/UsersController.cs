@@ -25,26 +25,29 @@ namespace HairCutAppAPI.Controllers
             _userService = userService;
         }
 
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        /// <summary>
+        /// DEBUG: Get all User in Database
+        /// </summary>
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetUsers()
         {
             return await _userService.GetUsers();
         }
 
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("advanced_get_users")]
-        public async Task<ActionResult<PagedList<GetUserListResponseDTO>>> AdvancedGetUser(
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUser(
             PaginationParams paginationParams)
         {
             var users = await _userService.AdvancedGetUsers(paginationParams);
-            
-            Response.AddPaginationHeader(users.Value.CurrentPage, users.Value.PageSize, users.Value.TotalCount, users.Value.TotalPages);
             return users;
         }
 
         /// <summary>
-        /// Find a user by their Id
+        /// DEBUG: Find a user by their Id
         /// </summary>
         /// <param name="id">user's id</param>
         /// <returns></returns>
@@ -63,14 +66,14 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<CurrentUserDTO>> Login([FromForm] LoginDTO loginDto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> Login([FromForm] LoginDTO loginDto)
         {
             //Trim All Strings in object
             loginDto = ObjectTrimmer.TrimObject(loginDto) as LoginDTO;
             
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
             
             return await _userService.Login(loginDto);
@@ -83,12 +86,12 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("forget_password/{email}")]
-        public async Task<ActionResult> ForgetPassword(string email)
+        public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
         {
             //Check input server side
             if (string.IsNullOrEmpty(email.Trim()))
             {
-                return BadRequest("Email is Blank");
+                return new CustomHttpCodeResponse(400,"Email is Blank");
             }
             
             return await _userService.ForgetPassword(email.Trim());
@@ -101,7 +104,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("reset_password")]
-        public async Task<ActionResult> ResetPassword([FromForm] ResetPasswordDTO resetPasswordDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword([FromForm] ResetPasswordDTO resetPasswordDTO)
         {
             return await _userService.ResetPassword(resetPasswordDTO);
         }
@@ -134,7 +137,7 @@ namespace HairCutAppAPI.Controllers
 
         [AllowAnonymous]
         [HttpPost("social_login")]
-        public async Task<ActionResult<CurrentUserDTO>> SocialLogin([FromBody] SocialLoginDTO socialLoginDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> SocialLogin([FromBody] SocialLoginDTO socialLoginDTO)
         {
             //Trim All Strings in object
             socialLoginDTO = ObjectTrimmer.TrimObject(socialLoginDTO) as SocialLoginDTO;
@@ -142,7 +145,7 @@ namespace HairCutAppAPI.Controllers
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             switch (socialLoginDTO.Platform.Trim().ToLower())

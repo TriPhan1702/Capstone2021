@@ -26,7 +26,7 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("find_work_slot")]
-        public async Task<ActionResult<GetWorkSlotResponseDTO>> FindWorkSlot([FromBody] GetWorkSlotDTO getWorkSlotDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlot([FromBody] GetWorkSlotDTO getWorkSlotDTO)
         {
             //Trim All Strings in object
             getWorkSlotDTO = ObjectTrimmer.TrimObject(getWorkSlotDTO) as GetWorkSlotDTO;
@@ -46,7 +46,7 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("work_slot_of_day")]
-        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsOfDay([FromBody]FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfDay([FromBody]FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
         {
             //Trim All Strings in object
             findWorkSlotsOfDayDTO = ObjectTrimmer.TrimObject(findWorkSlotsOfDayDTO) as FindWorkSlotsOfDayDTO;
@@ -66,7 +66,7 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("work_slot_of_time_span")]
-        public async Task<ActionResult<ICollection<GetWorkSlotResponseDTO>>> FindWorkSlotsTimeSpan([FromBody] FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsTimeSpan([FromBody] FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
         {
             //Trim All Strings in object
             findWorkSlotsOfTimeSpanDTO = ObjectTrimmer.TrimObject(findWorkSlotsOfTimeSpanDTO) as FindWorkSlotsOfTimeSpanDTO;
@@ -86,7 +86,7 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("add_available_work_slot")]
-        public async Task<ActionResult<int>> AddAvailableWorkSlot([FromBody] AddWorkSlotDTO addWorkSlotDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> AddAvailableWorkSlot([FromBody] AddWorkSlotDTO addWorkSlotDTO)
         {
             //Trim All Strings in object
             addWorkSlotDTO = ObjectTrimmer.TrimObject(addWorkSlotDTO) as AddWorkSlotDTO;
@@ -106,7 +106,7 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPost("add_available_work_slot_bulk")]
-        public async Task<ActionResult<bool>> AddAvailableWorkSlot([FromBody] ICollection<AddWorkSlotDTO> addWorkSlotsDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> AddAvailableWorkSlot([FromBody] ICollection<AddWorkSlotDTO> addWorkSlotsDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -123,7 +123,7 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPut("update_work_slot")]
-        public async Task<ActionResult<UpdateWorkSlotDTO>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
         {
             //Trim All Strings in object
             updateWorkSlotDTO = ObjectTrimmer.TrimObject(updateWorkSlotDTO) as UpdateWorkSlotDTO;
@@ -141,9 +141,9 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpGet("work_slot_statuses")]
-        public ActionResult<ICollection<string>> GetWorkSlotStatuses()
+        public ActionResult<CustomHttpCodeResponse> GetWorkSlotStatuses()
         {
-            return GlobalVariables.WorkSlotStatuses;
+            return new CustomHttpCodeResponse(200,"",GlobalVariables.WorkSlotStatuses);
         }
     }
 }

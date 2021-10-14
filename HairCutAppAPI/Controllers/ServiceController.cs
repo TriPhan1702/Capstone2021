@@ -23,7 +23,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_service")]
-        public async Task<ActionResult<int>> CreateService([FromForm] CreateServiceDTO createServiceDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateService([FromForm] CreateServiceDTO createServiceDTO)
         {
             //Trim All Strings in object
             createServiceDTO = ObjectTrimmer.TrimObject(createServiceDTO) as CreateServiceDTO;
@@ -31,7 +31,7 @@ namespace HairCutAppAPI.Controllers
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             return await _serviceService.CreateService(createServiceDTO);
@@ -44,7 +44,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPut("update_service")]
-        public async Task<ActionResult<UpdateServiceResponseDto>> UpdateService([FromForm] UpdateServiceDto updateServiceDto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateService([FromForm] UpdateServiceDto updateServiceDto)
         {
             //Trim All Strings in object
             updateServiceDto = ObjectTrimmer.TrimObject(updateServiceDto) as UpdateServiceDto;
@@ -52,7 +52,7 @@ namespace HairCutAppAPI.Controllers
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             return await _serviceService.UpdateService(updateServiceDto);
@@ -64,16 +64,16 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpGet]
-        public async Task<ActionResult<ICollection<ServiceDTO>>> GetAllServices()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllServices()
         {
             return await _serviceService.GetAllServices();
         }
 
         // [Authorize]
         [HttpGet("service_statuses")]
-        public ActionResult<ICollection<string>> GetServiceStatuses()
+        public ActionResult<CustomHttpCodeResponse> GetServiceStatuses()
         {
-            return GlobalVariables.ServiceStatuses;
+            return new CustomHttpCodeResponse(200,"",GlobalVariables.ServiceStatuses);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<AssignCrewResponseDTO> AssignCrew(AssignCrewDTO assignCrewDTO)
+        public async Task<CustomHttpCodeResponse> AssignCrew(AssignCrewDTO assignCrewDTO)
         {
             var appointment = await _repositoryWrapper.Appointment.GetAppointmentWithDetailAndCrewDetail(assignCrewDTO.AppointmentId);
             if (appointment is null)
@@ -85,11 +85,11 @@ namespace HairCutAppAPI.Services
             await _repositoryWrapper.AppointmentDetail.UpdateAsync(appointment.AppointmentDetail, appointment.AppointmentDetail.Id);
             var appointmentDetail= await _repositoryWrapper.AppointmentDetail.GetAppointmentDetailWithCrew(assignCrewDTO.AppointmentId);
             
-            return new AssignCrewResponseDTO()
+            return new CustomHttpCodeResponse(200,"Crew Assigned", new AssignCrewResponseDTO()
             {
                 AppointmentId = appointmentDetail.AppointmentId,
                 StaffIds = appointmentDetail.Crew.CrewDetails.Select(cd=>cd.StaffId).ToList()
-            };
+            }); 
         }
     }
 }

@@ -23,7 +23,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<GetAppointmentDetailResponseDTO>> GetComboPrice(int id)
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
         {
             return await _appointmentService.GetAppointmentDetail(id);
         }
@@ -34,7 +34,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>
         [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
         [HttpPost("create_appointment")]
-        public async Task<ActionResult<CreateAppointmentResponseDTO>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
         {
             //Trim All Strings in object
             createAppointmentDTO = ObjectTrimmer.TrimObject(createAppointmentDTO) as CreateAppointmentDTO;
@@ -42,7 +42,7 @@ namespace HairCutAppAPI.Controllers
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             return await _appointmentService.CreateAppointment(createAppointmentDTO);
@@ -57,7 +57,7 @@ namespace HairCutAppAPI.Controllers
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [Authorize(Policy = GlobalVariables.RequireManagerRole)]
         [HttpPut("cancel_appointment/{id}")]
-        public async Task<ActionResult<ChangeAppointmentStatusResponseDTO>> CancelAppointment(int id)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int id)
         {
             return await _appointmentService.CancelAppointment(id);
         }

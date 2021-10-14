@@ -46,9 +46,9 @@ namespace HairCutAppAPI.Entities
                 Id = Id,
                 Description = Description,
                 Name = Name,
-                Latitude = Latitude.ToString(),
-                Longitude = Longitude.ToString(),
-                AvatarUrl = AvatarUrl
+                Latitude = Latitude?.ToString(),
+                Longitude = Longitude?.ToString(),
+                AvatarUrl = AvatarUrl,
             };
         } 
         

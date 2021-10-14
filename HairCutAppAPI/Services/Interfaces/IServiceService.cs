@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.ServiceDTOs;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IServiceService
     {
-        Task<UpdateServiceResponseDto> UpdateService(UpdateServiceDto updateServiceDto);
-        Task<ActionResult<ICollection<ServiceDTO>>> GetAllServices();
-        Task<ActionResult<int>> CreateService(CreateServiceDTO createServiceDTO);
+        Task<CustomHttpCodeResponse> UpdateService(UpdateServiceDto updateServiceDto);
+        Task<ActionResult<CustomHttpCodeResponse>> GetAllServices();
+        Task<ActionResult<CustomHttpCodeResponse>> CreateService(CreateServiceDTO createServiceDTO);
     }
 }

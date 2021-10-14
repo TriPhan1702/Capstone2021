@@ -2,15 +2,16 @@
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.ComboDTOs;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IComboService
     {
-        Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo(UpdateComboDTO updateComboDTO);
-        Task<ActionResult<decimal>> GetComboPrice(int id);
-        Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos();
-        Task<ActionResult<int>> CreateCombo(CreateComboDTO createComboDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id);
+        Task<ActionResult<CustomHttpCodeResponse>> GetAllActiveCombos();
+        Task<ActionResult<CustomHttpCodeResponse>> CreateCombo(CreateComboDTO createComboDTO);
     }
 }

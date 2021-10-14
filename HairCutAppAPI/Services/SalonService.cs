@@ -18,19 +18,19 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<ActionResult<ICollection<CustomerGetSalonListDTO>>> CustomerGetSalonList()
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList()
         {
             var salons = await _repositoryWrapper.Salon.FindByConditionAsync(s=>s.Status == GlobalVariables.SalonStatuses[0]);
-            return salons?.Select(salon => salon.ToCustomerGetSalonListDTO()).ToList();
+            return  new CustomHttpCodeResponse(200, "",salons?.Select(salon => salon.ToCustomerGetSalonListDTO()).ToList());
         }
 
-        public async Task<ActionResult<CreateSalonResponseDTO>> CreateSalon(CreateSalonDTO salonDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon(CreateSalonDTO salonDTO)
         {
             var newSalon = salonDTO.ToNewSalon();
 
             var result = await _repositoryWrapper.Salon.CreateAsync(newSalon);
 
-            return new OkObjectResult(result.ToCreateSalonResponseDTO());
+            return new CustomHttpCodeResponse(200, "", result.ToCreateSalonResponseDTO());
         }
     }
 }

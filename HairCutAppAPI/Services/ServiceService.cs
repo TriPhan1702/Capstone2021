@@ -21,7 +21,7 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<UpdateServiceResponseDto> UpdateService(UpdateServiceDto updateServiceDto)
+        public async Task<CustomHttpCodeResponse> UpdateService(UpdateServiceDto updateServiceDto)
         {
             //Validate request
             if (updateServiceDto.Status != null)
@@ -42,10 +42,10 @@ namespace HairCutAppAPI.Services
             //Update to database
             service = await _repositoryWrapper.Service.UpdateAsync(service, service.Id);
             
-            return service.ToUpdateServiceResponseDto();
+            return new CustomHttpCodeResponse(200,"Service Updated",service.ToUpdateServiceResponseDto()); 
         }
 
-        public async Task<ActionResult<ICollection<ServiceDTO>>> GetAllServices()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllServices()
         {
             var services = await _repositoryWrapper.Service.FindAllAsync();
             var result = new List<ServiceDTO>();
@@ -54,10 +54,10 @@ namespace HairCutAppAPI.Services
                 result.Add(service.ToServiceDTO());
             }
 
-            return result;
+            return new CustomHttpCodeResponse(200,"", result);
         }
 
-        public async Task<ActionResult<int>> CreateService(CreateServiceDTO createServiceDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateService(CreateServiceDTO createServiceDTO)
         {
             //Validate request
             ValidateServiceStatus(createServiceDTO.Status);
@@ -68,7 +68,7 @@ namespace HairCutAppAPI.Services
             //Create new Service in database
             var result = await _repositoryWrapper.Service.CreateAsync(newService);
             
-            return new OkObjectResult(result.Id);
+            return new CustomHttpCodeResponse(200, "Service Created",result.Id);
         }
 
         /// <summary>

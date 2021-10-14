@@ -26,7 +26,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("combo_price/{id}")]
-        public async Task<ActionResult<decimal>> GetComboPrice(int id)
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
         {
             return await _comboService.GetComboPrice(id);
         }
@@ -37,7 +37,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="createComboDTO">, if Services is null or empty, then the combo created will have no service</param>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_combo")]
-        public async Task<ActionResult<int>> CreateCombo([FromBody] CreateComboDTO createComboDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo([FromBody] CreateComboDTO createComboDTO)
         {
             //Trim All Strings in object
             createComboDTO = ObjectTrimmer.TrimObject(createComboDTO) as CreateComboDTO;
@@ -45,7 +45,7 @@ namespace HairCutAppAPI.Controllers
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             return await _comboService.CreateCombo(createComboDTO);
@@ -57,7 +57,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="updateComboDTO"> Empty ot null fields will not be changed, negative duration = null. If Services == null => no change, if Services is empty list => combo has no service</param>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPut("update_combo")]
-        public async Task<ActionResult<UpdateComboResponseDTO>> UpdateCombo([FromBody] UpdateComboDTO updateComboDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo([FromBody] UpdateComboDTO updateComboDTO)
         {
             //Trim All Strings in object
             updateComboDTO = ObjectTrimmer.TrimObject(updateComboDTO) as UpdateComboDTO;
@@ -65,7 +65,7 @@ namespace HairCutAppAPI.Controllers
             //Check input server side
             if (!ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
             return await _comboService.UpdateCombo(updateComboDTO);
@@ -73,9 +73,9 @@ namespace HairCutAppAPI.Controllers
         
         [Authorize]
         [HttpGet("combo_statuses")]
-        public ActionResult<ICollection<string>> GetComboStatuses()
+        public ActionResult<CustomHttpCodeResponse> GetComboStatuses()
         {
-            return GlobalVariables.ComboStatuses;
+            return new CustomHttpCodeResponse(200,"", GlobalVariables.ComboStatuses);
         }
         
         /// <summary>
@@ -84,7 +84,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("active_combos")]
-        public async Task<ActionResult<List<ComboDTO>>> GetAllActiveCombos()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllActiveCombos()
         {
             return await _comboService.GetAllActiveCombos();
         }

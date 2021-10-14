@@ -27,7 +27,7 @@ namespace HairCutAppAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ActionResult<CreateAppointmentResponseDTO>> CreateAppointment(CreateAppointmentDTO createAppointmentDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment(CreateAppointmentDTO createAppointmentDTO)
         {
             //Get Current User's Id
             var customerId = GetCurrentUserId();
@@ -193,10 +193,10 @@ namespace HairCutAppAPI.Services
                 stylistName = stylistAsStaff.FullName;
             }
 
-            return createdAppointment.ToCreateAppointmentResponseDTO(price, stylistId, stylistName);
+            return new CustomHttpCodeResponse(200,"Appointment Created",createdAppointment.ToCreateAppointmentResponseDTO(price, stylistId, stylistName)); 
         }
 
-        public async Task<ActionResult<ChangeAppointmentStatusResponseDTO>> CancelAppointment(int appointmentId)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int appointmentId)
         {
             
             //Find appointment in database
@@ -295,11 +295,10 @@ namespace HairCutAppAPI.Services
                     "Some thing went wrong went canceling Appointment " + e.Message);
             }
             
-            return result.ToChangeAppointmentStatusResponseDTO();
-
+            return new CustomHttpCodeResponse(200,"", result.ToChangeAppointmentStatusResponseDTO()); 
         }
 
-        public async Task<ActionResult<GetAppointmentDetailResponseDTO>> GetAppointmentDetail(int appointmentId)
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentDetail(int appointmentId)
         {
             //Get Current User's Id
             var userId = GetCurrentUserId();
@@ -318,7 +317,7 @@ namespace HairCutAppAPI.Services
 
             var combo = await _repositoryWrapper.Combo.GetComBoWithService(appointment.AppointmentDetail.ComboId);
 
-            return appointment.ToGetAppointmentDetailResponseDTO(combo);
+            return new CustomHttpCodeResponse(200,"",appointment.ToGetAppointmentDetailResponseDTO(combo));
         }
 
         #region private functions

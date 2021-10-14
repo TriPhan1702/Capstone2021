@@ -22,7 +22,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         // [Authorize]
         [HttpGet]
-        public async Task<ActionResult<ICollection<SlotOfDayDTO>>> GetAllSlotsOfDay()
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllSlotsOfDay()
         {
             return await _slotOfDayService.GetAllSlotsOfDay();
         }
