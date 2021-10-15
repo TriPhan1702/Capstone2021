@@ -25,7 +25,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_admin")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateAdmin([FromForm]CreateUserDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateAdmin([FromBody]CreateUserDTO dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as CreateUserDTO;

@@ -66,7 +66,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> Login([FromForm] LoginDTO loginDto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> Login([FromBody] LoginDTO loginDto)
         {
             //Trim All Strings in object
             loginDto = ObjectTrimmer.TrimObject(loginDto) as LoginDTO;
@@ -104,7 +104,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("reset_password")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword([FromForm] ResetPasswordDTO resetPasswordDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
         {
             return await _userService.ResetPassword(resetPasswordDTO);
         }

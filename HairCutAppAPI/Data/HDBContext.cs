@@ -75,11 +75,11 @@ namespace HairCutAppAPI.Data
             //Seed Role
             builder.Entity<AppRole>().HasData
             (
-                new AppRole() {Id = 1, Name = "Administrator", NormalizedName = "ADMINISTRATOR",},
-                new AppRole() {Id = 2, Name = "Manager", NormalizedName = "MANAGER",},
-                new AppRole() {Id = 3, Name = "Stylist", NormalizedName = "STYLIST",},
-                new AppRole() {Id = 4, Name = "Beautician", NormalizedName = "BEAUTICIAN",},
-                new AppRole() {Id = 5, Name = "Customer", NormalizedName = "CUSTOMER",}
+                new AppRole() {Id = 1, Name = GlobalVariables.AdministratorRole, NormalizedName = GlobalVariables.AdministratorRole.ToUpper(),},
+                new AppRole() {Id = 2, Name = GlobalVariables.ManagerRole, NormalizedName = GlobalVariables.ManagerRole.ToUpper(),},
+                new AppRole() {Id = 3, Name = GlobalVariables.StylistRole, NormalizedName = GlobalVariables.StylistRole.ToUpper(),},
+                new AppRole() {Id = 4, Name = GlobalVariables.BeauticianRole, NormalizedName = GlobalVariables.BeauticianRole.ToUpper(),},
+                new AppRole() {Id = 5, Name = GlobalVariables.CustomerRole, NormalizedName = GlobalVariables.CustomerRole.ToUpper(),}
             );
             
             //Seed Admin

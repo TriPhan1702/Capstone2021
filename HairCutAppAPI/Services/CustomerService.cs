@@ -51,9 +51,10 @@ namespace HairCutAppAPI.Services
 
             //Save New User to Database
             var result = await _repositoryWrapper.Customer.CreateAsync(customer);
+            var user =  await _repositoryWrapper.User.FindSingleByConditionAsync(u =>u.Id == result.Id);
 
             //Save Customer's role
-            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newUser, GlobalVariables.CustomerRole);
+            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(user, GlobalVariables.CustomerRole);
             if (!roleResult.Succeeded)
             {
                 return new CustomHttpCodeResponse(500, "Could not add user to Customer Role", roleResult.Errors);

@@ -23,7 +23,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_service")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateService([FromForm] CreateServiceDTO createServiceDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateService([FromBody] CreateServiceDTO createServiceDTO)
         {
             //Trim All Strings in object
             createServiceDTO = ObjectTrimmer.TrimObject(createServiceDTO) as CreateServiceDTO;
@@ -44,7 +44,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPut("update_service")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateService([FromForm] UpdateServiceDto updateServiceDto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateService([FromBody] UpdateServiceDto updateServiceDto)
         {
             //Trim All Strings in object
             updateServiceDto = ObjectTrimmer.TrimObject(updateServiceDto) as UpdateServiceDto;

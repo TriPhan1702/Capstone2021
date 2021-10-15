@@ -25,11 +25,11 @@ namespace HairCutAppAPI.Utilities
         public const int TimeToCreateAppointmentInAdvanced = 2;
         
         //Name of roles
-        public const string AdministratorRole = "Administrator";
-        public const string ManagerRole = "Manager";
-        public const string StylistRole = "Stylist";
-        public const string BeauticianRole = "Beautician";
-        public const string CustomerRole = "Customer";
+        public const string AdministratorRole = "administrator";
+        public const string ManagerRole = "manager";
+        public const string StylistRole = "stylist";
+        public const string BeauticianRole = "beautician";
+        public const string CustomerRole = "customer";
         
         //Names of authorization policies
         public const string RequireAdministratorRole = "RequireAdministratorRole";
@@ -40,7 +40,7 @@ namespace HairCutAppAPI.Utilities
 
         //Status Lists
         public static readonly string[] UserStatuses = {"active", "inactive", "new"};
-        public static readonly string[] StaffTypes = {"Stylist", "Beautician"};
+        public static readonly string[] StaffTypes = {"stylist", "beautician", "manager"};
         public static readonly string[] ServiceStatuses = {"active", "inactive"};
         public static readonly string[] ComboStatuses = {"active", "inactive"};
         public static readonly string[] DeviceStatuses = {"active", "inactive"};

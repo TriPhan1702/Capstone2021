@@ -36,7 +36,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
         [HttpPost("create_salon")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon([FromForm] CreateSalonDTO createSalonDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon([FromBody] CreateSalonDTO createSalonDTO)
         {
             //Trim All Strings in object
             createSalonDTO = ObjectTrimmer.TrimObject(createSalonDTO) as CreateSalonDTO;

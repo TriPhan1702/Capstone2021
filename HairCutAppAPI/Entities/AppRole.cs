@@ -5,6 +5,6 @@ namespace HairCutAppAPI.Entities
 {
     public class AppRole : IdentityRole<int>
     {
-        public ICollection<AppUserRole> UserRole { get; set; }
+        public virtual  ICollection<AppUserRole> UserRole { get; set; }
     }
 }

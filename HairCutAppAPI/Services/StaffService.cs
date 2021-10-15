@@ -1,10 +1,12 @@
 ﻿using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.Errors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,19 +28,18 @@ namespace HairCutAppAPI.Services
             //Check if User exists
             if (await UserExists(dto.UserName))
             {
-                return new BadRequestObjectResult("Username Already Exists");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Username Already Exists");
             }
             
             //Check if staff type exists
             if (!GlobalVariables.StaffTypes.Contains(dto.StaffType))
             {
-                return new BadRequestObjectResult("Staff type is invalid, must be: " +
-                                                  string.Join(", ", GlobalVariables.StaffTypes));
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Staff type is invalid, must be: " + string.Join(", ", GlobalVariables.StaffTypes)); 
             }
 
             if (dto.SalonId>=0 && await SalonExists(dto.SalonId) is false)
             {
-                return new BadRequestObjectResult("Salon doesn't exist");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Salon doesn't exist");
             }
 
             // from Dto to Staff
@@ -49,7 +50,7 @@ namespace HairCutAppAPI.Services
 
             //Save staff's role
             string role;
-            switch (dto.StaffType)
+            switch (dto.StaffType.ToLower())
             {
                 case GlobalVariables.StylistRole:
                     role = GlobalVariables.StylistRole;
@@ -57,15 +58,24 @@ namespace HairCutAppAPI.Services
                 case GlobalVariables.BeauticianRole:
                     role = GlobalVariables.BeauticianRole;
                     break;
+                case GlobalVariables.ManagerRole:
+                    role = GlobalVariables.ManagerRole;
+                    break;
                 default:
                     return new BadRequestObjectResult("Staff type is invalid, must be: " +
                                                       string.Join(", ", GlobalVariables.StaffTypes));
             }
 
-            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(newStaff.User,role);
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == result.Id);
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Created user not found");
+            }
+
+            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(user,role);
             if (!roleResult.Succeeded)
             {
-                return new BadRequestObjectResult(roleResult.Errors);
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, roleResult.Errors.ToString());
             }
 
             return new CustomHttpCodeResponse(200,"", result.Id);

@@ -16,22 +16,22 @@ namespace HairCutAppAPI.Controllers
             _userService = userService;
         }
         
-        /// <summary>
-        /// Used Admin the create manager
-        /// </summary>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [HttpPost("create_manager")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateManager([FromForm]CreateUserDTO dto)
-        {
-            //Trim All Strings in object
-            dto = ObjectTrimmer.TrimObject(dto) as CreateUserDTO;
-            //Validate form
-            if (!ModelState.IsValid)
-            {
-                return new CustomHttpCodeResponse(400,"",ModelState);
-            }
-            
-            return await _userService.CreateUser(dto, GlobalVariables.ManagerRole);
-        }
+        // /// <summary>
+        // /// Used Admin the create manager
+        // /// </summary>
+        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        // [HttpPost("create_manager")]
+        // public async Task<ActionResult<CustomHttpCodeResponse>> CreateManager([FromForm]CreateUserDTO dto)
+        // {
+        //     //Trim All Strings in object
+        //     dto = ObjectTrimmer.TrimObject(dto) as CreateUserDTO;
+        //     //Validate form
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return new CustomHttpCodeResponse(400,"",ModelState);
+        //     }
+        //     
+        //     return await _userService.CreateUser(dto, GlobalVariables.ManagerRole);
+        // }
     }
 }
