@@ -47,15 +47,13 @@ namespace HairCutAppAPI.Data
                 .HasMany(ur => ur.UserRole)
                 .WithOne(u => u.User)
                 .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<AppRole>()
                 .HasMany(ur => ur.UserRole)
                 .WithOne(r => r.Role)
                 .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Restrict)
-                .IsRequired();
+                .OnDelete(DeleteBehavior.Restrict);
             
             builder.Entity<Appointment>()
                 .HasOne(a => a.AppointmentDetail)

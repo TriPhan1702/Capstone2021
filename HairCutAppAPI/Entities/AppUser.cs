@@ -25,7 +25,10 @@ namespace HairCutAppAPI.Entities
         [MinLength(1), MaxLength(20)]
         public string Status { get; set; }
         
-        public virtual  ICollection<AppUserRole> UserRole { get; set; }
+        public virtual ICollection<AppUserRole> UserRole { get; set; }
+        
+        public virtual ICollection<Customer> Customers { get; set; }
+        public virtual ICollection<Staff> Staffs { get; set; }
         
         public Device Device { get; set; }
 

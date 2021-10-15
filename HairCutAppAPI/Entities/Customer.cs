@@ -6,10 +6,12 @@ namespace HairCutAppAPI.Entities
 {
     public class Customer
     {
-        //One-to-One relationship with User
         [Key]
-        [ForeignKey("User")]
         public int Id { get; set; }
+        
+        //One-to-One relationship with User
+        [ForeignKey("User")]
+        public int UserId { get; set; }
         public AppUser User { get; set; }
         
         [Required]
