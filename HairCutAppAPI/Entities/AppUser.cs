@@ -6,26 +6,24 @@ using Microsoft.AspNetCore.Identity;
 
 namespace HairCutAppAPI.Entities
 {
-    public class AppUser : IdentityUser<int>
+    public class AppUser
     {
-        [Required]
-        public override string UserName { get; set; }
-        [Required]
-        public override string NormalizedUserName { get; set; }
+        [Key]
+        public int Id { get; set; }
 
         [Required]
-        public override string Email { get; set; }
-        [Required]
-        public override string NormalizedEmail { get; set; }
+        public string Email { get; set; }
 
         [Required]
-        public override string PasswordHash { get; set; }
+        public byte[] PasswordHash { get; set; }
+        
+        public byte[] PasswordSalt { get; set; }
         
         [Required]
         [MinLength(1), MaxLength(20)]
         public string Status { get; set; }
         
-        public virtual ICollection<AppUserRole> UserRole { get; set; }
+        public string Role { get; set; }
         
         public virtual ICollection<Customer> Customers { get; set; }
         public virtual ICollection<Staff> Staffs { get; set; }
@@ -35,7 +33,7 @@ namespace HairCutAppAPI.Entities
         //Numeric only, length 10
         [StringLength(10)]
         [RegularExpression(@"^[0-9]{10}$", ErrorMessage = "Must be 10 digits")]
-        public override string PhoneNumber { get; set; }
+        public string PhoneNumber { get; set; }
         
         [Url]
         public string AvatarUrl { get; set; }
@@ -45,12 +43,11 @@ namespace HairCutAppAPI.Entities
             var result = new GetUserListResponseDTO
             {
                 Id = Id,
-                UserName = UserName,
                 Email = Email,
                 Status = Status,
                 AvatarUrl = AvatarUrl,
                 PhoneNumber = PhoneNumber,
-                UserRoles = UserRole.Select(role => role.Role.Name).ToList()
+                Role = Role
             };
 
             return result;

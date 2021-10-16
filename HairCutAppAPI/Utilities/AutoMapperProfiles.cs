@@ -8,9 +8,6 @@ namespace HairCutAppAPI.Utilities
     {
         public AutoMapperProfiles()
         {
-            CreateMap<CreateCustomerDto, AppUser>().ForMember(des=>des.UserName, 
-                opt=>opt.MapFrom(u=>u.UserName.ToLower()));
-            
         }
     }
 }

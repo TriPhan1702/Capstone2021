@@ -19,14 +19,10 @@ namespace HairCutAppAPI.Repositories
     public class UserRepository : RepositoryBase<AppUser>, IUserRepository
     {
         private readonly HDBContext _hdbContext;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
 
-        public UserRepository(HDBContext hdbContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(hdbContext)
+        public UserRepository(HDBContext hdbContext) : base(hdbContext)
         {
             _hdbContext = hdbContext;
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         public async Task<PagedList<GetUserListResponseDTO>> AdvancedGetUsers(PaginationParams paginationParams)

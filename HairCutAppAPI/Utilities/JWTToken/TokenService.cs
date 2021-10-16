@@ -34,13 +34,13 @@ namespace HairCutAppAPI.Utilities
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
             };
 
             //Get the roles of user to add role into token
-            var roles = await _userManager.GetRolesAsync(user);
+            var role = user.Role;
             //Add all of user's role to token
-            claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
+            claims.Add(new Claim(ClaimTypes.Role, role));
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 

@@ -9,11 +9,8 @@ using Microsoft.EntityFrameworkCore;
 namespace HairCutAppAPI.Data
 {
     //Make sure that User, Role and UserRole have int as ID
-    public class HDBContext : IdentityDbContext<AppUser, AppRole, int
-        , IdentityUserClaim<int>, AppUserRole, IdentityUserLogin<int>,
-        IdentityRoleClaim<int>, IdentityUserToken<int>>
+    public class HDBContext : DbContext
     {
-        private readonly IPasswordHasher<AppUser> _passwordHasher;
         public DbSet<Salon> Salons { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -33,27 +30,13 @@ namespace HairCutAppAPI.Data
         public DbSet<Crew> Crews { get; set; }
         public DbSet<CrewDetail> CrewDetails { get; set; }
         
-        public HDBContext(DbContextOptions options, IPasswordHasher<AppUser> passwordHasher) : base(options)
+        public HDBContext(DbContextOptions options) : base(options)
         {
-            _passwordHasher = passwordHasher;
         }
         
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
-            //Relationship between in Many-Many tables
-            builder.Entity<AppUser>()
-                .HasMany(ur => ur.UserRole)
-                .WithOne(u => u.User)
-                .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            builder.Entity<AppRole>()
-                .HasMany(ur => ur.UserRole)
-                .WithOne(r => r.Role)
-                .HasForeignKey(ur => ur.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
             
             builder.Entity<Appointment>()
                 .HasOne(a => a.AppointmentDetail)
@@ -81,35 +64,26 @@ namespace HairCutAppAPI.Data
             );
             
             //Seed Admin
-            builder.Entity<AppUser>().HasData
-            (
-                new AppUser(){
-                    Id = 1, 
-                    Status = "Active",
-                    UserName = "admin123",
-                    NormalizedUserName = "ADMIN123", 
-                    Email = "tphan2883@gmail.com", 
-                    NormalizedEmail = "TPHAN2882@GMAIL.COM",
-                    EmailConfirmed = false, 
-                    PhoneNumber = "0869190061",
-                    PhoneNumberConfirmed = false,
-                    TwoFactorEnabled = false,
-                    LockoutEnabled = false,
-                    AccessFailedCount = 0,
-                    PasswordHash = _passwordHasher.HashPassword(null,"Test123"),
-                    SecurityStamp = Guid.NewGuid().ToString()
-                }
-            );
+            // builder.Entity<AppUser>().HasData
+            // (
+            //     new AppUser(){
+            //         Id = 1, 
+            //         Status = "Active",
+            //         Email = "tphan2883@gmail.com", 
+            //         PhoneNumber = "0869190061",
+            //         PasswordHash = _passwordHasher.HashPassword(null,"Test123"),
+            //     }
+            // );
             
-            //Seed Admin Role
-            builder.Entity<AppUserRole>().HasData
-            (
-                new AppUserRole()
-                {
-                    UserId = 1,
-                    RoleId = 1,
-                }
-            );
+            // //Seed Admin Role
+            // builder.Entity<AppUserRole>().HasData
+            // (
+            //     new AppUserRole()
+            //     {
+            //         UserId = 1,
+            //         RoleId = 1,
+            //     }
+            // );
             
             //Seed Services
             builder.Entity<Service>().HasData
