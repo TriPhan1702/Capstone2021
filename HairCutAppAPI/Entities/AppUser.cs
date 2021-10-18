@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
 
 namespace HairCutAppAPI.Entities
@@ -32,7 +33,7 @@ namespace HairCutAppAPI.Entities
 
         //Numeric only, length 10
         [StringLength(10)]
-        [RegularExpression(@"^[0-9]{10}$", ErrorMessage = "Must be 10 digits")]
+        [RegularExpression(GlobalVariables.PhoneNumberRegex, ErrorMessage = "Must be 10 digits")]
         public string PhoneNumber { get; set; }
         
         [Url]

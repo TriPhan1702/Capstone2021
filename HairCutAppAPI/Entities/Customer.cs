@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HairCutAppAPI.DTOs.CustomerDTO;
 
 namespace HairCutAppAPI.Entities
 {
@@ -20,5 +21,18 @@ namespace HairCutAppAPI.Entities
         public string FullName { get; set; }
         
         public ICollection<Appointment> Appointments { get; set; }
+
+        public CustomerDetailDTO ToCustomerDetailDTO()
+        {
+            return new CustomerDetailDTO()
+            {
+                FullName = FullName,
+                Email = User.Email,
+                PhoneNumber = User.PhoneNumber,
+                UserId = User.Id,
+                CustomerId = Id,
+                AvatarUrl = User.AvatarUrl
+            };
+        }
     }
 }

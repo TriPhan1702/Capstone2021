@@ -15,6 +15,18 @@ namespace HairCutAppAPI.Controllers
         {
             _customerService = customerService;
         }
+
+        /// <summary>
+        /// Get profile of a customer
+        /// </summary>
+        /// <param name="id">UserId</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetCustomerDetail(int id)
+        {
+            return await _customerService.GetCustomerDetail(id);
+        }
         
         /// <summary>
         /// Used by customer to create account
