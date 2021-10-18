@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
 using HairCutAppAPI.Entities;
@@ -7,6 +9,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,10 +18,12 @@ namespace HairCutAppAPI.Services
     public class StaffService : IStaffService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public StaffService(IRepositoryWrapper repositoryWrapper)
+        public StaffService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor)
         {
             _repositoryWrapper = repositoryWrapper;
+            _httpContextAccessor = httpContextAccessor;
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateStaff(CreateStaffDTO dto)
@@ -54,7 +59,22 @@ namespace HairCutAppAPI.Services
         
             return new CustomHttpCodeResponse(200,"", result.Id);
         }
-        
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetStaffDetail(int userId)
+        {
+            var currentUserId = GetCurrentUserId();
+            var currentUserRole = GetCurrentUserRole();
+
+            //Get customer from database
+            var staff = await _repositoryWrapper.Staff.GetStaffDetail(userId);
+            if (staff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Staff with UserId {userId} not found");
+            }
+
+            return new CustomHttpCodeResponse(200, "", staff.ToStaffDetailDTO());
+        }
+
         //Check if user exists by username and email
         private async Task<bool> UserExists(string email)
         {
@@ -65,6 +85,48 @@ namespace HairCutAppAPI.Services
         private async Task<bool> SalonExists(int salonId)
         {
             return await _repositoryWrapper.Salon.AnyAsync(s => s.Id == salonId);
+        }
+        
+        private int GetCurrentUserId()
+        {
+            int customerId;
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
+            }
+
+            try
+            {
+                //Get Current customer Id
+                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Current User Id not Found");
+            }
+
+            return customerId;
+        }
+        
+        private string GetCurrentUserRole()
+        {
+            string role;
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
+            }
+
+            try
+            {
+                //Get Current customer Id
+                role = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Role);
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Current User Id not Found");
+            }
+
+            return role;
         }
     }
 }

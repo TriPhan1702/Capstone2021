@@ -1,7 +1,9 @@
-﻿using HairCutAppAPI.Data;
+﻿using System.Threading.Tasks;
+using HairCutAppAPI.Data;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairCutAppAPI.Repositories
 {
@@ -12,6 +14,11 @@ namespace HairCutAppAPI.Repositories
         public StaffRepository(HDBContext hdbContext) : base(hdbContext)
         {
             _hdbContext = hdbContext;
+        }
+
+        public async Task<Staff> GetStaffDetail(int userId)
+        {
+            return await _hdbContext.Staff.Include(staff => staff.User).FirstOrDefaultAsync(staff => staff.UserId == userId);
         }
     }
 }

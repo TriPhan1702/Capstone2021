@@ -17,6 +17,18 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Get profile of a staff
+        /// </summary>
+        /// <param name="id">UserId</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetStaffDetail(int id)
+        {
+            return await _staffService.GetStaffDetail(id);
+        }
+        
+        /// <summary>
         /// For Admin to create staff
         /// </summary>
         /// <param name="createStaffDTO"></param>
