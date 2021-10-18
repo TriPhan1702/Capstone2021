@@ -12,7 +12,6 @@ namespace HairCutAppAPI.Repositories
     public class RepositoryWrapper : IRepositoryWrapper
     {
         private readonly HDBContext _context;
-        private readonly SignInManager<AppUser> _signInManager;
         private IUserRepository _user;
         private ICustomerRepository _customer;
         private IStaffRepository _staff;
@@ -29,21 +28,17 @@ namespace HairCutAppAPI.Repositories
         private IAppointmentRatingRepository _appointmentRating;
         private ICrewRepository _crew;
         private ICrewDetailRepository _crewDetail;
-            
-        private readonly UserManager<AppUser> _userManager;
 
-        public RepositoryWrapper(UserManager<AppUser> userManager, HDBContext context, SignInManager<AppUser> signInManager)
+        public RepositoryWrapper( HDBContext context)
         {
-            _userManager = userManager;
             _context = context;
-            _signInManager = signInManager;
         }
 
         #region Create concrete repositories if there aren't
         
-        public IUserRepository User => _user ??= new UserRepository(_context, _userManager, _signInManager);
-        public ICustomerRepository Customer => _customer ??= new CustomerRepository(_context, _userManager, _signInManager);
-        public IStaffRepository Staff => _staff ??= new StaffRepository(_context, _userManager, _signInManager);
+        public IUserRepository User => _user ??= new UserRepository(_context);
+        public ICustomerRepository Customer => _customer ??= new CustomerRepository(_context);
+        public IStaffRepository Staff => _staff ??= new StaffRepository(_context);
         public ISalonRepository Salon => _salon ??= new SalonRepository(_context);
         public IServiceRepository Service => _service ??= new ServiceRepository(_context);
         public IComboRepository Combo => _combo ??= new ComboRepository(_context);

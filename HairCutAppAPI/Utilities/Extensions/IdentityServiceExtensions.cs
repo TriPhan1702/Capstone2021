@@ -14,16 +14,6 @@ namespace HairCutAppAPI.Utilities.Extensions
     {
         public static IServiceCollection AddIdentityServices(this IServiceCollection services, IConfiguration config)
         {
-            services.AddIdentityCore<AppUser>(opt =>
-                {
-                    opt.Password.RequireNonAlphanumeric = false;
-                })
-                .AddRoles<AppRole>()
-                .AddRoleManager<RoleManager<AppRole>>()
-                .AddSignInManager<SignInManager<AppUser>>()
-                .AddRoleValidator<RoleValidator<AppRole>>()
-                .AddEntityFrameworkStores<HDBContext>()
-                .AddTokenProvider<DataProtectorTokenProvider<AppUser>>(TokenOptions.DefaultProvider);
 
             //Authentication middleware
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -11,11 +11,11 @@ namespace HairCutAppAPI.Services.Interfaces
     {
         Task<ActionResult<CustomHttpCodeResponse>> CreateUser(CreateUserDTO createUserDTO, string role);
         Task<ActionResult<CustomHttpCodeResponse>> GetUsers();
-        Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(PaginationParams paginationParams);
+        // Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(PaginationParams paginationParams);
         Task<ActionResult<AppUser>> FindById(int id);
         Task<ActionResult<CustomHttpCodeResponse>> Login(LoginDTO loginDto);
-        Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email);
-        Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO);
+        // Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email);
+        // Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO);
         Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken);
         Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken);
     }

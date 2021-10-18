@@ -93,7 +93,7 @@ namespace HairCutAppAPI.Services
             {
                 //Check if stylist exists
                 stylist= await _repositoryWrapper.User.FindSingleByConditionAsync(c => c.Id == createAppointmentDTO.StylistId);
-                if (!await _repositoryWrapper.User.CheckRole(stylist, GlobalVariables.StylistRole))
+                if (!await _repositoryWrapper.User.CheckRole(stylist.Email, GlobalVariables.StylistRole))
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Stylist with Id {createAppointmentDTO.StylistId} doesn't exist");
                 }
@@ -222,15 +222,15 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Current User not found");
             }
-            //If User is a customer
-            if (await _repositoryWrapper.User.CheckRole(user, GlobalVariables.CustomerRole))
-            {
-                //If Customer Id is not the same as appointment's user id, abort
-                if (userId != appointment.CustomerId)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer Id doesn't match");
-                }
-            }
+            // If User is a customer
+             if (user.Role.ToLower() == GlobalVariables.CustomerRole.ToLower())
+             {
+                 //If Customer Id is not the same as appointment's user id, abort
+                 if (userId != appointment.CustomerId)
+                 {
+                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer Id doesn't match");
+                 }
+             }
 
             //If the appointment already has a crew chosen, change the status of WorkSlots associated with the crew
             if (appointment.AppointmentDetail.CrewId != null)
@@ -308,15 +308,15 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Appointment not found");
             }
-
+        
             //If current User is a customer and the id doesn't match with the appointment's customer Id, abort
             if ( await CheckUserOfRoleExists(userId, GlobalVariables.CustomerRole) && appointment.CustomerId != userId)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current user is not the owner of this appointment");
             }
-
+        
             var combo = await _repositoryWrapper.Combo.GetComBoWithService(appointment.AppointmentDetail.ComboId);
-
+        
             return new CustomHttpCodeResponse(200,"",appointment.ToGetAppointmentDetailResponseDTO(combo));
         }
 
@@ -360,13 +360,7 @@ namespace HairCutAppAPI.Services
         
         private async Task<bool> CheckUserOfRoleExists(int userId, string role)
         {
-            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(c => c.Id == userId);
-            if (user is null)
-            {
-                return false;
-            }
-
-            return await _repositoryWrapper.User.CheckRole(user, role);
+            return await _repositoryWrapper.User.AnyAsync(user => user.Id == userId && user.Role.ToLower() == role.ToLower());
         }
 
         private async Task CheckSlot(int startSlotOfDayId)

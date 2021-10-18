@@ -62,14 +62,17 @@ namespace HairCutAppAPI.Controllers
         /// For Admin to get all services from database
         /// </summary>
         /// <returns></returns>
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [HttpGet]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAllServices()
         {
             return await _serviceService.GetAllServices();
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpGet("service_statuses")]
         public ActionResult<CustomHttpCodeResponse> GetServiceStatuses()
         {

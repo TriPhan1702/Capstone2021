@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +13,7 @@ namespace HairCutAppAPI.Data
     //Make sure that User, Role and UserRole have int as ID
     public class HDBContext : DbContext
     {
+        public DbSet<AppUser> Users { get; set; }
         public DbSet<Salon> Salons { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -37,6 +40,7 @@ namespace HairCutAppAPI.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            using var hmac = new HMACSHA512();
             
             builder.Entity<Appointment>()
                 .HasOne(a => a.AppointmentDetail)
@@ -52,38 +56,20 @@ namespace HairCutAppAPI.Data
 
             //Get Current time
             var now = DateTime.Now;
-            
-            //Seed Role
-            builder.Entity<AppRole>().HasData
-            (
-                new AppRole() {Id = 1, Name = GlobalVariables.AdministratorRole, NormalizedName = GlobalVariables.AdministratorRole.ToUpper(),},
-                new AppRole() {Id = 2, Name = GlobalVariables.ManagerRole, NormalizedName = GlobalVariables.ManagerRole.ToUpper(),},
-                new AppRole() {Id = 3, Name = GlobalVariables.StylistRole, NormalizedName = GlobalVariables.StylistRole.ToUpper(),},
-                new AppRole() {Id = 4, Name = GlobalVariables.BeauticianRole, NormalizedName = GlobalVariables.BeauticianRole.ToUpper(),},
-                new AppRole() {Id = 5, Name = GlobalVariables.CustomerRole, NormalizedName = GlobalVariables.CustomerRole.ToUpper(),}
-            );
-            
+
             //Seed Admin
-            // builder.Entity<AppUser>().HasData
-            // (
-            //     new AppUser(){
-            //         Id = 1, 
-            //         Status = "Active",
-            //         Email = "tphan2883@gmail.com", 
-            //         PhoneNumber = "0869190061",
-            //         PasswordHash = _passwordHasher.HashPassword(null,"Test123"),
-            //     }
-            // );
-            
-            // //Seed Admin Role
-            // builder.Entity<AppUserRole>().HasData
-            // (
-            //     new AppUserRole()
-            //     {
-            //         UserId = 1,
-            //         RoleId = 1,
-            //     }
-            // );
+            builder.Entity<AppUser>().HasData
+            (
+                new AppUser(){
+                    Id = 1, 
+                    Status = "Active",
+                    Email = "tphan2883@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.ManagerRole,
+                }
+            );
             
             //Seed Services
             builder.Entity<Service>().HasData

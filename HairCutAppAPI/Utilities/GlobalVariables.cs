@@ -8,6 +8,10 @@ namespace HairCutAppAPI.Utilities
     {
         //Regex
         public const string DateRegex = @"(((0|1)[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/((19|20)\d\d))$";
+        public const string EmailRegex = @"^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$";
+        public const string PhoneNumberRegex = @"^(?:[0-9]{10})$";
+        
+        //Messages
         public const string DateRegexMessage = "dd/MM/yyyy";
         
         //Social Login Platforms
@@ -30,6 +34,8 @@ namespace HairCutAppAPI.Utilities
         public const string StylistRole = "stylist";
         public const string BeauticianRole = "beautician";
         public const string CustomerRole = "customer";
+        public static readonly string[] Roles = {AdministratorRole, ManagerRole, StylistRole,BeauticianRole,CustomerRole};
+        public static readonly string[] UserRolesWithoutSeparateTable = {AdministratorRole};
         
         //Names of authorization policies
         public const string RequireAdministratorRole = "RequireAdministratorRole";

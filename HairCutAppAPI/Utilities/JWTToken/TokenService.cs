@@ -16,14 +16,12 @@ namespace HairCutAppAPI.Utilities
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _config;
-        private readonly UserManager<AppUser> _userManager;
 
         //Key to decrypt and encrypt token
         private readonly SymmetricSecurityKey _key;
-        public TokenService(IConfiguration config, UserManager<AppUser> userManager)
+        public TokenService(IConfiguration config)
         {
             _config = config;
-            _userManager = userManager;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
         }
 
@@ -36,11 +34,9 @@ namespace HairCutAppAPI.Utilities
                 new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, user.Email),
             };
-
-            //Get the roles of user to add role into token
-            var role = user.Role;
+            
             //Add all of user's role to token
-            claims.Add(new Claim(ClaimTypes.Role, role));
+            claims.Add(new Claim(ClaimTypes.Role, user.Role));
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 

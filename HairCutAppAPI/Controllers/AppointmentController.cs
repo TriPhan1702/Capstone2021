@@ -16,17 +16,17 @@ namespace HairCutAppAPI.Controllers
             _appointmentService = appointmentService;
         }
         
-        /// <summary>
-        /// Get detail about an appointment
-        /// </summary>
-        /// <param name="id">Appointment Id</param>
-        /// <returns></returns>
-        [Authorize]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
-        {
-            return await _appointmentService.GetAppointmentDetail(id);
-        }
+        // /// <summary>
+        // /// Get detail about an appointment
+        // /// </summary>
+        // /// <param name="id">Appointment Id</param>
+        // /// <returns></returns>
+        // [Authorize]
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
+        // {
+        //     return await _appointmentService.GetAppointmentDetail(id);
+        // }
         
         /// <summary>
         /// For Customer to create appointment

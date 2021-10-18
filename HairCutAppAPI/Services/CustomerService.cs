@@ -22,51 +22,42 @@ namespace HairCutAppAPI.Services
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
-        private readonly IPasswordHasher<AppUser> _passwordHasher;
 
-        public CustomerService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ITokenService tokenService, IPasswordHasher<AppUser> passwordHasher)
+        public CustomerService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ITokenService tokenService)
         {
             _repositoryWrapper = repositoryWrapper;
             _mapper = mapper;
             _tokenService = tokenService;
-            _passwordHasher = passwordHasher;
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> Register(CreateCustomerDto dto)
         {
             //Check if User exists
-            if (await UserExists(dto.UserName))
+            if (await UserExists(dto.Email))
             {
-                return new CustomHttpCodeResponse(400, "User name already Exists");
+                return new CustomHttpCodeResponse(400, "Email already Exists");
             }
-
+        
             // from Dto to AppUser
-            var newUser = dto.ToNewAppUser(_passwordHasher.HashPassword(null, dto.Password));
-
+            var newUser = dto.ToNewAppUser(dto.Password);
+        
             var customer = new Customer()
             {
                 User = newUser,
                 FullName = dto.FullName,
             };
-
+        
             //Save New User to Database
             var result = await _repositoryWrapper.Customer.CreateAsync(customer);
             var user =  await _repositoryWrapper.User.FindSingleByConditionAsync(u =>u.Id == result.Id);
-
-            //Save Customer's role
-            var roleResult = await _repositoryWrapper.User.AddToRoleAsync(user, GlobalVariables.CustomerRole);
-            if (!roleResult.Succeeded)
-            {
-                return new CustomHttpCodeResponse(500, "Could not add user to Customer Role", roleResult.Errors);
-            }
-
+        
             return new CustomHttpCodeResponse(200, "Customer added", result.Id);
         }
         
         //Check if user exists by username and email
-        private async Task<bool> UserExists(string username)
+        private async Task<bool> UserExists(string email)
         {
-            return await _repositoryWrapper.User.AnyAsync(u => u.UserName == username.ToLower());
+            return await _repositoryWrapper.User.AnyAsync(u => u.Email == email.ToLower());
         }
     }
 }

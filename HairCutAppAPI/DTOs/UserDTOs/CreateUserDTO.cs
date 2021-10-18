@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 
@@ -9,8 +11,9 @@ namespace HairCutAppAPI.DTOs
     public class CreateUserDTO
     {
         [Required]
-        [MinLength(3), MaxLength(100)]
-        public string UserName { get; set; }
+        [EmailAddress]
+        [RegularExpression(GlobalVariables.EmailRegex)]
+        public string Email { get; set; }
         
         [Required]
         [MinLength(3), MaxLength(50)]
@@ -23,32 +26,21 @@ namespace HairCutAppAPI.DTOs
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
         
-        [Required]
-        [EmailAddress]
-        [RegularExpression(@"^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$", ErrorMessage = "Must be Gmail")]
-        public string Email { get; set; }
-        
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^(?:[0-9]{10})$", ErrorMessage = "Phone Number is Invalid")]
+        [RegularExpression(GlobalVariables.PhoneNumberRegex, ErrorMessage = "Phone Number is Invalid")]
         public string PhoneNumber { get; set; }
 
-        public AppUser ToNewUser( string password)
+        public AppUser ToNewUser(string password, string role)
         {
+            using var hmac = new HMACSHA512();
             return new AppUser()
             {
                 Email = Email,
-                NormalizedEmail = Email.ToUpper(),
-                EmailConfirmed = false,
-                UserName = UserName.ToLower(),
-                NormalizedUserName = UserName.ToUpper(),
-                PasswordHash = password,
-                SecurityStamp = Guid.NewGuid().ToString(),
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
+                PasswordSalt = hmac.Key,
                 Status = GlobalVariables.NewUserStatus,
                 PhoneNumber = PhoneNumber,
-                PhoneNumberConfirmed = false,
-                TwoFactorEnabled = false,
-                LockoutEnabled = false,
-                AccessFailedCount = 0
+                Role = role.ToLower()
             };
         }
     }

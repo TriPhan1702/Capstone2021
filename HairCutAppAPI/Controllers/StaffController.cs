@@ -33,7 +33,7 @@ namespace HairCutAppAPI.Controllers
             {
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
-
+        
             return await _staffService.CreateStaff(createStaffDTO);
         }
     }

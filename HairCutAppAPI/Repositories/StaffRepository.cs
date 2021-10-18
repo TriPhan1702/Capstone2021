@@ -8,14 +8,10 @@ namespace HairCutAppAPI.Repositories
     public class StaffRepository : RepositoryBase<Staff>, IStaffRepository
     {
         private readonly HDBContext _hdbContext;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
         
-        public StaffRepository(HDBContext hdbContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(hdbContext)
+        public StaffRepository(HDBContext hdbContext) : base(hdbContext)
         {
             _hdbContext = hdbContext;
-            _userManager = userManager;
-            _signInManager = signInManager;
         }
     }
 }

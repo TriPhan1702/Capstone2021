@@ -6,6 +6,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
 {
     public interface ICustomerRepository : IRepositoryBase<Customer>
     {
-        Task<IdentityResult> CreateUsingUserManagerAsync(AppUser user, string password);
+        // Task<IdentityResult> CreateUsingUserManagerAsync(AppUser user, string password);
     }
 }

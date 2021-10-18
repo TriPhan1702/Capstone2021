@@ -9,20 +9,10 @@ namespace HairCutAppAPI.Repositories
     public class CustomerRepository : RepositoryBase<Customer>, ICustomerRepository
     {
         private readonly HDBContext _hdbContext;
-        private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;
 
-        public CustomerRepository(HDBContext hdbContext, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(hdbContext)
+        public CustomerRepository(HDBContext hdbContext) : base(hdbContext)
         {
             _hdbContext = hdbContext;
-            _userManager = userManager;
-            _signInManager = signInManager;
-        }
-
-        public async Task<IdentityResult> CreateUsingUserManagerAsync(AppUser user, string password)
-        {
-            //Save New User to Database
-            return await _userManager.CreateAsync(user, password);
         }
     }
 }

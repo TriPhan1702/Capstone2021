@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 
@@ -7,10 +9,6 @@ namespace HairCutAppAPI.DTOs
 {
     public class CreateStaffDTO
     {
-        [Required]
-        [MinLength(3), MaxLength(100)]
-        public string UserName { get; set; }
-        
         [Required]
         [MinLength(3)]
         [MaxLength(50)]
@@ -35,7 +33,7 @@ namespace HairCutAppAPI.DTOs
         public string Email { get; set; }
         
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^(?:[0-9]{10})$", ErrorMessage = "Phone Number has to have 10 numeric characters")]
+        [RegularExpression(GlobalVariables.PhoneNumberRegex, ErrorMessage = "Phone Number has to have 10 numeric characters")]
         public string PhoneNumber { get; set; }
         
         public int SalonId { get; set; }
@@ -44,30 +42,22 @@ namespace HairCutAppAPI.DTOs
         [MaxLength(20)]
         public string StaffType { get; set; }
 
-        public Staff ToNewStaff(string passwordHash, string staffType, int salonId = -1)
+        public Staff ToNewStaff(string password, string staffType, int salonId = -1)
         {
+            using var hmac = new HMACSHA512();
             
             var result = new Staff()
             {
                 User = new AppUser()
                 {
                     Email = Email,
-                    NormalizedEmail = Email.ToUpper(),
-                    EmailConfirmed = false,
-                    UserName = UserName.ToLower(),
-                    NormalizedUserName = UserName.ToUpper(),
-                    PasswordHash = passwordHash,
-                    SecurityStamp = Guid.NewGuid().ToString(),
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
+                    PasswordSalt = hmac.Key,
                     Status = GlobalVariables.NewUserStatus,
                     PhoneNumber = PhoneNumber,
-                    PhoneNumberConfirmed = false,
-                    TwoFactorEnabled = false,
-                    LockoutEnabled = false,
-                    AccessFailedCount = 0,
+                    Role = staffType,
                 },
                 Description = Description,
-                AppointmentsNumber = 0,
-                SuccessfulAppointmentsNumber = 0,
                 FullName = FullName,
                 StaffType = staffType,
             };
