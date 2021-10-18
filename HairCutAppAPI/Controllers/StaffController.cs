@@ -21,7 +21,10 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="id">UserId</param>
         /// <returns></returns>
-        [Authorize]
+        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
+        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetStaffDetail(int id)
         {
