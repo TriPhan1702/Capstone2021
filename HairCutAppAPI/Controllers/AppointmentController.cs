@@ -16,23 +16,23 @@ namespace HairCutAppAPI.Controllers
             _appointmentService = appointmentService;
         }
         
-        // /// <summary>
-        // /// Get detail about an appointment
-        // /// </summary>
-        // /// <param name="id">Appointment Id</param>
-        // /// <returns></returns>
-        // [Authorize]
-        // [HttpGet("{id}")]
-        // public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
-        // {
-        //     return await _appointmentService.GetAppointmentDetail(id);
-        // }
+        /// <summary>
+        /// Get detail about an appointment
+        /// </summary>
+        /// <param name="id">Appointment Id</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
+        {
+            return await _appointmentService.GetAppointmentDetail(id);
+        }
         
         /// <summary>
         /// For Customer to create appointment
         /// </summary>
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>
-        [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
+        [Authorize(Roles = GlobalVariables.CustomerRole)]
         [HttpPost("create_appointment")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
         {
@@ -52,10 +52,7 @@ namespace HairCutAppAPI.Controllers
         /// Cancel an Appointment
         /// </summary>
         /// <param name="id">Appointment Id</param>
-        /// <returns></returns>
-        [Authorize(Policy = GlobalVariables.RequireCustomerRole)]
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Roles = GlobalVariables.ManagerRole + ", " + GlobalVariables.AdministratorRole + ", " + GlobalVariables.CustomerRole)]
         [HttpPut("cancel_appointment/{id}")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int id)
         {

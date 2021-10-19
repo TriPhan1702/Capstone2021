@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories;
 using HairCutAppAPI.Repositories.Interfaces;
@@ -72,11 +73,18 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "",users.ToList()); 
         }
         
-        // public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(PaginationParams paginationParams)
-        // {
-        //     var result = await _repositoryWrapper.User.AdvancedGetUsers(paginationParams);
-        //     return new CustomHttpCodeResponse(200, "" , result);
-        // }
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(AdvancedGetUserDTO advancedGetUserDTO)
+        {
+            if (!string.IsNullOrWhiteSpace(advancedGetUserDTO.SortBy))
+            {
+                if (!AdvancedGetUserDTO.OrderingParams.Contains(advancedGetUserDTO.SortBy.ToLower()))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetUserDTO.OrderingParams));
+                }
+            }
+            var result = await _repositoryWrapper.User.AdvancedGetUsers(advancedGetUserDTO);
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
         
         public async Task<ActionResult<AppUser>> FindById(int id)
         {

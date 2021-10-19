@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 
-namespace HairCutAppAPI.DTOs
+namespace HairCutAppAPI.DTOs.UserDTOs
 {
     public class CreateUserDTO
     {

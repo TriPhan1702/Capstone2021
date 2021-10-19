@@ -35,7 +35,7 @@ namespace HairCutAppAPI.Controllers
         /// For Admin to create new combo
         /// </summary>
         /// <param name="createComboDTO">, if Services is null or empty, then the combo created will have no service</param>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_combo")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo([FromBody] CreateComboDTO createComboDTO)
         {
@@ -55,7 +55,7 @@ namespace HairCutAppAPI.Controllers
         /// For Admin to update Combo Info
         /// </summary>
         /// <param name="updateComboDTO"> Empty ot null fields will not be changed, negative duration = null. If Services == null => no change, if Services is empty list => combo has no service</param>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPut("update_combo")]
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo([FromBody] UpdateComboDTO updateComboDTO)
         {

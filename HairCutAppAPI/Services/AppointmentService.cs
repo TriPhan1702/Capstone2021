@@ -146,7 +146,6 @@ namespace HairCutAppAPI.Services
                 
                 newAppointmentDetails.Add(new AppointmentDetail()
                 {
-                    ComboId = combo.Id,
                     ServiceId = comboDetail.ServiceId,
                     Price = comboDetail.Service.Price,
                     StaffId = staffId,

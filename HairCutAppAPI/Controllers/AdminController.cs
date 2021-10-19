@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
@@ -23,7 +24,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Used by admin to create other admin accounts
         /// </summary>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Policy = GlobalVariables.AdministratorRole)]
         [HttpPost("create_admin")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateAdmin([FromBody]CreateUserDTO dto)
         {

@@ -21,10 +21,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="id">UserId</param>
         /// <returns></returns>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
-        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetStaffDetail(int id)
         {
@@ -36,7 +33,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="createStaffDTO"></param>
         /// <returns></returns>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_staff")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateStaff([FromBody] CreateStaffDTO createStaffDTO)
         {

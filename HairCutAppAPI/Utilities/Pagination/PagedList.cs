@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace HairCutAppAPI.Utilities
 {
     //Used for pagination
-    public class PagedList<T>:List<T>
+    public class PagedList<T>
     {
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
@@ -22,7 +22,7 @@ namespace HairCutAppAPI.Utilities
             TotalPages =(int) Math.Ceiling(count/(double)pageSize);
             PageSize = pageSize;
             TotalCount = count;
-            AddRange(items);
+            Items = items;
         }
 
         public static async Task<PagedList<T>> CreateAsync(IQueryable<T> source, int pageNumber, int pageSize)

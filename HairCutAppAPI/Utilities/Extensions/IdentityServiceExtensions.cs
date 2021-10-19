@@ -19,6 +19,7 @@ namespace HairCutAppAPI.Utilities.Extensions
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
+                    options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
@@ -28,20 +29,20 @@ namespace HairCutAppAPI.Utilities.Extensions
                     };
                 });
 
-            //Add authorization policies
-            services.AddAuthorization(option =>
-            {
-                option.AddPolicy(GlobalVariables.RequireAdministratorRole,
-                    policy => policy.RequireRole(GlobalVariables.AdministratorRole));
-                option.AddPolicy(GlobalVariables.RequireCustomerRole,
-                    policy => policy.RequireRole(GlobalVariables.CustomerRole));
-                option.AddPolicy(GlobalVariables.RequireManagerRole,
-                    policy => policy.RequireRole(GlobalVariables.ManagerRole));
-                option.AddPolicy(GlobalVariables.RequireStylistRole,
-                    policy => policy.RequireRole(GlobalVariables.StylistRole));
-                option.AddPolicy(GlobalVariables.RequireBeauticianRole,
-                    policy => policy.RequireRole(GlobalVariables.BeauticianRole));
-            });
+            // //Add authorization policies
+            // services.AddAuthorization(option =>
+            // {
+            //     option.AddPolicy(GlobalVariables.RequireAdministratorRole,
+            //         policy => policy.RequireRole(GlobalVariables.AdministratorRole));
+            //     option.AddPolicy(GlobalVariables.RequireCustomerRole,
+            //         policy => policy.RequireRole(GlobalVariables.CustomerRole));
+            //     option.AddPolicy(GlobalVariables.RequireManagerRole,
+            //         policy => policy.RequireRole(GlobalVariables.ManagerRole));
+            //     option.AddPolicy(GlobalVariables.RequireStylistRole,
+            //         policy => policy.RequireRole(GlobalVariables.StylistRole));
+            //     option.AddPolicy(GlobalVariables.RequireBeauticianRole,
+            //         policy => policy.RequireRole(GlobalVariables.BeauticianRole));
+            // });
             
             //Token generated will last for 1 hour
             services.Configure<DataProtectionTokenProviderOptions>(opt =>

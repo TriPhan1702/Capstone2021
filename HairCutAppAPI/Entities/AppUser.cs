@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
 

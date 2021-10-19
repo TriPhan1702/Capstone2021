@@ -1,4 +1,4 @@
-﻿namespace HairCutAppAPI.DTOs
+﻿namespace HairCutAppAPI.DTOs.UserDTOs
 {
     public class CurrentUserDTO
     {

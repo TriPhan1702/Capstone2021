@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using HairCutAppAPI.Entities;
-
-namespace HairCutAppAPI.DTOs
+﻿namespace HairCutAppAPI.DTOs.UserDTOs
 {
     public class GetUserListResponseDTO
     {

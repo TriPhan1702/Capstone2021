@@ -11,10 +11,6 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Appointment")]
         public int AppointmentId { get; set; }
         public virtual Appointment Appointment { get; set; }
-
-        [ForeignKey("Combo")]
-        public int ComboId { get; set; }
-        public virtual Combo Combo { get; set; }
         
         [ForeignKey("Service")]
         public int ServiceId { get; set; }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
@@ -28,31 +29,30 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// DEBUG: Get all User in Database
         /// </summary>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole)]
         [HttpGet]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetUsers()
         {
             return await _userService.GetUsers();
         }
         
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        // [Authorize(Policy = GlobalVariables.RequireManagerRole)]
-        // [HttpPost("advanced_get_users")]
-        // public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUser(
-        //     PaginationParams paginationParams)
-        // {
-        //     var users = await _userService.AdvancedGetUsers(paginationParams);
-        //     return users;
-        // }
+        // [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole)]
+        [HttpPost("advanced_get_users")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUser(
+            AdvancedGetUserDTO advancedGetUserDTO)
+        {
+            //Trim All Strings in object
+            advancedGetUserDTO = ObjectTrimmer.TrimObject(advancedGetUserDTO) as AdvancedGetUserDTO;
+            var users = await _userService.AdvancedGetUsers(advancedGetUserDTO);
+            return users;
+        }
         
         /// <summary>
         /// DEBUG: Find a user by their Id
         /// </summary>
         /// <param name="id">user's id</param>
         /// <returns></returns>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole)]
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {

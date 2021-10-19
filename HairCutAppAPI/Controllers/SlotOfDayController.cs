@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.SlotOfDayDTOs;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Controllers
@@ -20,7 +21,7 @@ namespace HairCutAppAPI.Controllers
         /// Get all slots of a day
         /// </summary>
         /// <returns></returns>
-        // [Authorize]
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAllSlotsOfDay()
         {

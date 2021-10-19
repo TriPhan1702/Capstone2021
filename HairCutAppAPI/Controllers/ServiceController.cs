@@ -21,7 +21,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For Admin to create service
         /// </summary>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_service")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateService([FromBody] CreateServiceDTO createServiceDTO)
         {
@@ -42,7 +42,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="updateServiceDto">Empty ot null fields will not be changed, negative price = null</param>
         /// <returns></returns>
-        // [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPut("update_service")]
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateService([FromBody] UpdateServiceDto updateServiceDto)
         {
@@ -62,10 +62,7 @@ namespace HairCutAppAPI.Controllers
         /// For Admin to get all services from database
         /// </summary>
         /// <returns></returns>
-        [Authorize(Policy = GlobalVariables.RequireAdministratorRole)]
-        [Authorize(Policy = GlobalVariables.RequireManagerRole)]
-        [Authorize(Policy = GlobalVariables.RequireStylistRole)]
-        [Authorize(Policy = GlobalVariables.RequireBeauticianRole)]
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAllServices()
         {

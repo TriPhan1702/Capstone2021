@@ -49,6 +49,15 @@ namespace HairCutAppAPI.Data
 
             //Get Current time
             var now = DateTime.Now;
+            
+            //Seed Salon
+            builder.Entity<Salon>().HasData
+            (
+                new Salon(){Id = 1, Name = "Salon 1", Description = "Salon 1", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 2, Name = "Salon 2", Description = "Salon 2", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 3, Name = "Salon 3", Description = "Salon 3", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 4, Name = "Salon 4", Description = "Salon 4", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus}
+            );
 
             //Seed Admin
             builder.Entity<AppUser>().HasData
@@ -56,13 +65,101 @@ namespace HairCutAppAPI.Data
                 new AppUser(){
                     Id = 1, 
                     Status = "Active",
-                    Email = "tphan2883@gmail.com", 
+                    Email = "admin123@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.AdministratorRole,
+                },
+                new AppUser(){
+                    Id = 2, 
+                    Status = "Active",
+                    Email = "manager123@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.ManagerRole,
+                },
+                new AppUser(){
+                    Id = 3, 
+                    Status = "Active",
+                    Email = "stylist123@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.StylistRole,
+                },
+                new AppUser(){
+                    Id = 4, 
+                    Status = "Active",
+                    Email = "beautician123@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.BeauticianRole,
+                },
+                new AppUser(){
+                    Id = 5, 
+                    Status = "Active",
+                    Email = "stylist1234@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.StylistRole,
+                },
+                new AppUser(){
+                    Id = 6, 
+                    Status = "Active",
+                    Email = "beautician1234@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.BeauticianRole,
+                },
+                new AppUser(){
+                    Id = 7, 
+                    Status = "Active",
+                    Email = "customer1@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.CustomerRole,
+                },
+                new AppUser(){
+                    Id = 8, 
+                    Status = "Active",
+                    Email = "customer2@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.CustomerRole,
+                },
+                new AppUser(){
+                    Id = 9, 
+                    Status = "Active",
+                    Email = "customer3@gmail.com", 
+                    PhoneNumber = "0869190061",
+                    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
+                    PasswordSalt = hmac.Key,
+                    Role = GlobalVariables.CustomerRole,
                 }
             );
+            
+            //Seed Staff
+            builder.Entity<Staff>().HasData(
+                new Staff(){Id = 2, UserId = 2, FullName = "Manager 1", Description = "Manager 1", SalonId = 1, StaffType = GlobalVariables.ManagerRole},
+                new Staff(){Id = 3, UserId = 3, FullName = "Stylist 1", Description = "Stylist 1", SalonId = 1, StaffType = GlobalVariables.StylistRole},
+                new Staff(){Id = 4, UserId = 4, FullName = "Beautician 1", Description = "Beautician 1", SalonId = 1, StaffType = GlobalVariables.BeauticianRole},
+                new Staff(){Id = 5, UserId = 5, FullName = "Stylist 2", Description = "Stylist 2", SalonId = 1, StaffType = GlobalVariables.StylistRole},
+                new Staff(){Id = 6, UserId = 6, FullName = "Beautician 2", Description = "Beautician 2", SalonId = 1, StaffType = GlobalVariables.BeauticianRole}
+            );
+            
+            //Seed Customer
+            builder.Entity<Customer>().HasData(
+                new Customer(){Id = 7, UserId = 7, FullName = "Customer 1"},
+                new Customer(){Id = 8, UserId = 8, FullName = "Customer 2"},
+                new Customer(){Id = 9, UserId = 9, FullName = "Customer 3"}
+                );
             
             //Seed Services
             builder.Entity<Service>().HasData
@@ -133,15 +230,6 @@ namespace HairCutAppAPI.Data
                     new SlotOfDay() {Id = 26, StartTime = new TimeSpan(19,30,0), EndTime = new TimeSpan(20,00,0)},
                     new SlotOfDay() {Id = 27, StartTime = new TimeSpan(20,00,0), EndTime = new TimeSpan(20,30,0)}
                 );
-            
-            //Seed Salon
-            builder.Entity<Salon>().HasData
-            (
-                new Salon(){Id = 1, Name = "Salon 1", Description = "Salon 1", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
-                new Salon(){Id = 2, Name = "Salon 2", Description = "Salon 2", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
-                new Salon(){Id = 3, Name = "Salon 3", Description = "Salon 3", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
-                new Salon(){Id = 4, Name = "Salon 4", Description = "Salon 4", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus}
-            );
 
             #endregion SeedData
 

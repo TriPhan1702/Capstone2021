@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HairCutAppAPI.Data.Migrations
 {
     [DbContext(typeof(HDBContext))]
-    [Migration("20211018121457_InitialCreate2")]
+    [Migration("20211019071128_InitialCreate2")]
     partial class InitialCreate2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,11 +62,91 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            Email = "tphan2883@gmail.com",
-                            PasswordHash = new byte[] { 68, 113, 5, 73, 182, 235, 216, 69, 80, 101, 111, 132, 3, 217, 6, 74, 84, 163, 159, 95, 61, 157, 92, 239, 59, 155, 201, 6, 145, 145, 131, 183, 75, 61, 207, 145, 60, 50, 140, 167, 166, 70, 63, 215, 198, 132, 248, 105, 152, 232, 114, 118, 148, 74, 21, 35, 135, 146, 111, 44, 0, 2, 169, 254 },
-                            PasswordSalt = new byte[] { 183, 32, 183, 56, 165, 203, 121, 56, 242, 104, 175, 208, 224, 229, 250, 23, 157, 52, 66, 116, 23, 193, 167, 234, 110, 123, 13, 21, 184, 39, 19, 176, 249, 114, 238, 121, 228, 50, 223, 158, 102, 67, 161, 3, 163, 180, 153, 151, 115, 253, 137, 194, 82, 120, 183, 44, 168, 77, 127, 97, 92, 78, 177, 106, 242, 79, 131, 28, 55, 42, 204, 46, 204, 206, 119, 240, 168, 206, 152, 142, 101, 141, 98, 190, 150, 125, 209, 187, 39, 244, 93, 63, 67, 85, 142, 141, 8, 231, 157, 197, 34, 97, 18, 116, 194, 178, 221, 145, 131, 6, 235, 64, 149, 7, 47, 161, 162, 15, 143, 18, 152, 58, 208, 7, 118, 139, 92, 125 },
+                            Email = "admin123@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "administrator",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Email = "manager123@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
                             PhoneNumber = "0869190061",
                             Role = "manager",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Email = "stylist123@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "stylist",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Email = "beautician123@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "beautician",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Email = "stylist1234@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "stylist",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Email = "beautician1234@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "beautician",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Email = "customer1@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "customer",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Email = "customer2@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "customer",
+                            Status = "Active"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Email = "customer3@gmail.com",
+                            PasswordHash = new byte[] { 251, 152, 38, 20, 225, 210, 26, 63, 156, 116, 172, 236, 20, 172, 251, 93, 88, 57, 216, 96, 194, 205, 251, 63, 229, 59, 109, 217, 94, 110, 76, 131, 115, 85, 203, 177, 117, 118, 171, 176, 175, 173, 75, 236, 177, 124, 183, 101, 156, 71, 23, 31, 140, 227, 72, 245, 113, 33, 132, 226, 131, 168, 213, 231 },
+                            PasswordSalt = new byte[] { 84, 250, 17, 202, 47, 254, 234, 208, 175, 175, 15, 96, 254, 63, 154, 176, 170, 194, 230, 25, 236, 173, 87, 63, 151, 29, 222, 54, 179, 198, 165, 40, 53, 237, 73, 27, 140, 212, 233, 225, 206, 236, 53, 1, 31, 224, 57, 35, 206, 161, 43, 146, 115, 18, 246, 67, 10, 192, 15, 125, 118, 254, 107, 159, 48, 169, 9, 130, 172, 71, 73, 141, 32, 193, 245, 80, 153, 76, 178, 98, 156, 103, 66, 74, 59, 46, 154, 81, 30, 46, 171, 34, 65, 0, 175, 30, 189, 146, 73, 47, 142, 127, 222, 189, 125, 85, 50, 203, 48, 44, 135, 154, 61, 196, 101, 38, 205, 201, 86, 89, 99, 232, 75, 231, 195, 42, 118, 255 },
+                            PhoneNumber = "0869190061",
+                            Role = "customer",
                             Status = "Active"
                         });
                 });
@@ -78,10 +158,7 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AppointmentDetailId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ComboId")
+                    b.Property<int>("ComboId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
@@ -102,6 +179,9 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Property<string>("Note")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<decimal>("PaidAmount")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("PaymentType")
                         .HasMaxLength(20)
@@ -146,26 +226,22 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Property<int>("AppointmentId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ComboId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CrewId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("PaidAmount")
+                    b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("StaffId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AppointmentId")
-                        .IsUnique();
+                    b.HasIndex("AppointmentId");
 
-                    b.HasIndex("ComboId");
+                    b.HasIndex("ServiceId");
 
-                    b.HasIndex("CrewId");
+                    b.HasIndex("StaffId");
 
                     b.ToTable("AppointmentDetails");
                 });
@@ -220,6 +296,9 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -233,51 +312,56 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Cắt Tóc",
                             Duration = 1,
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Cắt Tóc",
+                            Price = 40000m,
                             Status = "active"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Cắt Tóc Gội Đầu",
                             Duration = 2,
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Cắt Tóc Gội Đầu",
+                            Price = 0m,
                             Status = "active"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Cắt Tóc Gội Đầu Rửa Mặt",
                             Duration = 2,
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Cắt Tóc Gội Đầu Rửa Mặt",
+                            Price = 0m,
                             Status = "active"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Cắt Tóc, Ráy Táy, Gội Đầu, Rửa Mặt, Dắp mặt",
                             Duration = 3,
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Chăm sóc đầy đử",
+                            Price = 0m,
                             Status = "active"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Cắt Tóc, Ráy Táy",
                             Duration = 1,
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Cắt tóc ráy tai",
+                            Price = 0m,
                             Status = "active"
                         });
                 });
@@ -290,6 +374,9 @@ namespace HairCutAppAPI.Data.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("ComboId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Order")
                         .HasColumnType("int");
 
                     b.Property<int>("ServiceId")
@@ -308,120 +395,93 @@ namespace HairCutAppAPI.Data.Migrations
                         {
                             Id = 1,
                             ComboId = 1,
+                            Order = 0,
                             ServiceId = 1
                         },
                         new
                         {
                             Id = 2,
                             ComboId = 2,
+                            Order = 0,
                             ServiceId = 1
                         },
                         new
                         {
                             Id = 3,
                             ComboId = 2,
+                            Order = 1,
                             ServiceId = 2
                         },
                         new
                         {
                             Id = 4,
                             ComboId = 3,
+                            Order = 0,
                             ServiceId = 1
                         },
                         new
                         {
                             Id = 5,
                             ComboId = 3,
+                            Order = 1,
                             ServiceId = 2
                         },
                         new
                         {
                             Id = 6,
                             ComboId = 3,
+                            Order = 2,
                             ServiceId = 4
                         },
                         new
                         {
                             Id = 7,
                             ComboId = 4,
+                            Order = 0,
                             ServiceId = 1
                         },
                         new
                         {
                             Id = 8,
                             ComboId = 4,
+                            Order = 1,
                             ServiceId = 2
                         },
                         new
                         {
                             Id = 9,
                             ComboId = 4,
+                            Order = 2,
                             ServiceId = 3
                         },
                         new
                         {
                             Id = 10,
                             ComboId = 4,
+                            Order = 3,
                             ServiceId = 4
                         },
                         new
                         {
                             Id = 11,
                             ComboId = 4,
+                            Order = 4,
                             ServiceId = 5
                         },
                         new
                         {
                             Id = 12,
                             ComboId = 5,
+                            Order = 0,
                             ServiceId = 1
                         },
                         new
                         {
                             Id = 13,
                             ComboId = 5,
+                            Order = 1,
                             ServiceId = 3
                         });
-                });
-
-            modelBuilder.Entity("HairCutAppAPI.Entities.Crew", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastUpdated")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Crews");
-                });
-
-            modelBuilder.Entity("HairCutAppAPI.Entities.CrewDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CrewId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StaffId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CrewId");
-
-                    b.HasIndex("StaffId");
-
-                    b.ToTable("CrewDetails");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Customer", b =>
@@ -444,6 +504,26 @@ namespace HairCutAppAPI.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Customers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 7,
+                            FullName = "Customer 1",
+                            UserId = 7
+                        },
+                        new
+                        {
+                            Id = 8,
+                            FullName = "Customer 2",
+                            UserId = 8
+                        },
+                        new
+                        {
+                            Id = 9,
+                            FullName = "Customer 3",
+                            UserId = 9
+                        });
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.CustomersCodes", b =>
@@ -628,36 +708,36 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Salon 1",
-                            LastUpdate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Salon 1",
                             Status = "active"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Salon 2",
-                            LastUpdate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Salon 2",
                             Status = "active"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Salon 3",
-                            LastUpdate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Salon 3",
                             Status = "active"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Salon 4",
-                            LastUpdate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Salon 4",
                             Status = "active"
                         });
@@ -723,9 +803,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Cắt tóc",
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Cắt tóc",
                             Price = 50000m,
                             Status = "active"
@@ -733,9 +813,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Gội Đầu",
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Gội Đầu",
                             Price = 20000m,
                             Status = "active"
@@ -743,9 +823,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Ráy tai",
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Ráy tai",
                             Price = 10000m,
                             Status = "active"
@@ -753,9 +833,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Gội Đầu",
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Rửa Mặt",
                             Price = 20000m,
                             Status = "active"
@@ -763,9 +843,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            CreatedDate = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Description = "Đắp Mặt",
-                            LastUpdated = new DateTime(2021, 10, 18, 19, 14, 57, 282, DateTimeKind.Local).AddTicks(799),
+                            LastUpdated = new DateTime(2021, 10, 19, 14, 11, 27, 983, DateTimeKind.Local).AddTicks(2274),
                             Name = "Đắp Mặt",
                             Price = 20000m,
                             Status = "active"
@@ -986,6 +1066,53 @@ namespace HairCutAppAPI.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Staff");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            Description = "Manager 1",
+                            FullName = "Manager 1",
+                            SalonId = 1,
+                            StaffType = "manager",
+                            UserId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Stylist 1",
+                            FullName = "Stylist 1",
+                            SalonId = 1,
+                            StaffType = "stylist",
+                            UserId = 3
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Beautician 1",
+                            FullName = "Beautician 1",
+                            SalonId = 1,
+                            StaffType = "beautician",
+                            UserId = 4
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Stylist 2",
+                            FullName = "Stylist 2",
+                            SalonId = 1,
+                            StaffType = "stylist",
+                            UserId = 5
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Description = "Beautician 2",
+                            FullName = "Beautician 2",
+                            SalonId = 1,
+                            StaffType = "beautician",
+                            UserId = 6
+                        });
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.WorkSlot", b =>
@@ -1020,9 +1147,11 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Appointment", b =>
                 {
-                    b.HasOne("HairCutAppAPI.Entities.Combo", null)
+                    b.HasOne("HairCutAppAPI.Entities.Combo", "Combo")
                         .WithMany("Appointments")
-                        .HasForeignKey("ComboId");
+                        .HasForeignKey("ComboId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("HairCutAppAPI.Entities.Customer", "Customer")
                         .WithMany("Appointments")
@@ -1036,6 +1165,8 @@ namespace HairCutAppAPI.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Combo");
+
                     b.Navigation("Customer");
 
                     b.Navigation("Salon");
@@ -1044,26 +1175,26 @@ namespace HairCutAppAPI.Data.Migrations
             modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentDetail", b =>
                 {
                     b.HasOne("HairCutAppAPI.Entities.Appointment", "Appointment")
-                        .WithOne("AppointmentDetail")
-                        .HasForeignKey("HairCutAppAPI.Entities.AppointmentDetail", "AppointmentId")
+                        .WithMany("AppointmentDetails")
+                        .HasForeignKey("AppointmentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HairCutAppAPI.Entities.Combo", "Combo")
+                    b.HasOne("HairCutAppAPI.Entities.Service", "Service")
                         .WithMany()
-                        .HasForeignKey("ComboId")
+                        .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HairCutAppAPI.Entities.Crew", "Crew")
-                        .WithMany()
-                        .HasForeignKey("CrewId");
+                    b.HasOne("HairCutAppAPI.Entities.Staff", "Staff")
+                        .WithMany("AppointmentDetails")
+                        .HasForeignKey("StaffId");
 
                     b.Navigation("Appointment");
 
-                    b.Navigation("Combo");
+                    b.Navigation("Service");
 
-                    b.Navigation("Crew");
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.AppointmentRating", b =>
@@ -1094,25 +1225,6 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Navigation("Combo");
 
                     b.Navigation("Service");
-                });
-
-            modelBuilder.Entity("HairCutAppAPI.Entities.CrewDetail", b =>
-                {
-                    b.HasOne("HairCutAppAPI.Entities.Crew", "Crew")
-                        .WithMany("CrewDetails")
-                        .HasForeignKey("CrewId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("HairCutAppAPI.Entities.Staff", "Staff")
-                        .WithMany("CrewDetails")
-                        .HasForeignKey("StaffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Crew");
-
-                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Customer", b =>
@@ -1241,7 +1353,7 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Appointment", b =>
                 {
-                    b.Navigation("AppointmentDetail");
+                    b.Navigation("AppointmentDetails");
 
                     b.Navigation("Rating");
                 });
@@ -1251,11 +1363,6 @@ namespace HairCutAppAPI.Data.Migrations
                     b.Navigation("Appointments");
 
                     b.Navigation("ComboDetails");
-                });
-
-            modelBuilder.Entity("HairCutAppAPI.Entities.Crew", b =>
-                {
-                    b.Navigation("CrewDetails");
                 });
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Customer", b =>
@@ -1293,7 +1400,7 @@ namespace HairCutAppAPI.Data.Migrations
 
             modelBuilder.Entity("HairCutAppAPI.Entities.Staff", b =>
                 {
-                    b.Navigation("CrewDetails");
+                    b.Navigation("AppointmentDetails");
 
                     b.Navigation("WorkSlots");
                 });

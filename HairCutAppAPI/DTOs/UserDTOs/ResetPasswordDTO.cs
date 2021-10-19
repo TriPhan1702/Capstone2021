@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HairCutAppAPI.DTOs
+namespace HairCutAppAPI.DTOs.UserDTOs
 {
     public class ResetPasswordDTO
     {
