@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.CustomerDTO;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,17 @@ namespace HairCutAppAPI.Controllers
         public async Task<ActionResult<CustomHttpCodeResponse>> GetCustomerDetail(int id)
         {
             return await _customerService.GetCustomerDetail(id);
+        }
+        
+        // [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_customers")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCustomers(
+            AdvancedGetCustomerDTO advancedGetCustomerDTO)
+        {
+            //Trim All Strings in object
+            advancedGetCustomerDTO = ObjectTrimmer.TrimObject(advancedGetCustomerDTO) as AdvancedGetCustomerDTO;
+            var users = await _customerService.AdvancedGetCustomers(advancedGetCustomerDTO);
+            return users;
         }
         
         /// <summary>

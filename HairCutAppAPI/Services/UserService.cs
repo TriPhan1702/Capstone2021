@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.CustomerDTO;
 using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories;
