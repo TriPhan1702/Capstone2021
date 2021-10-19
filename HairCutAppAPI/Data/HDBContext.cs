@@ -87,19 +87,19 @@ namespace HairCutAppAPI.Data
             //Seed ComboDetail
             builder.Entity<ComboDetail>().HasData
             (
-                new ComboDetail(){Id = 1,ComboId = 1, ServiceId = 1, Order = 1},
-                new ComboDetail(){Id = 2,ComboId = 2, ServiceId = 1, Order = 1},
-                new ComboDetail(){Id = 3,ComboId = 2, ServiceId = 2, Order = 2},
-                new ComboDetail(){Id = 4,ComboId = 3, ServiceId = 1, Order = 1},
-                new ComboDetail(){Id = 5,ComboId = 3, ServiceId = 2, Order = 2},
-                new ComboDetail(){Id = 6,ComboId = 3, ServiceId = 4, Order = 3},
-                new ComboDetail(){Id = 7,ComboId = 4, ServiceId = 1, Order = 1},
-                new ComboDetail(){Id = 8,ComboId = 4, ServiceId = 2, Order = 2},
-                new ComboDetail(){Id = 9,ComboId = 4, ServiceId = 3, Order = 3},
-                new ComboDetail(){Id = 10,ComboId = 4, ServiceId = 4, Order = 4},
-                new ComboDetail(){Id = 11,ComboId = 4, ServiceId = 5, Order = 5},
-                new ComboDetail(){Id = 12,ComboId = 5, ServiceId = 1, Order = 1},
-                new ComboDetail(){Id = 13,ComboId = 5, ServiceId = 3, Order = 2}
+                new ComboDetail(){Id = 1,ComboId = 1, ServiceId = 1, Order = 0},
+                new ComboDetail(){Id = 2,ComboId = 2, ServiceId = 1, Order = 0},
+                new ComboDetail(){Id = 3,ComboId = 2, ServiceId = 2, Order = 1},
+                new ComboDetail(){Id = 4,ComboId = 3, ServiceId = 1, Order = 0},
+                new ComboDetail(){Id = 5,ComboId = 3, ServiceId = 2, Order = 1},
+                new ComboDetail(){Id = 6,ComboId = 3, ServiceId = 4, Order = 2},
+                new ComboDetail(){Id = 7,ComboId = 4, ServiceId = 1, Order = 0},
+                new ComboDetail(){Id = 8,ComboId = 4, ServiceId = 2, Order = 1},
+                new ComboDetail(){Id = 9,ComboId = 4, ServiceId = 3, Order = 2},
+                new ComboDetail(){Id = 10,ComboId = 4, ServiceId = 4, Order = 3},
+                new ComboDetail(){Id = 11,ComboId = 4, ServiceId = 5, Order = 4},
+                new ComboDetail(){Id = 12,ComboId = 5, ServiceId = 1, Order = 0},
+                new ComboDetail(){Id = 13,ComboId = 5, ServiceId = 3, Order = 1}
             );
             
             //Seed SlotOfDay

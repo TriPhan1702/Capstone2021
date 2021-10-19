@@ -92,13 +92,13 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon with Id {createAppointmentDTO.SalonId} doesn't exist");
             }
 
-            AppUser stylist = null;
+            AppUser stylistUser = null;
             //If user has already chosen a stylist
             if (createAppointmentDTO.StylistId >= 0)
             {
                 //Check if stylist exists
-                stylist= await _repositoryWrapper.User.FindSingleByConditionAsync(c => c.Id == createAppointmentDTO.StylistId);
-                if (!await _repositoryWrapper.User.CheckRole(stylist.Email, GlobalVariables.StylistRole))
+                stylistUser= await _repositoryWrapper.User.FindSingleByConditionAsync(c => c.Id == createAppointmentDTO.StylistId);
+                if (!await _repositoryWrapper.User.CheckRole(stylistUser.Email, GlobalVariables.StylistRole))
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Stylist with Id {createAppointmentDTO.StylistId} doesn't exist");
                 }
@@ -136,12 +136,21 @@ namespace HairCutAppAPI.Services
             
             //Prepare new list of appointment detail
             var newAppointmentDetails = new List<AppointmentDetail>();
+            var staffId = -1;
+            if (stylistUser != null)
+            {
+                staffId = stylistUser.Id;
+            }
             foreach (var comboDetail in combo.ComboDetails)
             {
-                if (comboDetail.)
+                
+                newAppointmentDetails.Add(new AppointmentDetail()
                 {
-                    
-                }
+                    ComboId = combo.Id,
+                    ServiceId = comboDetail.ServiceId,
+                    Price = comboDetail.Service.Price,
+                    StaffId = staffId,
+                });
             }
             
             //Prepare new appointment
@@ -155,11 +164,14 @@ namespace HairCutAppAPI.Services
                 EndDate = chosenDate.Add(endSlotOfDay.EndTime),
                 CreatedDate = now,
                 LastUpdated = now,
+                ComboId = combo.Id,
+                PaidAmount = 0,
             };
 
             //Pend create change
             await _repositoryWrapper.Appointment.CreateWithoutSaveAsync(newAppointment);
             
+            //Save appointment to database
             try
             {
                 //Save all changes above to database 
@@ -173,19 +185,19 @@ namespace HairCutAppAPI.Services
                     "Some thing went wrong went creating Appointment " + e.Message);
             }
             
-            //Get Lasted Appointment of customer
+            //Get Latest Appointment of customer
             var createdAppointment = await _repositoryWrapper.Appointment.GetAppointmentOfCustomer(customerId);
             var price = await CalculateComboPrice(createAppointmentDTO.ComboId);
-            int? stylistId = null;
+            int? stylistUserId = null;
             string stylistName = null;
-            if (stylist != null)
+            if (stylistUser != null)
             {
-                stylistId = stylist.Id;
-                var stylistAsStaff =await _repositoryWrapper.Staff.FindSingleByConditionAsync(s => s.Id == stylistId);
+                stylistUserId = stylistUser.Id;
+                var stylistAsStaff =await _repositoryWrapper.Staff.FindSingleByConditionAsync(s => s.UserId == stylistUserId);
                 stylistName = stylistAsStaff.FullName;
             }
 
-            return new CustomHttpCodeResponse(200,"Appointment Created",createdAppointment.ToCreateAppointmentResponseDTO(price, stylistId, stylistName)); 
+            return new CustomHttpCodeResponse(200,"Appointment Created",createdAppointment.ToCreateAppointmentResponseDTO(price, stylistUserId, stylistName)); 
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int appointmentId)
@@ -224,8 +236,11 @@ namespace HairCutAppAPI.Services
                  }
              }
 
+             //Get unique staff Id associated with the appointment
+             var staffIds = await 
+                 _repositoryWrapper.AppointmentDetail.GetUniqueStaffIds(appointmentId);
             //If the appointment already has a crew chosen, change the status of WorkSlots associated with the crew
-            if (appointment.AppointmentDetails.CrewId != null)
+            if (staffIds!= null && staffIds.Any())
             {
                 //Get start SlotOfDay
                 var startSlotOfDay = await 
@@ -251,11 +266,6 @@ namespace HairCutAppAPI.Services
                     slotsOfDayIds.Add(i);
                 }
             
-                //Get list of staff associated with the appointment
-                var staffIds = (await 
-                    _repositoryWrapper.CrewDetail.FindByConditionAsync(cd =>
-                        cd.CrewId == appointment.AppointmentDetails.CrewId)).Select(d => d.StaffId).ToList();
-                
                 //Get list of work slots associated with the staff and slot Of day list
                 var workSlots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws=>slotsOfDayIds.Contains(ws.SlotOfDayId) && staffIds.Contains(ws.StaffId));
 
@@ -307,7 +317,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current user is not the owner of this appointment");
             }
         
-            var combo = await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(appointment.AppointmentDetails.ComboId);
+            var combo = await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(appointment.ComboId);
         
             return new CustomHttpCodeResponse(200,"",appointment.ToGetAppointmentDetailResponseDTO(combo));
         }

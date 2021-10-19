@@ -11,7 +11,7 @@
         public int SalonId { get; set; }
         public string SalonName { get; set; }
         
-        public int? StylistId { get; set; }
+        public int? StylistUserId { get; set; }
         
         public string StylistName { get; set; }
         
