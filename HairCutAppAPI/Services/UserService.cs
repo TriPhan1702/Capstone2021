@@ -75,13 +75,11 @@ namespace HairCutAppAPI.Services
         
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(AdvancedGetUserDTO advancedGetUserDTO)
         {
-            if (!string.IsNullOrWhiteSpace(advancedGetUserDTO.SortBy))
+            if (!string.IsNullOrWhiteSpace(advancedGetUserDTO.SortBy) && !AdvancedGetUserDTO.OrderingParams.Contains(advancedGetUserDTO.SortBy.ToLower()))
             {
-                if (!AdvancedGetUserDTO.OrderingParams.Contains(advancedGetUserDTO.SortBy.ToLower()))
-                {
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetUserDTO.OrderingParams));
-                }
             }
+            
             var result = await _repositoryWrapper.User.AdvancedGetUsers(advancedGetUserDTO);
             return new CustomHttpCodeResponse(200, "" , result);
         }
