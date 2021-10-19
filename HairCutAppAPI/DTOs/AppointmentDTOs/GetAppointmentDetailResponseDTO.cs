@@ -13,7 +13,6 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public string CustomerName { get; set; }
         public int SalonId { get; set; }
         public string SalonName { get; set; }
-        public int AppointmentDetailId { get; set; }
         public string Status { get; set; }
         
         public int? RatingId { get; set; }
@@ -32,26 +31,22 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
 
         public int ComboId { get; set; }
         public string ComboName { get; set; }
-        public ICollection<GetAppointmentDetailResponseServiceDTO> Services { get; set; }
+        public string ComboDescription { get; set; }
         
-        public int? CrewId { get; set; }
-        public ICollection<GetAppointmentDetailResponseStaffDTO> Staffs { get; set; }
-        
+        public ICollection<GetAppointmentDetailResponseDetailDTO> AppointmentDetails { get; set; }
+
         public decimal TotalPrice { get; set; }
         public decimal PaidAmount { get; set; }
     }
 
-    public class GetAppointmentDetailResponseStaffDTO
+    public class GetAppointmentDetailResponseDetailDTO
     {
+        public int ServiceId { get; set; }
+        public int ServiceName { get; set; }
+        public string ServiceDescription { get; set; }
+        public int ServicePrice { get; set; }
         public int StaffId { get; set; }
         public string StaffName { get; set; }
         public string StaffType { get; set; }
-    }
-
-    public class GetAppointmentDetailResponseServiceDTO
-    {
-        public int ServiceId { get; set; }
-        public string ServiceName { get; set; }
-        public decimal ServicePrice { get; set; }
     }
 }

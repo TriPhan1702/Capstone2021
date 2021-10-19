@@ -7,23 +7,24 @@ namespace HairCutAppAPI.Entities
     {
         [Key]
         public int Id { get; set; }
-
-        [ForeignKey("Combo")]
-        public int ComboId { get; set; }
-        public Combo Combo { get; set; }
-        
-        [ForeignKey("Crew")]
-        public int? CrewId { get; set; }
-        public Crew Crew { get; set; }
         
         [ForeignKey("Appointment")]
         public int AppointmentId { get; set; }
-        public Appointment Appointment { get; set; }
+        public virtual Appointment Appointment { get; set; }
+
+        [ForeignKey("Combo")]
+        public int ComboId { get; set; }
+        public virtual Combo Combo { get; set; }
+        
+        [ForeignKey("Service")]
+        public int ServiceId { get; set; }
+        public virtual Service Service { get; set; }
+        
+        [ForeignKey("Staff")]
+        public int? StaffId { get; set; }
+        public virtual Staff Staff { get; set; }
         
         [Required]
-        public decimal TotalPrice { get; set; }
-        
-        [Required]
-        public decimal PaidAmount { get; set; }
+        public decimal Price { get; set; }
     }
 }

@@ -26,8 +26,6 @@ namespace HairCutAppAPI.Repositories
         private IAppointmentRepository _appointment;
         private IAppointmentDetailRepository _appointmentDetail;
         private IAppointmentRatingRepository _appointmentRating;
-        private ICrewRepository _crew;
-        private ICrewDetailRepository _crewDetail;
 
         public RepositoryWrapper( HDBContext context)
         {
@@ -50,8 +48,6 @@ namespace HairCutAppAPI.Repositories
         public IAppointmentRepository Appointment => _appointment ??= new AppointmentRepository(_context);
         public IAppointmentDetailRepository AppointmentDetail => _appointmentDetail ??= new AppointmentDetailRepository(_context);
         public IAppointmentRatingRepository AppointmentRating => _appointmentRating ??= new AppointmentRatingRepository(_context);
-        public ICrewRepository Crew => _crew ??= new CrewRepository(_context);
-        public ICrewDetailRepository CrewDetail => _crewDetail ??= new CrewDetailRepository(_context);
         
         #endregion Create concrete repositories if there aren't
 

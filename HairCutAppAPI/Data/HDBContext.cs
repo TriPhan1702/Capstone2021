@@ -30,8 +30,6 @@ namespace HairCutAppAPI.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentDetail> AppointmentDetails { get; set; }
         public DbSet<AppointmentRating> AppointmentRatings { get; set; }
-        public DbSet<Crew> Crews { get; set; }
-        public DbSet<CrewDetail> CrewDetails { get; set; }
         
         public HDBContext(DbContextOptions options) : base(options)
         {
@@ -41,11 +39,6 @@ namespace HairCutAppAPI.Data
         {
             base.OnModelCreating(builder);
             using var hmac = new HMACSHA512();
-            
-            builder.Entity<Appointment>()
-                .HasOne(a => a.AppointmentDetail)
-                .WithOne(d => d.Appointment)
-                .HasForeignKey<AppointmentDetail>(d => d.AppointmentId);
             
             builder.Entity<Appointment>()
                 .HasOne(a => a.Rating)
@@ -84,7 +77,7 @@ namespace HairCutAppAPI.Data
             //Seed Combo
             builder.Entity<Combo>().HasData
             (
-                new Combo(){Id = 1, Name = "Cắt Tóc",Description = "Cắt Tóc", Duration = 1, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
+                new Combo(){Id = 1, Name = "Cắt Tóc",Description = "Cắt Tóc", Duration = 1, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now, Price = 40000},
                 new Combo(){Id = 2, Name = "Cắt Tóc Gội Đầu",Description = "Cắt Tóc Gội Đầu", Duration = 2, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
                 new Combo(){Id = 3, Name = "Cắt Tóc Gội Đầu Rửa Mặt",Description = "Cắt Tóc Gội Đầu Rửa Mặt", Duration = 2, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
                 new Combo(){Id = 4, Name = "Chăm sóc đầy đử",Description = "Cắt Tóc, Ráy Táy, Gội Đầu, Rửa Mặt, Dắp mặt", Duration = 3, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
@@ -94,19 +87,19 @@ namespace HairCutAppAPI.Data
             //Seed ComboDetail
             builder.Entity<ComboDetail>().HasData
             (
-                new ComboDetail(){Id = 1,ComboId = 1, ServiceId = 1},
-                new ComboDetail(){Id = 2,ComboId = 2, ServiceId = 1},
-                new ComboDetail(){Id = 3,ComboId = 2, ServiceId = 2},
-                new ComboDetail(){Id = 4,ComboId = 3, ServiceId = 1},
-                new ComboDetail(){Id = 5,ComboId = 3, ServiceId = 2},
-                new ComboDetail(){Id = 6,ComboId = 3, ServiceId = 4},
-                new ComboDetail(){Id = 7,ComboId = 4, ServiceId = 1},
-                new ComboDetail(){Id = 8,ComboId = 4, ServiceId = 2},
-                new ComboDetail(){Id = 9,ComboId = 4, ServiceId = 3},
-                new ComboDetail(){Id = 10,ComboId = 4, ServiceId = 4},
-                new ComboDetail(){Id = 11,ComboId = 4, ServiceId = 5},
-                new ComboDetail(){Id = 12,ComboId = 5, ServiceId = 1},
-                new ComboDetail(){Id = 13,ComboId = 5, ServiceId = 3}
+                new ComboDetail(){Id = 1,ComboId = 1, ServiceId = 1, Order = 1},
+                new ComboDetail(){Id = 2,ComboId = 2, ServiceId = 1, Order = 1},
+                new ComboDetail(){Id = 3,ComboId = 2, ServiceId = 2, Order = 2},
+                new ComboDetail(){Id = 4,ComboId = 3, ServiceId = 1, Order = 1},
+                new ComboDetail(){Id = 5,ComboId = 3, ServiceId = 2, Order = 2},
+                new ComboDetail(){Id = 6,ComboId = 3, ServiceId = 4, Order = 3},
+                new ComboDetail(){Id = 7,ComboId = 4, ServiceId = 1, Order = 1},
+                new ComboDetail(){Id = 8,ComboId = 4, ServiceId = 2, Order = 2},
+                new ComboDetail(){Id = 9,ComboId = 4, ServiceId = 3, Order = 3},
+                new ComboDetail(){Id = 10,ComboId = 4, ServiceId = 4, Order = 4},
+                new ComboDetail(){Id = 11,ComboId = 4, ServiceId = 5, Order = 5},
+                new ComboDetail(){Id = 12,ComboId = 5, ServiceId = 1, Order = 1},
+                new ComboDetail(){Id = 13,ComboId = 5, ServiceId = 3, Order = 2}
             );
             
             //Seed SlotOfDay

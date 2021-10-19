@@ -1,10 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HairCutAppAPI.Entities;
 
 namespace HairCutAppAPI.Repositories.Interfaces
 {
     public interface IAppointmentDetailRepository : IRepositoryBase<AppointmentDetail>
     {
-        Task<AppointmentDetail> GetAppointmentDetailWithCrew(int appointmentId);
+        Task<IEnumerable<AppointmentDetail>> GetAppointmentDetailsWithStaff(int appointmentId);
     }
 }

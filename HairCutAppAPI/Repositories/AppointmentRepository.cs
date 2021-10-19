@@ -18,7 +18,7 @@ namespace HairCutAppAPI.Repositories
 
         public async Task<Appointment> GetAppointmentOfCustomer(int customerId)
         {
-            return await _hdbContext.Appointments.Include(a=>a.AppointmentDetail).Include(a=>a.Customer).Include(a=>a.Salon).OrderByDescending(a => a.CreatedDate)
+            return await _hdbContext.Appointments.Include(a=>a.AppointmentDetails).Include(a=>a.Customer).Include(a=>a.Salon).OrderByDescending(a => a.CreatedDate)
                 .FirstOrDefaultAsync(a => a.CustomerId == customerId);
         }
 
@@ -27,22 +27,13 @@ namespace HairCutAppAPI.Repositories
             return await _hdbContext.Appointments.Include(appointment => appointment.Customer)
                 .Include(appointment => appointment.Rating)
                 .Include(appointment => appointment.Salon)
-                .Include(appointment => appointment.AppointmentDetail)
-                .ThenInclude(detail => detail.Crew)
-                .ThenInclude(c=>c.CrewDetails)
-                .ThenInclude(crewDetail => crewDetail.Staff)
+                .Include(appointment => appointment.AppointmentDetails)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
 
         public async Task<Appointment> GetAppointmentWithDetail(int appointmentId)
         {
-            return await _hdbContext.Appointments.Include(a => a.AppointmentDetail)
-                .FirstOrDefaultAsync(a => a.Id == appointmentId);
-        }
-        
-        public async Task<Appointment> GetAppointmentWithDetailAndCrewDetail(int appointmentId)
-        {
-            return await _hdbContext.Appointments.Include(a => a.AppointmentDetail).ThenInclude(ad=>ad.Crew).ThenInclude(c=>c.CrewDetails)
+            return await _hdbContext.Appointments.Include(a => a.AppointmentDetails)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
     }

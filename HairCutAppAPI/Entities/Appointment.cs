@@ -20,14 +20,16 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Salon")]
         public int SalonId { get; set; }
         public Salon Salon { get; set; }
+        
+        [ForeignKey("Combo")]
+        public int ComboId { get; set; }
+        public Combo Combo { get; set; }
+        public string ComboDescription { get; set; }
 
         [ForeignKey("Rating")]
         public int? RatingId { get; set; }
         public AppointmentRating Rating { get; set; }
-        
-        [ForeignKey("AppointmentDetail")]
-        public int AppointmentDetailId { get; set; }
-        public AppointmentDetail AppointmentDetail { get; set; }
+        public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; }
         [Required]
         [MaxLength(20)]
         public string Status { get; set; }
@@ -51,6 +53,9 @@ namespace HairCutAppAPI.Entities
         [MinLength(3), MaxLength(255)]
         public string PromotionalCode { get; set; }
         
+        [Required]
+        public decimal PaidAmount { get; set; }
+        
         [Url]
         public string ImageUrl { get; set; }
 
@@ -63,7 +68,7 @@ namespace HairCutAppAPI.Entities
                 Status = Status,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DayFormat),
                 PromotionalCode = PromotionalCode,
-                ComboId = AppointmentDetail.ComboId,
+                ComboId = ComboId,
                 CustomerId = CustomerId,
                 CustomerName = Customer.FullName,
                 StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
@@ -72,7 +77,6 @@ namespace HairCutAppAPI.Entities
                 SalonName = Salon.Name,
                 StylistId = stylistId,
                 StylistName = stylistName,
-                AppointmentDetailId = AppointmentDetailId
             };
         }
 
@@ -105,26 +109,17 @@ namespace HairCutAppAPI.Entities
             result.PromotionalCode = PromotionalCode;
             result.RatingId = RatingId;
             result.RatingComment = Rating?.RatingComment;
-            result.AppointmentDetailId = AppointmentDetailId;
-            result.ComboId = AppointmentDetail.Combo.Id;
-            result.ComboName = AppointmentDetail.Combo.Name;
-            result.CrewId = AppointmentDetail.CrewId;
-            result.PaidAmount = AppointmentDetail.PaidAmount;
-            result.TotalPrice = AppointmentDetail.TotalPrice;
-            result.Services = combo.ComboDetails.Select(detail =>
-                new GetAppointmentDetailResponseServiceDTO()
-                {
-                    ServiceId = detail.Service.Id,
-                    ServiceName = detail.Service.Name,
-                    ServicePrice = detail.Service.Price
-                }).ToList();
-            result.Staffs = AppointmentDetail.Crew?.CrewDetails.Select(detail =>
-                new GetAppointmentDetailResponseStaffDTO()
-                {
-                    StaffId = detail.Staff.Id,
-                    StaffName = detail.Staff.FullName,
-                    StaffType = detail.Staff.StaffType,
-                }).ToList();
+            result.ComboId = ComboId;
+            result.ComboName = Combo.Name;
+            result.ComboDescription = Combo.Description;
+            result.AppointmentDetails = AppointmentDetails.Select(detail => new GetAppointmentDetailResponseDetailDTO()
+            {
+                ServiceId = detail.ServiceId,
+                ServiceDescription = detail.Service.Description,
+                
+            }).ToList();
+            result.PaidAmount = PaidAmount;
+            result.TotalPrice = Combo.Price;
             return result;
         }
     }

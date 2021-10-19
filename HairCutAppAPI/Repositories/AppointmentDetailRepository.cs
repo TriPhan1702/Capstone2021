@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
@@ -15,10 +17,10 @@ namespace HairCutAppAPI.Repositories
             _hdbContext = hdbContext;
         }
 
-        public async Task<AppointmentDetail> GetAppointmentDetailWithCrew(int appointmentId)
+        public async Task<IEnumerable<AppointmentDetail>> GetAppointmentDetailsWithStaff(int appointmentId)
         {
-            return await _hdbContext.AppointmentDetails.Include(a => a.Crew).ThenInclude(c=>c.CrewDetails)
-                .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
+            return await _hdbContext.AppointmentDetails.Include(a => a.Staff)
+                .Where(a => a.AppointmentId == appointmentId).ToListAsync();
         }
     }
 }

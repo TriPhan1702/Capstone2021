@@ -53,12 +53,17 @@ namespace HairCutAppAPI.Services
             //Get Now Time
             var now = DateTime.Now;
             
-            //Get Combo from database
-            var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(c => c.Id == createAppointmentDTO.ComboId);
+            //Get Combo (with list of ComboDetail and ServiceDetail to use for adding Appointment Detail later) from database
+            var combo = await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(createAppointmentDTO.ComboId);
             //Check if Combo exists
             if (combo is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Combo with Id {createAppointmentDTO.ComboId} doesn't exist");
+            }
+            //Check if Combo is Empty
+            if (!combo.ComboDetails.Any())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Can't not order combo with no service");
             }
             
             var chosenSlotsOfDayIds = new List<int>();
@@ -68,7 +73,7 @@ namespace HairCutAppAPI.Services
                 chosenSlotsOfDayIds.Add(i);
             }
             
-            //Get Slot Of day to the last WorkSLot to calculate EndTime and compare chosen time with now
+            //Get Slot Of Day from the first to the last WorkSLot to calculate EndTime and compare chosen time with now
             var startSlotOfDay = await 
                 _repositoryWrapper.SlotOfDay.FindSingleByConditionAsync(sod => sod.Id == chosenSlotsOfDayIds.First());
             var endSlotOfDay = await 
@@ -129,36 +134,23 @@ namespace HairCutAppAPI.Services
                 }
             }
             
-            Crew crew = null;
-            //If a stylist is chosen, prepare crew
-            if (stylist!=null)
+            //Prepare new list of appointment detail
+            var newAppointmentDetails = new List<AppointmentDetail>();
+            foreach (var comboDetail in combo.ComboDetails)
             {
-                crew = new Crew()
+                if (comboDetail.)
                 {
-                    CreatedDate = now,
-                    LastUpdated = now,
-                    CrewDetails = new List<CrewDetail>()
-                    {
-                        new CrewDetail()
-                        {
-                            StaffId = createAppointmentDTO.StylistId,
-                        }
-                    }
-                };
+                    
+                }
             }
-            //Prepare new appointment detail
-            var newAppointmentDetail = new AppointmentDetail()
-            {
-                ComboId = createAppointmentDTO.ComboId,
-                Crew = crew,
-            };
+            
             //Prepare new appointment
             var newAppointment = new Appointment()
             {
                 SalonId = createAppointmentDTO.SalonId,
                 CustomerId = customerId,
                 Status = GlobalVariables.NewAppointmentStatus,
-                AppointmentDetail = newAppointmentDetail,
+                AppointmentDetails = newAppointmentDetails,
                 StartDate = chosenDate.Add(startSlotOfDay.StartTime),
                 EndDate = chosenDate.Add(endSlotOfDay.EndTime),
                 CreatedDate = now,
@@ -233,7 +225,7 @@ namespace HairCutAppAPI.Services
              }
 
             //If the appointment already has a crew chosen, change the status of WorkSlots associated with the crew
-            if (appointment.AppointmentDetail.CrewId != null)
+            if (appointment.AppointmentDetails.CrewId != null)
             {
                 //Get start SlotOfDay
                 var startSlotOfDay = await 
@@ -262,7 +254,7 @@ namespace HairCutAppAPI.Services
                 //Get list of staff associated with the appointment
                 var staffIds = (await 
                     _repositoryWrapper.CrewDetail.FindByConditionAsync(cd =>
-                        cd.CrewId == appointment.AppointmentDetail.CrewId)).Select(d => d.StaffId).ToList();
+                        cd.CrewId == appointment.AppointmentDetails.CrewId)).Select(d => d.StaffId).ToList();
                 
                 //Get list of work slots associated with the staff and slot Of day list
                 var workSlots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws=>slotsOfDayIds.Contains(ws.SlotOfDayId) && staffIds.Contains(ws.StaffId));
@@ -315,10 +307,81 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current user is not the owner of this appointment");
             }
         
-            var combo = await _repositoryWrapper.Combo.GetComBoWithService(appointment.AppointmentDetail.ComboId);
+            var combo = await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(appointment.AppointmentDetails.ComboId);
         
             return new CustomHttpCodeResponse(200,"",appointment.ToGetAppointmentDetailResponseDTO(combo));
         }
+        
+        // public async Task<CustomHttpCodeResponse> AssignCrew(AssignCrewDTO assignCrewDTO)
+        // {
+        //     var appointment = await _repositoryWrapper.Appointment.GetAppointmentWithDetailAndCrewDetail(assignCrewDTO.AppointmentId);
+        //     if (appointment is null)
+        //     {
+        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment with id {assignCrewDTO.AppointmentId} not found");
+        //     }
+        //
+        //     //Check if appointment has pending status
+        //     if (appointment.Status != GlobalVariables.PendingAppointmentStatus)
+        //     {
+        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment is not pending ");
+        //     }
+        //
+        //     //If appointment hasn't had a crew yet, create a new crew
+        //     if (appointment.AppointmentDetails.CrewId is null)
+        //     {
+        //         appointment.AppointmentDetails.Crew = new Crew
+        //         {
+        //             CreatedDate = DateTime.Now, LastUpdated = DateTime.Now, CrewDetails = new List<CrewDetail>()
+        //         };
+        //     }
+        //     
+        //     //If appointment already has a crew, check for duplicate staffs
+        //     else
+        //     {
+        //         var duplicateStaffs =
+        //             appointment.AppointmentDetails.Crew.CrewDetails.Where(crewDetail => assignCrewDTO.StaffIds.Contains(crewDetail.StaffId)).ToList();
+        //         //If there's Duplicate, remove that staff id from dto
+        //         if (duplicateStaffs.Any())
+        //         {
+        //             foreach (var staff in duplicateStaffs)
+        //             {
+        //                 assignCrewDTO.StaffIds.Remove(staff.StaffId);
+        //             }
+        //         }
+        //     }
+        //     
+        //     //Get All Staff from database that has valid id and is from the same salon as the appointment
+        //     var staffs = await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+        //         assignCrewDTO.StaffIds.Contains(staff.Id) && staff.SalonId == appointment.SalonId);
+        //     if (staffs is null)
+        //     {
+        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"No Staff is found");
+        //     }
+        //     //If the count is not the same, then some staff doesn't exist or not from the same salon
+        //     if ( staffs.Count() != assignCrewDTO.StaffIds.Count)
+        //     {
+        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Some Staff is not found or not from the same salon");
+        //     }
+        //
+        //     //Pend Changes to appointment
+        //     foreach (var staffId in assignCrewDTO.StaffIds)
+        //     {
+        //         //Change appointment status
+        //         appointment.Status = GlobalVariables.ApprovedAppointmentStatus;
+        //         //Add new staff to the crew
+        //         appointment.AppointmentDetails.Crew.CrewDetails.Add(new CrewDetail(){CrewId = appointment.AppointmentDetails.Crew.Id, StaffId = staffId});
+        //     }
+        //
+        //     //Save to Database
+        //     await _repositoryWrapper.AppointmentDetail.UpdateAsync(appointment.AppointmentDetails, appointment.AppointmentDetails.Id);
+        //     var appointmentDetail= await _repositoryWrapper.AppointmentDetail.GetAppointmentDetailWithCrew(assignCrewDTO.AppointmentId);
+        //     
+        //     return new CustomHttpCodeResponse(200,"Crew Assigned", new AssignCrewResponseDTO()
+        //     {
+        //         AppointmentId = appointmentDetail.AppointmentId,
+        //         StaffIds = appointmentDetail.Crew.CrewDetails.Select(cd=>cd.StaffId).ToList()
+        //     }); 
+        // }
 
         #region private functions
         

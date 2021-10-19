@@ -13,10 +13,10 @@ namespace HairCutAppAPI.Entities
         
         [ForeignKey("User")]
         public int UserId { get; set; }
-        public AppUser User { get; set; }
+        public virtual AppUser User { get; set; }
         
         [Required]
-        [MinLength(3)]
+        [MinLength(3)] 
         [MaxLength(50)]
         public string FullName { get; set; }
         
@@ -32,9 +32,9 @@ namespace HairCutAppAPI.Entities
         public int? SalonId { get; set; }
         public virtual Salon Salon { get; set; }
         
-        public ICollection<WorkSlot> WorkSlots { get; set; }
+        public virtual ICollection<WorkSlot> WorkSlots { get; set; }
         
-        public ICollection<CrewDetail> CrewDetails { get; set; }
+        public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; }
 
         public StaffDetailDTO ToStaffDetailDTO()
         {

@@ -25,7 +25,5 @@ namespace HairCutAppAPI.Repositories.Interfaces
         IAppointmentRepository Appointment { get; }
         IAppointmentDetailRepository AppointmentDetail { get; }
         IAppointmentRatingRepository AppointmentRating { get; }
-        ICrewRepository Crew { get; }
-        ICrewDetailRepository CrewDetail { get; }
     }
 }

@@ -25,6 +25,9 @@ namespace HairCutAppAPI.Entities
         public int Duration { get; set; }
         
         [Required]
+        public decimal Price { get; set; }
+        
+        [Required]
         public DateTime CreatedDate { get; set; }
         [Required]
         public DateTime LastUpdated { get; set; }
