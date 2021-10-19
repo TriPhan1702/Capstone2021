@@ -10,5 +10,7 @@ namespace HairCutAppAPI.Services.Interfaces
     {
         Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList();
         Task<ActionResult<CustomHttpCodeResponse>> CreateSalon(CreateSalonDTO salonDTO);
+        
+        Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetSalons(AdvancedGetSalonDTO advancedGetSalonDTO);
     }
 }

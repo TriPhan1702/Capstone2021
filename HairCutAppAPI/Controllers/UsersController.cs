@@ -36,6 +36,9 @@ namespace HairCutAppAPI.Controllers
             return await _userService.GetUsers();
         }
         
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("advanced_get_users")]
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUser(

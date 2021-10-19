@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.DTOs.SalonDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -73,6 +74,20 @@ namespace HairCutAppAPI.Entities
             }
 
             return result;
+        }
+
+        public AdvancedGetSalonResponseDTO ToAdvancedGetSalonResponseDTO()
+        {
+            return new AdvancedGetSalonResponseDTO()
+            {
+                Id = Id,
+                Description = Description,
+                Name = Name,
+                Status = Status,
+                AvatarUrl = AvatarUrl,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat),
+            };
         }
     }
 }

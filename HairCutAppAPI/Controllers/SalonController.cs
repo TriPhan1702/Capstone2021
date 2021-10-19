@@ -28,6 +28,20 @@ namespace HairCutAppAPI.Controllers
         {
             return await _salonService.CustomerGetSalonList();
         }
+        
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_salons")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetSalon(
+            AdvancedGetSalonDTO advancedGetSalonDTO)
+        {
+            //Trim All Strings in object
+            advancedGetSalonDTO = ObjectTrimmer.TrimObject(advancedGetSalonDTO) as AdvancedGetSalonDTO;
+            var salons = await _salonService.AdvancedGetSalons(advancedGetSalonDTO);
+            return salons;
+        }
 
         /// <summary>
         /// For Admin create new salon

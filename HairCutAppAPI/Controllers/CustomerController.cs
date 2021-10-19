@@ -29,15 +29,18 @@ namespace HairCutAppAPI.Controllers
             return await _customerService.GetCustomerDetail(id);
         }
         
-        // [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("advanced_get_customers")]
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCustomers(
             AdvancedGetCustomerDTO advancedGetCustomerDTO)
         {
             //Trim All Strings in object
             advancedGetCustomerDTO = ObjectTrimmer.TrimObject(advancedGetCustomerDTO) as AdvancedGetCustomerDTO;
-            var users = await _customerService.AdvancedGetCustomers(advancedGetCustomerDTO);
-            return users;
+            var customers = await _customerService.AdvancedGetCustomers(advancedGetCustomerDTO);
+            return customers;
         }
         
         /// <summary>
