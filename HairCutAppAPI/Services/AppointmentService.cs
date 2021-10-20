@@ -320,7 +320,18 @@ namespace HairCutAppAPI.Services
         
             return new CustomHttpCodeResponse(200,"",appointment.ToGetAppointmentDetailResponseDTO(combo));
         }
-        
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO)
+        {
+            if (!string.IsNullOrWhiteSpace(advancedGetAppointmentsDTO.SortBy) && !AdvancedGetAppointmentsDTO.OrderingParams.Contains(advancedGetAppointmentsDTO.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetAppointmentsDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.Appointment.AdvancedGetAppointments(advancedGetAppointmentsDTO);
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
+
         // public async Task<CustomHttpCodeResponse> AssignCrew(AssignCrewDTO assignCrewDTO)
         // {
         //     var appointment = await _repositoryWrapper.Appointment.GetAppointmentWithDetailAndCrewDetail(assignCrewDTO.AppointmentId);

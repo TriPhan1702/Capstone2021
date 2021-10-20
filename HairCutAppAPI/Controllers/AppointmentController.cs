@@ -29,6 +29,20 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_appointments")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetWorkSlots(
+            AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO)
+        {
+            //Trim All Strings in object
+            advancedGetAppointmentsDTO = ObjectTrimmer.TrimObject(advancedGetAppointmentsDTO) as AdvancedGetAppointmentsDTO;
+            var appointments = await _appointmentService.AdvancedGetAppointments(advancedGetAppointmentsDTO);
+            return appointments;
+        }
+        
+        /// <summary>
         /// For Customer to create appointment
         /// </summary>
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>

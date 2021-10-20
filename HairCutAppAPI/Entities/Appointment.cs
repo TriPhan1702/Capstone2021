@@ -121,5 +121,26 @@ namespace HairCutAppAPI.Entities
             };
             return result;
         }
+        
+        public AdvancedGetAppointmentsResponseDTO ToAdvancedGetAppointmentsResponseDTO()
+        {
+            var result = new AdvancedGetAppointmentsResponseDTO
+            {
+                Id = Id,
+                Status = Status,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat),
+                CustomerId = CustomerId,
+                CustomerName = Customer.FullName,
+                SalonId = SalonId,
+                SalonName = Salon.Name,
+                StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
+                EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat),
+                ComboId = ComboId,
+                ComboName = Combo.Name,
+                TotalPrice = Combo.Price,
+            };
+            return result;
+        }
     }
 }

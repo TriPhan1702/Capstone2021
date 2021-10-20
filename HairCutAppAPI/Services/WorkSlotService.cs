@@ -187,6 +187,17 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"", (await _repositoryWrapper.WorkSlot.UpdateAsync(workSlot, workSlot.Id)).ToUpdateWorkSlotDTO());
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetWorkSlots(AdvancedGetWorkSlotsDTO advancedGetWorkSlotsDTO)
+        {
+            if (!string.IsNullOrWhiteSpace(advancedGetWorkSlotsDTO.SortBy) && !AdvancedGetWorkSlotsDTO.OrderingParams.Contains(advancedGetWorkSlotsDTO.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetWorkSlotsDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.WorkSlot.AdvancedGetWorkSlots(advancedGetWorkSlotsDTO);
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
+
         #region private functions
         /// <summary>
         /// Check if inputted date is valid, can be a day before and can be more than 2 weeks in the future

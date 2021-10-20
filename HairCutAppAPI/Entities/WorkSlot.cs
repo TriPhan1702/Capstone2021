@@ -46,5 +46,20 @@ namespace HairCutAppAPI.Entities
                 Status = Status
             };
         }
+
+        public AdvancedGetWorkSlotsResponseDTO ToAdvancedGetWorkSlotResponseDTO()
+        {
+            return new AdvancedGetWorkSlotsResponseDTO()
+            {
+                Id = Id,
+                Status = Status,
+                StaffId = StaffId,
+                SlotOfDayId = SlotOfDayId,
+                Date = Date.ToString(GlobalVariables.DayFormat),
+                StaffName = Staff.FullName,
+                StartTime = SlotOfDay.StartTime.ToString(GlobalVariables.TimeFormat),
+                EndTime = SlotOfDay.EndTime.ToString(GlobalVariables.TimeFormat),
+            };
+        }
     }
 }

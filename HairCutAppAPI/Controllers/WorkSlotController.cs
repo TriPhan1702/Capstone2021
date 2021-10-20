@@ -20,6 +20,20 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For authorized users
+        /// </summary>
+        [Authorize]
+        [HttpPost("advanced_get_work_slots")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetWorkSlots(
+            AdvancedGetWorkSlotsDTO advancedGetWorkSlotsDTO)
+        {
+            //Trim All Strings in object
+            advancedGetWorkSlotsDTO = ObjectTrimmer.TrimObject(advancedGetWorkSlotsDTO) as AdvancedGetWorkSlotsDTO;
+            var slots = await _workSlotService.AdvancedGetWorkSlots(advancedGetWorkSlotsDTO);
+            return slots;
+        }
+        
+        /// <summary>
         /// Get Id and status of a work slot based on staff, which slot, date
         /// </summary>
         [Authorize]
