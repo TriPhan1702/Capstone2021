@@ -71,6 +71,17 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "Service Created",result.Id);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetServices(AdvancedGetServiceDTO advancedGetServiceDTO)
+        {
+            if (!string.IsNullOrWhiteSpace(advancedGetServiceDTO.SortBy) && !AdvancedGetServiceDTO.OrderingParams.Contains(advancedGetServiceDTO.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetServiceDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.Service.AdvancedGetServices(advancedGetServiceDTO);
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
+
         /// <summary>
         /// Check if status is valid
         /// </summary>

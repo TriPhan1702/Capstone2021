@@ -19,6 +19,20 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_services")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetServices(
+            AdvancedGetServiceDTO advancedGetServiceDTO)
+        {
+            //Trim All Strings in object
+            advancedGetServiceDTO = ObjectTrimmer.TrimObject(advancedGetServiceDTO) as AdvancedGetServiceDTO;
+            var services = await _serviceService.AdvancedGetServices(advancedGetServiceDTO);
+            return services;
+        }
+        
+        /// <summary>
         /// For Admin to create service
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]

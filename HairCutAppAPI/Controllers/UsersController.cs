@@ -29,7 +29,6 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// DEBUG: Get all User in Database
         /// </summary>
-        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole)]
         [HttpGet]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetUsers()
         {
@@ -55,7 +54,6 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         /// <param name="id">user's id</param>
         /// <returns></returns>
-        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole)]
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {

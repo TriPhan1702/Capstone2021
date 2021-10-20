@@ -27,6 +27,17 @@ namespace HairCutAppAPI.Repositories
         public async Task<PagedList<CustomerDetailDTO>> AdvancedGetCustomers(AdvancedGetCustomerDTO advancedGetCustomerDTO)
         {
             var query = _hdbContext.Customers.Include(customer => customer.User).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(advancedGetCustomerDTO.Email))
+            {
+                query = query.Where(customer => customer.User.Email.Contains(advancedGetCustomerDTO.Email));
+            }
+
+            if (!string.IsNullOrWhiteSpace(advancedGetCustomerDTO.Name))
+            {
+                query = query.Where(customer => customer.FullName.ToLower().Contains(advancedGetCustomerDTO.Name.ToLower()));
+            }
+            
             //If there's role filtering
             if (advancedGetCustomerDTO.Roles != null && advancedGetCustomerDTO.Roles.Any())
             {
@@ -48,9 +59,9 @@ namespace HairCutAppAPI.Repositories
                     "customerid_asc" => query.OrderBy(customer => customer.Id),
                     "customerid_desc" => query.OrderByDescending(customer => customer.Id),
                     "email_asc" => query.OrderBy(customer => customer.User.Email),
-                    "email_desc" => query.OrderByDescending(customer => customer.Id),
-                    "fullname_asc" => query.OrderBy(customer => customer.User.Email),
-                    "fullname_desc" => query.OrderByDescending(customer => customer.Id),
+                    "email_desc" => query.OrderByDescending(customer => customer.User.Email),
+                    "fullname_asc" => query.OrderBy(customer => customer.FullName),
+                    "fullname_desc" => query.OrderByDescending(customer => customer.FullName),
                     "status_asc"  => query.OrderBy(customer => customer.User.Status),
                     "status_desc" => query.OrderByDescending(customer => customer.User.Status),
                     "role_asc"  => query.OrderBy(customer => customer.User.Role),

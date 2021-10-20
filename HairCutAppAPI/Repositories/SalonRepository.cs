@@ -27,8 +27,13 @@ namespace HairCutAppAPI.Repositories
             //If there's status filtering
             if (advancedGetSalonDTO.Statuses != null && advancedGetSalonDTO.Statuses.Any())
             {
-                query = query.Where(user =>
-                    advancedGetSalonDTO.Statuses.Select(status => status.ToLower()).Contains(user.Status.ToLower()));
+                query = query.Where(salon =>
+                    advancedGetSalonDTO.Statuses.Select(status => status.ToLower()).Contains(salon.Status.ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(advancedGetSalonDTO.Name))
+            {
+                query = query.Where(salon => salon.Name.ToLower().Contains((advancedGetSalonDTO.Name.ToLower())));
             }
 
             try

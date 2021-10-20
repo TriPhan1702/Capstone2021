@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.StaffDTOs;
 
 namespace HairCutAppAPI.Entities
 {
@@ -49,6 +50,23 @@ namespace HairCutAppAPI.Entities
                 StaffId = Id,
                 AvatarUrl = User.AvatarUrl,
                 PhoneNumber = User.PhoneNumber
+            };
+        }
+
+        public AdvancedGetStaffResponseDTO ToAdvancedGetStaffResponseDTO()
+        {
+            return new AdvancedGetStaffResponseDTO()
+            {
+                FullName = FullName,
+                Description = Description,
+                StaffType = StaffType,
+                Email = User.Email,
+                SalonId = SalonId,
+                SalonName = Salon.Name,
+                UserId = User.Id,
+                StaffId = Id,
+                AvatarUrl = User.AvatarUrl,
+                PhoneNumber = User.PhoneNumber,
             };
         }
     }

@@ -88,5 +88,19 @@ namespace HairCutAppAPI.Controllers
         {
             return await _comboService.GetAllActiveCombos();
         }
+        
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_combos")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCombos(
+            AdvancedGetCombosDTO advancedGetCombosDTO)
+        {
+            //Trim All Strings in object
+            advancedGetCombosDTO = ObjectTrimmer.TrimObject(advancedGetCombosDTO) as AdvancedGetCombosDTO;
+            var combos = await _comboService.AdvancedGetCombos(advancedGetCombosDTO);
+            return combos;
+        }
     }
 }

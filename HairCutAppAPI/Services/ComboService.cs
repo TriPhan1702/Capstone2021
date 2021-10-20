@@ -177,7 +177,17 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"",result.Id);
         }
 
-        
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCombos(AdvancedGetCombosDTO advancedGetCombosDTO)
+        {
+            if (!string.IsNullOrWhiteSpace(advancedGetCombosDTO.SortBy) && !AdvancedGetCombosDTO.OrderingParams.Contains(advancedGetCombosDTO.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetCombosDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.Combo.AdvancedGetCombos(advancedGetCombosDTO);
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
+
         /// <summary>
         /// Check if Service list is valid
         /// </summary>

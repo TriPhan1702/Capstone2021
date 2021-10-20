@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.StaffDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
@@ -73,6 +74,17 @@ namespace HairCutAppAPI.Services
             }
 
             return new CustomHttpCodeResponse(200, "", staff.ToStaffDetailDTO());
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetStaffs(AdvancedGetStaffDTO advancedGetStaffDTO)
+        {
+            if (!string.IsNullOrWhiteSpace(advancedGetStaffDTO.SortBy) && !AdvancedGetStaffDTO.OrderingParams.Contains(advancedGetStaffDTO.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetStaffDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.Staff.AdvancedGetStaffs(advancedGetStaffDTO);
+            return new CustomHttpCodeResponse(200, "" , result);
         }
 
         //Check if user exists by username and email

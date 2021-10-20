@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.DTOs.ComboDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -57,6 +58,21 @@ namespace HairCutAppAPI.Entities
                 Description = Description,
                 Duration = Duration,
                 Status = Status,
+            };
+        }
+
+        public AdvancedGetCombosResponseDTO ToAdvancedGetCombosResponseDTO()
+        {
+            return new AdvancedGetCombosResponseDTO()
+            {
+                Id = Id,
+                Name = Name,
+                Description = Description,
+                Duration = Duration,
+                Status = Status,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat),
+                Price = Price
             };
         }
     }

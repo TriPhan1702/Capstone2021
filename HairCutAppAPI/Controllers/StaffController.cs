@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using HairCutAppAPI.DTOs;
+using HairCutAppAPI.DTOs.StaffDTOs;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,20 @@ namespace HairCutAppAPI.Controllers
         public async Task<ActionResult<CustomHttpCodeResponse>> GetStaffDetail(int id)
         {
             return await _staffService.GetStaffDetail(id);
+        }
+        
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_staffs")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetStaffs(
+            AdvancedGetStaffDTO advancedGetStaffDTO)
+        {
+            //Trim All Strings in object
+            advancedGetStaffDTO = ObjectTrimmer.TrimObject(advancedGetStaffDTO) as AdvancedGetStaffDTO;
+            var staffs = await _staffService.AdvancedGetStaffs(advancedGetStaffDTO);
+            return staffs;
         }
         
         /// <summary>

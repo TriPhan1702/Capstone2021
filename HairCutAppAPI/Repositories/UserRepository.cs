@@ -39,7 +39,6 @@ namespace HairCutAppAPI.Repositories
             {
                 query = query.Where(user => advancedGetUserDTO.Statuses.Select(status=>status.ToLower()).Contains(user.Status.ToLower()));
             }
-            
 
             //If there's sorting
             if (!string.IsNullOrWhiteSpace(advancedGetUserDTO.SortBy))
@@ -49,7 +48,7 @@ namespace HairCutAppAPI.Repositories
                     "id_asc" => query.OrderBy(user => user.Id),
                     "id_desc" => query.OrderByDescending(user => user.Id),
                     "email_asc" => query.OrderBy(user => user.Email),
-                    "email_desc" => query.OrderByDescending(user => user.Id),
+                    "email_desc" => query.OrderByDescending(user => user.Email),
                     "status_asc"  => query.OrderBy(user => user.Status),
                     "status_desc" => query.OrderByDescending(user => user.Status),
                     "role_asc"  => query.OrderBy(user => user.Role),
