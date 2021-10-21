@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -132,6 +133,15 @@ namespace HairCutAppAPI.Repositories
             return await PagedList<AdvancedGetWorkSlotsResponseDTO>.CreateAsync(
                 query.Select(slot => slot.ToAdvancedGetWorkSlotResponseDTO()), advancedGetWorkSlotsDTO.PageNumber,
                 advancedGetWorkSlotsDTO.PageSize);
+        }
+
+        public async Task<ICollection<WorkSlot>> GetAvailableWorkSlotsDetailFromStaffListAndSlotOfDayListAndDate(DateTime date, IEnumerable<int> staffIds,
+            IEnumerable<int> slotsOfDayIds)
+        {
+            return await _hdbContext.WorkSlots.Include(slot => slot.SlotOfDay).Where(ws => slotsOfDayIds.Contains(ws.SlotOfDayId) &&
+                                                                             staffIds.Contains(ws.StaffId) &&
+                                                                             ws.Status == GlobalVariables.AvailableWorkSlotStatus &&
+                                                                             ws.Date.DayOfYear == date.DayOfYear).ToListAsync();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace HairCutAppAPI.Controllers
         /// For Customer see list of available salons
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = GlobalVariables.CustomerRole)]
+        [Authorize]
         [HttpGet("active_salons")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList()
         {

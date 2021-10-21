@@ -10,6 +10,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<Appointment> GetAppointmentOfCustomer(int customerId);
         Task<Appointment> GetAllAppointmentDetail(int appointmentId);
         Task<Appointment> GetAppointmentWithDetail(int appointmentId);
+        Task<Appointment> GetAppointmentWithComboDetail(int appointmentId);
         Task<PagedList<AdvancedGetAppointmentsResponseDTO>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO);
     }
 }

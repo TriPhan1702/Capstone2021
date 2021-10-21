@@ -11,11 +11,9 @@
         public int SalonId { get; set; }
         public string SalonName { get; set; }
         
-        public int? StylistUserId { get; set; }
+        public int? StylistStaffId { get; set; }
         
         public string StylistName { get; set; }
-        
-        public int AppointmentDetailId { get; set; }
         
         public int ComboId { get; set; }
         

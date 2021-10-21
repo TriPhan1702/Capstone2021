@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.AppointmentDTOs;
-using HairCutAppAPI.DTOs.CrewDTOs;
 using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +13,7 @@ namespace HairCutAppAPI.Services.Interfaces
 
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentDetail(int appointmentId);
         
-        // Task<CustomHttpCodeResponse> AssignCrew(AssignCrewDTO assignCrewDTO);
+        Task<CustomHttpCodeResponse> AssignStaff(AssignStaffDTO assignCrewDTO);
         
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO);
     }

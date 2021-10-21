@@ -190,5 +190,11 @@ namespace HairCutAppAPI.Repositories
                 query.Select(appointment => appointment.ToAdvancedGetAppointmentsResponseDTO()), advancedGetAppointmentsDTO.PageNumber,
                 advancedGetAppointmentsDTO.PageSize);
         }
+
+        public async Task<Appointment> GetAppointmentWithComboDetail(int appointmentId)
+        {
+            return await _hdbContext.Appointments.Include(appointment => appointment.Combo).ThenInclude(combo => combo.ComboDetails).ThenInclude(detail => detail.Service)
+                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+        }
     }
 }

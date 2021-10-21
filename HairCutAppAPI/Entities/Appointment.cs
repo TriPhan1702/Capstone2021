@@ -15,19 +15,23 @@ namespace HairCutAppAPI.Entities
         
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public virtual Customer Customer { get; set; }
         
         [ForeignKey("Salon")]
         public int SalonId { get; set; }
-        public Salon Salon { get; set; }
+        public virtual Salon Salon { get; set; }
+        
+        [ForeignKey("ChosenStaff")]
+        public int? ChosenStaffId { get; set; }
+        public virtual Staff ChosenStaff { get; set; }
         
         [ForeignKey("Combo")]
         public int ComboId { get; set; }
-        public Combo Combo { get; set; }
+        public virtual Combo Combo { get; set; }
 
         [ForeignKey("Rating")]
         public int? RatingId { get; set; }
-        public AppointmentRating Rating { get; set; }
+        public virtual AppointmentRating Rating { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; }
         [Required]
         [MaxLength(20)]
@@ -74,7 +78,7 @@ namespace HairCutAppAPI.Entities
                 EndDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
                 SalonId = SalonId,
                 SalonName = Salon.Name,
-                StylistUserId = stylistId,
+                StylistStaffId = stylistId,
                 StylistName = stylistName,
             };
         }

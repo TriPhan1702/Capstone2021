@@ -36,6 +36,7 @@ namespace HairCutAppAPI.Entities
         public virtual ICollection<WorkSlot> WorkSlots { get; set; }
         
         public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
 
         public StaffDetailDTO ToStaffDetailDTO()
         {
