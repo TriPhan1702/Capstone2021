@@ -87,6 +87,51 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "" , result);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> AddStaffToSalon(ChangeSalonStaffDTO changeSalonStaffDTO)
+        {
+            //Check if Salon Exists
+            if (!await _repositoryWrapper.Salon.AnyAsync(salon => salon.Id == changeSalonStaffDTO.SalonId))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon with id {changeSalonStaffDTO.SalonId} not found");
+            }
+
+            var updatedStaff =
+                await _repositoryWrapper.Staff.FindSingleByConditionAsync(staff =>
+                    staff.Id == changeSalonStaffDTO.StaffId);
+            if (updatedStaff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Staff with id {changeSalonStaffDTO.StaffId} not found");
+            }
+
+            updatedStaff.SalonId = changeSalonStaffDTO.SalonId;
+            var result = await _repositoryWrapper.Staff.UpdateAsync(updatedStaff, updatedStaff.Id);
+            
+            return new CustomHttpCodeResponse(200,$"Staff with id {changeSalonStaffDTO.StaffId} assigned to Salon with id {changeSalonStaffDTO.SalonId}",new ChangeSalonStaffDTO()
+            {
+                SalonId = updatedStaff.SalonId.Value,
+                StaffId = updatedStaff.Id
+            });
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> RemoveStaffFromSalon(int staffId)
+        {
+            var updatedStaff =
+                await _repositoryWrapper.Staff.FindSingleByConditionAsync(staff =>
+                    staff.Id == staffId);
+            if (updatedStaff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Staff with id {staffId} not found");
+            }
+
+            updatedStaff.SalonId = null;
+            await _repositoryWrapper.Staff.UpdateAsync(updatedStaff, updatedStaff.Id);
+            
+            return new CustomHttpCodeResponse(200,$"Salon removed from staff",true);
+        }
+
+
+        #region private functions
+
         //Check if user exists by username and email
         private async Task<bool> UserExists(string email)
         {
@@ -140,5 +185,8 @@ namespace HairCutAppAPI.Services
 
             return role;
         }
+
+        #endregion private functions
+        
     }
 }
