@@ -63,5 +63,26 @@ namespace HairCutAppAPI.Controllers
 
             return await _salonService.CreateSalon(createSalonDTO);
         }
+        
+        /// <summary>
+        /// For Admin to update a salon,
+        /// </summary>
+        /// <param name="updateSalonDTO">Empty ot null fields will not be changed, negative number value = null</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPut("update_salon")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateSalon([FromBody] UpdateSalonDTO updateSalonDTO)
+        {
+            //Trim All Strings in object
+            updateSalonDTO = ObjectTrimmer.TrimObject(updateSalonDTO) as UpdateSalonDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+
+            return await _salonService.UpdateSalon(updateSalonDTO);
+        }
     }
 }

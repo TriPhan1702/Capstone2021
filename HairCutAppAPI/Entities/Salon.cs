@@ -110,5 +110,19 @@ namespace HairCutAppAPI.Entities
         //         
         //     }
         // }
+
+        public UpdateSalonResponseDTO ToUpdateSalonResponseDTO()
+        {
+            return new UpdateSalonResponseDTO()
+            {
+                Id = Id,
+                Description = Description,
+                Name = Name,
+                Status = Status,
+                Latitude = Latitude,
+                Longitude = Longitude,
+                AvatarUrl = AvatarUrl
+            };
+        }
     }
 }
