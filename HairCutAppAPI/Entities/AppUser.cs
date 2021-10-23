@@ -15,8 +15,6 @@ namespace HairCutAppAPI.Entities
 
         [Required]
         public string Email { get; set; }
-
-        [Required]
         public byte[] PasswordHash { get; set; }
         
         public byte[] PasswordSalt { get; set; }

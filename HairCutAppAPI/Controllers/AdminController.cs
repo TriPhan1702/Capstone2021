@@ -1,5 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using CorePush.Google;
 using HairCutAppAPI.DTOs;
 using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Entities;
@@ -38,6 +42,29 @@ namespace HairCutAppAPI.Controllers
             
             return new CustomHttpCodeResponse(200,"", await _userService.CreateUser(dto, GlobalVariables.AdministratorRole));
         }
+
+        /// <summary>
+        /// Used to test notification
+        /// </summary>
+        [HttpGet("test_notification")]
+        public async Task<FcmResponse> TestNotification(string deviceToken)
+        {
+            var httpClient = new HttpClient()
+            {
+                BaseAddress = new Uri("https://fcm.googleapis.com/fcm/"),
+            };
+            
+            var notification = new GoogleNotification()
+            {
+                Data = new GoogleNotification.DataPayload(){Message = "Notification sent from DMT App"},
+            };
+
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var fcm = new FcmSender(new FcmSettings(){ServerKey = @"AAAAzdvljyU:APA91bH0HBmQD9eJflKWWBIjKqATJtHa16ozs4iCFgfrTl0s79B3-BoDu1DHt3gl4FrjIBcI-Wj5Bxxpn8z1h-LYnt1WiMRLSix7Jo07m8tXa9GweTe1KjETvCVf61Kd78kl1-wT87TI", SenderId = "884157550373"}, 
+                httpClient);
+            return await fcm.SendAsync(deviceToken, notification);
+        }
+        
 
         // /// <summary>
         // /// Change the user the specified roles

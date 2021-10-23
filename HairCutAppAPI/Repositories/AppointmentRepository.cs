@@ -78,16 +78,16 @@ namespace HairCutAppAPI.Repositories
             }
             
             //If there's min price filtering
-            if (advancedGetAppointmentsDTO.MinTotalPrice >= 0)
-            {
-                query = query.Where(appointment => appointment.Combo.Price >= advancedGetAppointmentsDTO.MinTotalPrice);
-            }
+            // if (advancedGetAppointmentsDTO.MinTotalPrice >= 0)
+            // {
+            //     query = query.Where(appointment => appointment.Combo.Price >= advancedGetAppointmentsDTO.MinTotalPrice);
+            // }
             
             //If there's max price filtering
-            if (advancedGetAppointmentsDTO.MaxTotalPrice >= 0)
-            {
-                query = query.Where(appointment => appointment.Combo.Price <= advancedGetAppointmentsDTO.MaxTotalPrice);
-            }
+            // if (advancedGetAppointmentsDTO.MaxTotalPrice >= 0)
+            // {
+            //     query = query.Where(appointment => appointment.Combo.Price <= advancedGetAppointmentsDTO.MaxTotalPrice);
+            // }
 
             try
             {
@@ -172,8 +172,8 @@ namespace HairCutAppAPI.Repositories
                     "salonname_desc" => query.OrderByDescending(appointment => appointment.Combo.Name),
                     "status_asc" => query.OrderBy(appointment => appointment.Status),
                     "status_desc" => query.OrderByDescending(appointment => appointment.Status),
-                    "toalprice_asc" => query.OrderBy(appointment => appointment.Combo.Price),
-                    "totalprice_desc" => query.OrderByDescending(appointment => appointment.Combo.Price),
+                    // "toalprice_asc" => query.OrderBy(appointment => appointment.Combo.Price),
+                    // "totalprice_desc" => query.OrderByDescending(appointment => appointment.Combo.Price),
                     "createddate_asc" => query.OrderBy(appointment => appointment.CreatedDate),
                     "createddate_desc" => query.OrderByDescending(appointment => appointment.CreatedDate),
                     "lastupdate_asc" => query.OrderBy(appointment => appointment.LastUpdated),

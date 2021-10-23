@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using HairCutAppAPI.DTOs.ComboDTOs;
 using HairCutAppAPI.DTOs.SalonDTOs;
 using HairCutAppAPI.Utilities;
 
@@ -89,5 +91,24 @@ namespace HairCutAppAPI.Entities
                 LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat),
             };
         }
+
+        // public CustomerGetSalonDetailDTO ToCustomerGetSalonDetailDTO(ICollection<Combo> combos)
+        // {
+        //     var result = new CustomerGetSalonDetailDTO()
+        //     {
+        //         Id = Id,
+        //         Description = Description,
+        //         Name = Name,
+        //         Latitude = Latitude,
+        //         Longitude = Longitude,
+        //         AvatarUrl = AvatarUrl,
+        //         ComboDetailDTOs = new List<ComboDetailDTO>()
+        //     };
+        //
+        //     foreach (var combo in combos)
+        //     {
+        //         
+        //     }
+        // }
     }
 }

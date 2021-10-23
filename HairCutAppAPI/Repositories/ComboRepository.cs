@@ -46,7 +46,7 @@ namespace HairCutAppAPI.Repositories
 
         public async Task<PagedList<AdvancedGetCombosResponseDTO>> AdvancedGetCombos(AdvancedGetCombosDTO advancedGetCombosDTO)
         {
-            var query = _hdbContext.Combos.AsQueryable();
+            var query = _hdbContext.Combos.Include(combo => combo.ComboDetails).ThenInclude(detail => detail.Service).AsQueryable();
             //If there's status filtering
             if (advancedGetCombosDTO.Statuses != null && advancedGetCombosDTO.Statuses.Any())
             {
@@ -63,13 +63,13 @@ namespace HairCutAppAPI.Repositories
             //If there's min price filtering
             if (advancedGetCombosDTO.MinPrice >= 0)
             {
-                query = query.Where(combo => combo.Price >= advancedGetCombosDTO.MinPrice);
+                query = query.Where(combo => combo.ComboDetails.Sum(detail => detail.Service.Price) >= advancedGetCombosDTO.MinPrice);
             }
             
             //If there's max price filtering
             if (advancedGetCombosDTO.MaxPrice >= 0)
             {
-                query = query.Where(combo => combo.Price <= advancedGetCombosDTO.MaxPrice);
+                query = query.Where(combo => combo.ComboDetails.Sum(detail => detail.Service.Price) <= advancedGetCombosDTO.MaxPrice);
             }
             
             //If there's min duration filtering
@@ -81,7 +81,7 @@ namespace HairCutAppAPI.Repositories
             //If there's max duration filtering
             if (advancedGetCombosDTO.MaxDuration >= 0)
             {
-                query = query.Where(combo => combo.Price <= advancedGetCombosDTO.MaxPrice);
+                query = query.Where(combo => combo.ComboDetails.Sum(detail => detail.Service.Price) <= advancedGetCombosDTO.MaxPrice);
             }
 
             try
@@ -137,8 +137,8 @@ namespace HairCutAppAPI.Repositories
                     "name_desc" => query.OrderByDescending(combo => combo.Name),
                     "status_asc" => query.OrderBy(combo => combo.Status),
                     "status_desc" => query.OrderByDescending(combo => combo.Status),
-                    "price_asc" => query.OrderBy(combo => combo.Price),
-                    "price_desc" => query.OrderByDescending(combo => combo.Price),
+                    "price_asc" => query.OrderBy(combo => combo.ComboDetails.Sum(detail => detail.Service.Price)),
+                    "price_desc" => query.OrderByDescending(combo => combo.ComboDetails.Sum(detail => detail.Service.Price)),
                     "duration_asc" => query.OrderBy(combo => combo.Duration),
                     "duration_desc" => query.OrderByDescending(combo => combo.Duration),
                     "createddate_asc" => query.OrderBy(combo => combo.CreatedDate),

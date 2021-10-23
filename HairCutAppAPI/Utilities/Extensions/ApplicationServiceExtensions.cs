@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CorePush.Google;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Repositories;
 using HairCutAppAPI.Repositories.Interfaces;
@@ -36,6 +37,8 @@ namespace HairCutAppAPI.Utilities.Extensions
             
             //For getting the current User Id
             services.AddHttpContextAccessor();
+            
+            services.AddHttpClient<FcmSender>();
 
             return services;
         }

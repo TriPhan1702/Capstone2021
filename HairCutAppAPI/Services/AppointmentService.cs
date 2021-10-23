@@ -169,7 +169,7 @@ namespace HairCutAppAPI.Services
                 LastUpdated = now,
                 ComboId = combo.Id,
                 PaidAmount = 0,
-                ChosenStaffId = chosenStylist?.Id
+                ChosenStaffId = chosenStylist?.Id,
             };
 
             //Pend create change

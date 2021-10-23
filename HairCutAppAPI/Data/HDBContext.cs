@@ -174,7 +174,7 @@ namespace HairCutAppAPI.Data
             //Seed Combo
             builder.Entity<Combo>().HasData
             (
-                new Combo(){Id = 1, Name = "Cắt Tóc",Description = "Cắt Tóc", Duration = 1, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now, Price = 40000},
+                new Combo(){Id = 1, Name = "Cắt Tóc",Description = "Cắt Tóc", Duration = 1, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
                 new Combo(){Id = 2, Name = "Cắt Tóc Gội Đầu",Description = "Cắt Tóc Gội Đầu", Duration = 2, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
                 new Combo(){Id = 3, Name = "Cắt Tóc Gội Đầu Rửa Mặt",Description = "Cắt Tóc Gội Đầu Rửa Mặt", Duration = 2, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
                 new Combo(){Id = 4, Name = "Chăm sóc đầy đử",Description = "Cắt Tóc, Ráy Táy, Gội Đầu, Rửa Mặt, Dắp mặt", Duration = 3, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},

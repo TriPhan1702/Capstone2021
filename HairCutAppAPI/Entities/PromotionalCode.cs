@@ -20,7 +20,7 @@ namespace HairCutAppAPI.Entities
         [Required]
         public DateTime StartDate { get; set; }
         [Required]
-        public DateTime ExpirationDateUpdate { get; set; }
+        public DateTime ExpirationDate { get; set; }
         public bool IsUniversal { get; set; }
         [Required]
         public int UsesPerCustomer { get; set; }

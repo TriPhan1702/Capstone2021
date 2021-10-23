@@ -185,12 +185,36 @@ namespace HairCutAppAPI.Services
         
         public async Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken)
         {
-            var user = await CheckGoogleIdToken(idToken);
+            var idTokenResponse = await GetReponseFromGoogleAPI(idToken);
+            if (string.IsNullOrWhiteSpace(idTokenResponse.Aud))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"IdToken is not valid");
+            }
         
+            var user = await _repositoryWrapper.User.GetUserByEmailAsync(idTokenResponse.Email);
             //Check if user is found in database
             if (user is null)
             {
                 return new BadRequestObjectResult("This account doesn't exist");
+                
+                // from Dto to AppUser
+                // var newUser = new AppUser()
+                // {
+                //     Role = GlobalVariables.CustomerRole,
+                //     Email = idTokenResponse.Email,
+                //     Status = GlobalVariables.NewUserStatus,
+                //     
+                // };
+                //
+                // var customer = new Customer()
+                // {
+                //     User = newUser,
+                //     FullName = dto.FullName,
+                // };
+                //
+                // //Save New User to Database
+                // var result = await _repositoryWrapper.Customer.CreateAsync(customer);
+                // var user =  await _repositoryWrapper.User.FindSingleByConditionAsync(u =>u.Id == result.Id);
             }
             
             //Return Ok Result
@@ -213,7 +237,7 @@ namespace HairCutAppAPI.Services
             var user = await CheckFacebookAccessToken(accessToken);
             if (user is null)
             {
-                return new BadRequestObjectResult("User with this email not found");
+                // return new BadRequestObjectResult("User with this email not found");
             }
             
             //Return Ok Result
@@ -251,7 +275,7 @@ namespace HairCutAppAPI.Services
         /// <summary>
         /// Send idToken to google api, check the response if idToken came from the right Client, and return user from database with the same email
         /// </summary>
-        private async Task<AppUser> CheckGoogleIdToken(string idToken)
+        private async Task<GoogleIdTokenResponse> GetReponseFromGoogleAPI(string idToken)
         {
             var idTokenResponseJson = await CallSocialAuthenticationApis(_configuration["GoogleApiTokenInfoUrl"] + idToken);
             
@@ -261,13 +285,15 @@ namespace HairCutAppAPI.Services
                 var idTokenResponse = JsonConvert.DeserializeObject<GoogleIdTokenResponse>(idTokenResponseJson);
         
                 //Check if AppId for response is the same as AppId of client app
-                if (idTokenResponse.Aud != _configuration["GoogleClientId"])
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Google API Token Info aud not containing the required client i");
-                }
+                // if (idTokenResponse.Aud != _configuration["GoogleClientId"])
+                // {
+                //     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Google API Token Info aud not containing the required client i");
+                // }
                 
                 //Find User with the same email in database
-                return await _repositoryWrapper.User.GetUserByEmailAsync(idTokenResponse.Email);
+                // return await _repositoryWrapper.User.GetUserByEmailAsync(idTokenResponse.Email);
+
+                return idTokenResponse;
             }
         
             catch (JsonSerializationException)

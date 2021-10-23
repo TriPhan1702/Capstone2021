@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using HairCutAppAPI.DTOs.ComboDTOs;
 using HairCutAppAPI.Utilities;
 
@@ -25,8 +26,8 @@ namespace HairCutAppAPI.Entities
         [Required]
         public int Duration { get; set; }
         
-        [Required]
-        public decimal Price { get; set; }
+        // [Required]
+        // public decimal Price { get; set; }
         
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -45,7 +46,8 @@ namespace HairCutAppAPI.Entities
                 Id = Id,
                 Description = Description,
                 Name = Name,
-                Status = Status
+                Status = Status,
+                Price = ComboDetails.Sum(detail => detail.Service.Price)
             };
         }
 
@@ -72,7 +74,7 @@ namespace HairCutAppAPI.Entities
                 Status = Status,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
                 LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat),
-                Price = Price
+                Price = ComboDetails.Sum(detail => detail.Service.Price)
             };
         }
     }

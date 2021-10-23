@@ -121,7 +121,7 @@ namespace HairCutAppAPI.Entities
                     ServiceId = detail.ServiceId, ServiceDescription = detail.Service.Description,
                 }).ToList(),
                 PaidAmount = PaidAmount,
-                TotalPrice = Combo.Price,
+                // TotalPrice = Combo.Price,
             };
             return result;
         }
@@ -142,7 +142,7 @@ namespace HairCutAppAPI.Entities
                 EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat),
                 ComboId = ComboId,
                 ComboName = Combo.Name,
-                TotalPrice = Combo.Price,
+                // TotalPrice = Combo.Price,
             };
             return result;
         }
