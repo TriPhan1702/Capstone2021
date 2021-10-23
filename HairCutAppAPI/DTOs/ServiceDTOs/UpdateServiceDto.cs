@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Entities;
 
 namespace HairCutAppAPI.DTOs.ServiceDTOs
@@ -20,24 +21,34 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
 
         public Service CompareUpdateService(Service service)
         {
+            var changes = 0;
             if (!string.IsNullOrWhiteSpace(Name) && Name != service.Name)
             {
                 service.Name = Name;
+                changes++;
             }
 
             if (!string.IsNullOrWhiteSpace(Description) && Description != service.Description)
             {
                 service.Description = Description;
+                changes++;
             }
 
             if (!string.IsNullOrWhiteSpace(Status) && Status != service.Status)
             {
                 service.Status = Status.ToLower();
+                changes++;
             }
             
             if ( Price >= 0 && Price != service.Price)
             {
                 service.Price = Price;
+                changes++;
+            }
+
+            if (changes>0)
+            {
+                service.LastUpdated = DateTime.Now;
             }
 
             return service;

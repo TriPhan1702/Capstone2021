@@ -25,15 +25,18 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
 
         public Salon CompareAndMapToSalon(Salon salon)
         {
+            var changes = 0;
             //If name is not null, mapp
             if (!string.IsNullOrWhiteSpace(Name))
             {
                 salon.Name = Name;
+                changes++;
             }
 
             if (!string.IsNullOrWhiteSpace(Description))
             {
                 salon.Description = Description;
+                changes++;
             }
             
             //TODO:MAP Image
@@ -41,16 +44,24 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
             if (!string.IsNullOrWhiteSpace(Status))
             {
                 salon.Status = Status;
+                changes++;
             }
 
             if (Longitude >= 0)
             {
                 salon.Longitude = Longitude;
+                changes++;
             }
 
             if (Latitude >= 0)
             {
                 salon.Latitude = Latitude;
+                changes++;
+            }
+
+            if (changes > 0)
+            {
+                salon.LastUpdate = DateTime.Now;
             }
 
             return salon;
