@@ -137,7 +137,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAllActiveCombos()
         {
             //Get Active Combo
-            var comboDetails = await _repositoryWrapper.Combo.FindByConditionAsync(c=>c.Status == GlobalVariables.ComboStatuses[0]);
+            var comboDetails = await _repositoryWrapper.Combo.GetActiveCombosWithDetailsAndServiceDetails();
             
             return new CustomHttpCodeResponse(200, "" , comboDetails.Select(c=>c.ToComboDTO()).ToList());
         }

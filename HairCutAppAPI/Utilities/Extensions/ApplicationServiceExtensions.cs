@@ -3,8 +3,12 @@ using CorePush.Google;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Repositories;
 using HairCutAppAPI.Repositories.Interfaces;
+using HairCutAppAPI.Services;
+using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities.Email;
 using HairCutAppAPI.Utilities.JWTToken;
+using Hangfire;
+using Hangfire.MemoryStorage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,7 +42,17 @@ namespace HairCutAppAPI.Utilities.Extensions
             //For getting the current User Id
             services.AddHttpContextAccessor();
             
+            //For sending Firebase notification
             services.AddHttpClient<FcmSender>();
+            
+            //For running background tasks
+            services.AddHangfire(configuration =>
+                configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer().UseDefaultTypeSerializer().UseMemoryStorage());
+
+            services.AddHangfireServer();
+
+            services.AddScoped<IBackgroundJobService, BackgroundJobService>();
 
             return services;
         }

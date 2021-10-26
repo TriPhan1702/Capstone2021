@@ -60,12 +60,12 @@ namespace HairCutAppAPI.Controllers
             };
 
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var fcm = new FcmSender(new FcmSettings(){ServerKey = @"AAAAzdvljyU:APA91bH0HBmQD9eJflKWWBIjKqATJtHa16ozs4iCFgfrTl0s79B3-BoDu1DHt3gl4FrjIBcI-Wj5Bxxpn8z1h-LYnt1WiMRLSix7Jo07m8tXa9GweTe1KjETvCVf61Kd78kl1-wT87TI", SenderId = "884157550373"}, 
+            var fcm = new FcmSender(new FcmSettings(){ServerKey = @"AAAA8-N5Dnk:APA91bFjvbPNga7NDSsMYPHfa6o5OIzTM64WUn9CLct1-7lybapkewfwc-PrsrSiOwxCy1J-L5OTPcEasvmmc8lqNlgaZ_7Xv6ap-gkOeyZEZL_3l-HgtRgLsmxn5N6sp5xe1IqCtOVq", SenderId = "1047493414521"}, 
                 httpClient);
             return await fcm.SendAsync(deviceToken, notification);
         }
         
-
+        
         // /// <summary>
         // /// Change the user the specified roles
         // /// </summary>

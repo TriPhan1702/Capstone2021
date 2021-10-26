@@ -26,8 +26,8 @@ namespace HairCutAppAPI.Utilities
         public const string TimeFormat = @"hh\:mm";
         
         //Time variables
-        public const int TimeToCreateAppointmentInAdvanced = 2;
-        public const int TimeToConfirmAppointmentInAdvanced = 1;
+        public const int TimeToCreateAppointmentInAdvanced = 120;
+        public const int TimeToConfirmAppointmentInAdvanced = 60;
         
         //Name of roles
         public const string AdministratorRole = "administrator";
@@ -70,5 +70,7 @@ namespace HairCutAppAPI.Utilities
         public const string NotAvailableWorkSlotStatus = "not available";
         public const string NewPromotionalCodeStatus = ActivePromotionalCodeStatus;
         public const string ActivePromotionalCodeStatus = "active";
+        public const string ActiveComboStatus = "active";
+        
     }
 }

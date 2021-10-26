@@ -29,6 +29,11 @@ namespace HairCutAppAPI.Repositories
             return (await _hdbContext.Combos.Where(c => c.Id == id).Include(c => c.ComboDetails).ToListAsync()).First();
         }
         
+        public async Task<IEnumerable<Combo>> GetActiveCombosWithDetailsAndServiceDetails()
+        {
+            return await _hdbContext.Combos.Include(c=>c.ComboDetails).ThenInclude(detail => detail.Service).Where(combo => combo.Status == GlobalVariables.ActiveComboStatus).ToListAsync();
+        }
+        
         public async Task<IEnumerable<Combo>> GetCombosWithDetails()
         {
             return await _hdbContext.Combos.Include(c=>c.ComboDetails).ToListAsync();

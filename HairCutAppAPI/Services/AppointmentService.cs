@@ -81,7 +81,7 @@ namespace HairCutAppAPI.Services
 
             
             //If chosen date less than TimeToCreateAppointmentInAdvanced(Default 2) hours away, abort
-            if (chosenDate.Add(startSlotOfDay.StartTime) < now.AddHours(GlobalVariables.TimeToCreateAppointmentInAdvanced))
+            if (chosenDate.Add(startSlotOfDay.StartTime) < now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Chosen date has to be at least 2 hours away from now");
             }
@@ -274,7 +274,7 @@ namespace HairCutAppAPI.Services
                 foreach (var slot in workSlots)
                 {
                     //If this work slot is less than TimeToCreateAppointmentInAdvanced(Default 2 hours) away, change status of that slot to not available, else set available
-                    slot.Status = appointment.StartDate <= now.AddHours(GlobalVariables.TimeToCreateAppointmentInAdvanced) ? GlobalVariables.NotAvailableWorkSlotStatus : GlobalVariables.AvailableWorkSlotStatus;
+                    slot.Status = appointment.StartDate <= now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) ? GlobalVariables.NotAvailableWorkSlotStatus : GlobalVariables.AvailableWorkSlotStatus;
 
                     //Pend change
                     await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
@@ -430,7 +430,7 @@ namespace HairCutAppAPI.Services
             {
                 //If appointment is the same day as today
                 //If a work slot is less than 1 hour away, abort
-                if (appointment.StartDate.DayOfYear == now.DayOfYear && workSlot.Date.Add(workSlot.SlotOfDay.StartTime).AddHours(GlobalVariables.TimeToConfirmAppointmentInAdvanced) >= now )
+                if (appointment.StartDate.DayOfYear == now.DayOfYear && workSlot.Date.Add(workSlot.SlotOfDay.StartTime).AddMinutes(GlobalVariables.TimeToConfirmAppointmentInAdvanced) >= now )
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"WorkSlot {workSlot.Id} is less than {GlobalVariables.TimeToConfirmAppointmentInAdvanced} hours away");
                 }

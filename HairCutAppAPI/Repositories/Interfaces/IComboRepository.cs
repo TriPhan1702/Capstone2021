@@ -13,5 +13,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<Combo> GetOneComboWithDetails(int comboId);
         Task<Combo> GetOneComboWithDetailsAndServiceDetails(int comboId);
         Task<PagedList<AdvancedGetCombosResponseDTO>> AdvancedGetCombos(AdvancedGetCombosDTO advancedGetCombosDTO);
+
+        Task<IEnumerable<Combo>> GetActiveCombosWithDetailsAndServiceDetails();
     }
 }

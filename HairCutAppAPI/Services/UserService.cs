@@ -120,6 +120,7 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "User Logged in", new CurrentUserDTO()
             {
                 Email = user.Email,
+                Role = user.Role,
                 Token = await _tokenService.CreateToken(user)
             });
         }
