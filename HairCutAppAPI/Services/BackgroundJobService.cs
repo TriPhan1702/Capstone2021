@@ -50,5 +50,36 @@ namespace HairCutAppAPI.Services
                 }
             }
         }
+
+        public async Task CheckAndUpdateActiveWorkSlotJob()
+        {
+            //Get list of available work slots
+            var activeWorkSlots = (await _repositoryWrapper.WorkSlot.GetAvailableWorkSlotsWithSlotOfDay()).ToList();
+
+            if (activeWorkSlots.Any())
+            {
+                foreach (var slot in activeWorkSlots)
+                {
+                    var date = slot.Date.Add(slot.SlotOfDay.StartTime);
+                    if (date.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) <= DateTime.Now)
+                    {
+                        slot.Status = GlobalVariables.NotAvailableWorkSlotStatus;
+                        await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
+                    }
+                }
+                
+                try
+                {
+                    //Save all changes above to database 
+                    await _repositoryWrapper.SaveAllAsync();
+                }
+                catch (Exception e)
+                {
+                    //clear pending changes if fail
+                    _repositoryWrapper.DeleteChanges();
+                    //TODO: Log failure to update work slot
+                }
+            }
+        }
     }
 }

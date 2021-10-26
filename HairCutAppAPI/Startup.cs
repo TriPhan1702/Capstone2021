@@ -76,6 +76,9 @@ namespace HairCutAppAPI
             
             //Queue background tasks
             recurringJobManager.AddOrUpdate("Check and Update Pending Appointments",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdatePendingAppointmentJob(), Cron.Minutely());
+            recurringJobManager.AddOrUpdate("Check and Update Available Work Slot",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdateActiveWorkSlotJob(), Cron.Minutely());
+            
+            //TODO:Remove below when released
         }
     }
 }

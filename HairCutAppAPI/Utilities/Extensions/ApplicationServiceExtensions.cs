@@ -6,6 +6,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities.Email;
+using HairCutAppAPI.Utilities.ImageUpload;
 using HairCutAppAPI.Utilities.JWTToken;
 using Hangfire;
 using Hangfire.MemoryStorage;
@@ -19,6 +20,9 @@ namespace HairCutAppAPI.Utilities.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            //Add Cloudinary for image upload
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+            
             services.AddScoped<ITokenService, TokenService>();
             //Add dbcontext and add connection string
             services.AddDbContext<HDBContext>(options =>
@@ -50,10 +54,12 @@ namespace HairCutAppAPI.Utilities.Extensions
                 configuration.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                     .UseSimpleAssemblyNameTypeSerializer().UseDefaultTypeSerializer().UseMemoryStorage());
 
+            //Add Hangfire Server to do background tasks
             services.AddHangfireServer();
 
-            services.AddScoped<IBackgroundJobService, BackgroundJobService>();
-
+            //Add Photo Service
+            services.AddScoped<IPhotoService, PhotoService>();
+            
             return services;
         }
     }

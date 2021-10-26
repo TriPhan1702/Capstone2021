@@ -143,5 +143,11 @@ namespace HairCutAppAPI.Repositories
                                                                              ws.Status == GlobalVariables.AvailableWorkSlotStatus &&
                                                                              ws.Date.DayOfYear == date.DayOfYear).ToListAsync();
         }
+
+        public async Task<IEnumerable<WorkSlot>> GetAvailableWorkSlotsWithSlotOfDay()
+        {
+            return await _hdbContext.WorkSlots.Include(slot => slot.SlotOfDay)
+                .Where(slot => slot.Status == GlobalVariables.AvailableWorkSlotStatus).ToListAsync();
+        }
     }
 }

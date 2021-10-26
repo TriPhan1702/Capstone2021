@@ -14,5 +14,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<ICollection<WorkSlot>> GetAvailableWorkSlotsDetailFromStaffListAndSlotOfDayListAndDate(DateTime date,
             IEnumerable<int> staffIds,
             IEnumerable<int> slotsOfDayIds);
+
+        Task<IEnumerable<WorkSlot>> GetAvailableWorkSlotsWithSlotOfDay();
     }
 }

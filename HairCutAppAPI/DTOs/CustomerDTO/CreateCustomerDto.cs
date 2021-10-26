@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Http;
 
 namespace HairCutAppAPI.DTOs
 {
@@ -34,6 +35,8 @@ namespace HairCutAppAPI.DTOs
         [DataType(DataType.PhoneNumber)]
         [RegularExpression(GlobalVariables.PhoneNumberRegex, ErrorMessage = "Phone Number is Invalid")]
         public string PhoneNumber { get; set; }
+        
+        public IFormFile ImageFile { get; set; }
 
         public AppUser ToNewAppUser(string password)
         {

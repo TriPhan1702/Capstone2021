@@ -13,6 +13,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using HairCutAppAPI.Utilities.ImageUpload;
 using HairCutAppAPI.Utilities.JWTToken;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -24,16 +25,14 @@ namespace HairCutAppAPI.Services
     public class CustomerService : ICustomerService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
-        private readonly IMapper _mapper;
-        private readonly ITokenService _tokenService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPhotoService _photoService;
 
-        public CustomerService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ITokenService tokenService, IHttpContextAccessor httpContextAccessor)
+        public CustomerService(IRepositoryWrapper repositoryWrapper, IMapper mapper, ITokenService tokenService, IHttpContextAccessor httpContextAccessor, IPhotoService photoService)
         {
             _repositoryWrapper = repositoryWrapper;
-            _mapper = mapper;
-            _tokenService = tokenService;
             _httpContextAccessor = httpContextAccessor;
+            _photoService = photoService;
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> Register(CreateCustomerDto dto)
@@ -41,7 +40,7 @@ namespace HairCutAppAPI.Services
             //Check if User exists
             if (await UserExists(dto.Email))
             {
-                return new CustomHttpCodeResponse(400, "Email already Exists");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Email already Exists");
             }
         
             // from Dto to AppUser
@@ -52,6 +51,19 @@ namespace HairCutAppAPI.Services
                 User = newUser,
                 FullName = dto.FullName,
             };
+            
+            //If there's image
+            if (dto.ImageFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(dto.ImageFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+                }
+
+                customer.User.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
         
             //Save New User to Database
             var result = await _repositoryWrapper.Customer.CreateAsync(customer);
