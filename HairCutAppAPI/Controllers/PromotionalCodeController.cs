@@ -35,5 +35,19 @@ namespace HairCutAppAPI.Controllers
             
             return new CustomHttpCodeResponse(200,"", await _promotionalCodeService.CreatePromotionalCode(dto));
         }
+        
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_code")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetPromotionalCode(
+            AdvancedGetPromotionalCodesDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as AdvancedGetPromotionalCodesDTO;
+            var codes = await _promotionalCodeService.AdvancedGetPromotionalCodes(dto);
+            return codes;
+        }
     }
 }

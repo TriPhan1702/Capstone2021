@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using HairCutAppAPI.DTOs.PromotionalCodeDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -29,9 +31,24 @@ namespace HairCutAppAPI.Entities
         public string Status { get; set; }
         
         //Many-Many
-        public ICollection<CustomersCodes> CustomersCodes { get; set; }
+        public virtual ICollection<CustomersCodes> CustomersCodes { get; set; }
         
         //Many-Many
-        public ICollection<SalonsCodes> SalonsCodes { get; set; }
+        public virtual ICollection<SalonsCodes> SalonsCodes { get; set; }
+
+        public AdvancedGetPromotionalCodesResponseDTO ToAdvancedGetPromotionalCodesResponseDTO()
+        {
+            return new AdvancedGetPromotionalCodesResponseDTO()
+            {
+                Id = Id,
+                Code = Code,
+                Percentage = Percentage,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat),
+                IsUniversal = IsUniversal,
+                StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
+                ExpirationDate = ExpirationDate.ToString(GlobalVariables.DateTimeFormat)
+            };
+        }
     }
 }

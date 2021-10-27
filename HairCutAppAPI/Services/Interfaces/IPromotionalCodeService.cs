@@ -8,5 +8,6 @@ namespace HairCutAppAPI.Services.Interfaces
     public interface IPromotionalCodeService
     {
         Task<ActionResult<CustomHttpCodeResponse>> CreatePromotionalCode(CreatePromotionalCodeDTO createPromotionalCodeDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetPromotionalCodes(AdvancedGetPromotionalCodesDTO dto);
     }
 }
