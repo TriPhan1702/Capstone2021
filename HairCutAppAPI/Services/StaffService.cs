@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
@@ -129,6 +131,43 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,$"Salon removed from staff",true);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStylistsOfASalonInSpanOfDay(GetAvailableStylistsOfASalonInSpanOfDayDTO dto)
+        {
+            //Check if Salon Id is Valid
+            if (!await  SalonExists(dto.SalonId))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon with id {dto.SalonId} not found");
+            }
+            
+            //Parse start date and end date 
+            var startDate = ParseDate(dto.StartDate);
+            var endDate = ParseDate(dto.EndDate);
+
+            var staffs = await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+                //Find Staffs with same salon Id
+                staff.SalonId == dto.SalonId &&
+                //With active status
+                staff.User.Status == GlobalVariables.ActiveUserStatus &&
+                //That have work slot in the time span
+                staff.WorkSlots.Any(slot =>
+                    slot.Date >= startDate &&
+                    slot.Date <= endDate &&
+                    slot.Status == GlobalVariables.AvailableWorkSlotStatus) &&
+                //That is a stylist
+                staff.StaffType == GlobalVariables.StylistRole
+            );
+            
+            //Map to result dto
+            var result = staffs.Select(staff => new GetAvailableStylistsOfASalonInSpanOfDayResponseDTO() 
+                {
+                    StaffId = staff.Id, 
+                    UserId = staff.UserId, 
+                    Name = staff.FullName
+                }).ToList();
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
+
 
         #region private functions
 
@@ -184,6 +223,19 @@ namespace HairCutAppAPI.Services
             }
 
             return role;
+        }
+
+        private DateTime ParseDate(string date)
+        {
+            try
+            {
+                return DateTime.ParseExact(date, GlobalVariables.DayFormat,
+                    CultureInfo.InvariantCulture);
+            }
+            catch (FormatException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, e.Message);
+            }
         }
 
         #endregion private functions

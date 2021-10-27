@@ -121,6 +121,7 @@ namespace HairCutAppAPI.Services
             {
                 Email = user.Email,
                 Role = user.Role,
+                AvatarUrl = user.AvatarUrl,
                 Token = await _tokenService.CreateToken(user)
             });
         }

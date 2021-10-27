@@ -8,6 +8,7 @@ using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities.Email;
 using HairCutAppAPI.Utilities.ImageUpload;
 using HairCutAppAPI.Utilities.JWTToken;
+using HairCutAppAPI.Utilities.Notification;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.EntityFrameworkCore;
@@ -59,6 +60,8 @@ namespace HairCutAppAPI.Utilities.Extensions
 
             //Add Photo Service
             services.AddScoped<IPhotoService, PhotoService>();
+
+            services.AddScoped<IPushNotification, PushNotification>();
             
             return services;
         }

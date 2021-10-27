@@ -2,6 +2,7 @@
 using HairCutAppAPI.DTOs;
 using HairCutAppAPI.DTOs.CustomerDTO;
 using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services.Interfaces

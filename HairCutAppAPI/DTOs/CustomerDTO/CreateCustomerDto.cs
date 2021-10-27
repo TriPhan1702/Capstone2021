@@ -36,6 +36,7 @@ namespace HairCutAppAPI.DTOs
         [RegularExpression(GlobalVariables.PhoneNumberRegex, ErrorMessage = "Phone Number is Invalid")]
         public string PhoneNumber { get; set; }
         
+        [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
 
         public AppUser ToNewAppUser(string password)

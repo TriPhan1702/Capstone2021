@@ -90,13 +90,29 @@ namespace HairCutAppAPI.Controllers
         [HttpPut("add_staff_to_salon/{id}")]
         public async Task<ActionResult<CustomHttpCodeResponse>> RemoveStaffFromSalon(int id)
         {
+            
+
+            return await _staffService.RemoveStaffFromSalon(id);
+        }
+        
+        /// <summary>
+        /// Get list of staff that have available work slot between start date and end date(dd/MM/yyyy)
+        /// </summary>
+        [Authorize]
+        [HttpPost("get_available_staffs_in_span_of_day")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStylistsOfASalonInSpanOfDay(
+            GetAvailableStylistsOfASalonInSpanOfDayDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as GetAvailableStylistsOfASalonInSpanOfDayDTO;
+            
             //Check input server side
             if (!ModelState.IsValid)
             {
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
-
-            return await _staffService.RemoveStaffFromSalon(id);
+            
+            return  await _staffService.GetAvailableStylistsOfASalonInSpanOfDay(dto);;
         }
     }
 }

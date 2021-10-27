@@ -15,5 +15,8 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetStaffs(AdvancedGetStaffDTO advancedGetStaffDTO);
         Task<ActionResult<CustomHttpCodeResponse>> AddStaffToSalon(ChangeSalonStaffDTO changeSalonStaffDTO);
         Task<ActionResult<CustomHttpCodeResponse>> RemoveStaffFromSalon(int staffId);
+
+        Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStylistsOfASalonInSpanOfDay(
+            GetAvailableStylistsOfASalonInSpanOfDayDTO dto);
     }
 }
