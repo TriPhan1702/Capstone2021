@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 
@@ -15,18 +17,20 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
         [Required]
         public string StartDate { get; set; }
         [Required]
-        [RegularExpression(GlobalVariables.DateRegex, ErrorMessage = GlobalVariables.DateRegexMessage)]
         public string ExpirationDate { get; set; }
         [Required]
         public bool IsUniversal { get; set; }
+        
+        public IEnumerable<int> SalonIds { get; set; }
+        
         [Required]
         public int UsesPerCustomer { get; set; }
 
         public PromotionalCode ToPromotionalCode(DateTime startDate, DateTime endDate)
         {
-            return new PromotionalCode()
+            var result = new PromotionalCode()
             {
-                Code = Code,
+                Code = Code.ToLower(),
                 Percentage = Percentage,
                 Status = GlobalVariables.NewPromotionalCodeStatus,
                 CreatedDate = DateTime.Now,
@@ -34,8 +38,22 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
                 StartDate = startDate,
                 ExpirationDate = endDate,
                 IsUniversal = IsUniversal,
-                UsesPerCustomer = UsesPerCustomer
+                UsesPerCustomer = UsesPerCustomer,
             };
+
+            if (SalonIds.Any())
+            {
+                result.SalonsCodes = new List<SalonsCodes>();
+                foreach (var salonId in SalonIds)
+                {
+                    result.SalonsCodes.Add(new SalonsCodes()
+                    {
+                        SalonId = salonId
+                    });
+                }
+            }
+
+            return result;
         }
     }
 }

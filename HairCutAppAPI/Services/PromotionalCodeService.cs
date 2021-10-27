@@ -7,6 +7,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services
 {
@@ -19,7 +20,7 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
-        public async Task<CustomHttpCodeResponse> CreatePromotionalCode(
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreatePromotionalCode(
             CreatePromotionalCodeDTO createPromotionalCodeDTO)
         {
             if (await _repositoryWrapper.PromotionalCode.AnyAsync(code => code.Code == createPromotionalCodeDTO.Code && code.Status == GlobalVariables.ActivePromotionalCodeStatus))

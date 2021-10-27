@@ -20,7 +20,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For admin to Create New Promotion Code
         /// </summary>
-        [Authorize(Policy = GlobalVariables.AdministratorRole)]
+        // [Authorize(Policy = GlobalVariables.AdministratorRole)]
         [HttpPost("create_promotional_code")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreatePromotionalCode([FromBody]CreatePromotionalCodeDTO dto)
         {
