@@ -49,5 +49,19 @@ namespace HairCutAppAPI.Controllers
             var codes = await _promotionalCodeService.AdvancedGetPromotionalCodes(dto);
             return codes;
         }
+        
+        /// <summary>
+        /// For Admin to update a promotional code
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPut("update_code")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateSalon([FromBody] UpdatePromotionalCodeDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as UpdatePromotionalCodeDTO;
+
+            return await _promotionalCodeService.UpdatePromotionalCode(dto);
+        }
     }
 }

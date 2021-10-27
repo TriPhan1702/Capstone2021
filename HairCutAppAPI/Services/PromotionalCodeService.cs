@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.PromotionalCodeDTOs;
+using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
@@ -56,6 +57,99 @@ namespace HairCutAppAPI.Services
             
             var result = await _repositoryWrapper.PromotionalCode.AdvancedGetPromotionalCodes(dto);
             return new CustomHttpCodeResponse(200, "" , result);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdatePromotionalCode(UpdatePromotionalCodeDTO dto)
+        {
+            //Get promotional code from database
+            var code = await _repositoryWrapper.PromotionalCode.GetOnePromotionalWithSalon(dto.Id);
+            if (code is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Promotional Code with Id {dto.Id} not found");
+            }
+            
+            code = dto.CompareUpdatePromotionalCode(code);
+            
+            //If IsUniversal is set to false
+            if (dto.IsUniversal == 0)
+            {
+                //If no salon id is provided and the code doesn't have a list of salon already
+                if (!dto.SalonIds.Any() && !code.SalonsCodes.Any())
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Promotional Code is set to be not universal but no Salon list is provided");
+                }
+                
+                var codeSalonIds = code.SalonsCodes.Select(salonsCodes => salonsCodes.SalonId).ToList();
+                var deletedSalonIds = dto.SalonIds.Except(codeSalonIds);
+                var addedSalonIds = codeSalonIds.Except(dto.SalonIds);
+
+                //Pend delete changes
+                foreach (var salonId in deletedSalonIds)
+                { 
+                    _repositoryWrapper.SalonsCodes.DeleteWithoutSave(
+                        code.SalonsCodes.First(codes => codes.SalonId == salonId));
+                }
+                
+                //Pend create changes
+                foreach (var salonId in addedSalonIds)
+                {
+                    await _repositoryWrapper.SalonsCodes.CreateWithoutSaveAsync(new SalonsCodes()
+                    {
+                        CodeId = code.Id,
+                        SalonId = salonId
+                    });
+                }
+            }
+            
+            var hasChanged = false;
+            //If there's changes to start date
+            if (!string.IsNullOrWhiteSpace(dto.StartDate))
+            {
+                var startDate = DateTime.ParseExact(dto.StartDate, GlobalVariables.DayFormat,
+                    CultureInfo.InvariantCulture);
+                code.StartDate = startDate;
+                hasChanged = true;
+            }
+            
+            //If there's changes to end date
+            if (!string.IsNullOrWhiteSpace(dto.ExpirationDate))
+            {
+                var expDate = DateTime.ParseExact(dto.ExpirationDate, GlobalVariables.DayFormat,
+                    CultureInfo.InvariantCulture);
+                code.ExpirationDate = expDate;
+                hasChanged = true;
+            }
+
+            if (code.StartDate >= code.ExpirationDate)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Start Date is after ExpirationalDate");
+            }
+
+            if (hasChanged)
+            {
+                code.LastUpdate = DateTime.Now;
+            }
+
+            //Pend changes to promotional code table
+            await _repositoryWrapper.PromotionalCode.UpdateAsyncWithoutSave(code, code.Id);
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Some thing went wrong when updating Promotional Code " + e.Message);
+            }
+
+            //Get the updated code to show
+            code = await _repositoryWrapper.PromotionalCode.GetOnePromotionalWithSalon(code.Id);
+            
+            return new CustomHttpCodeResponse(200, "", code.ToUpdatePromotionalCodeResponseDTO());
         }
     }
 }

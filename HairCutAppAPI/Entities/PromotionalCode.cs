@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using HairCutAppAPI.DTOs.PromotionalCodeDTOs;
 using HairCutAppAPI.Utilities;
 
@@ -49,6 +50,36 @@ namespace HairCutAppAPI.Entities
                 StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
                 ExpirationDate = ExpirationDate.ToString(GlobalVariables.DateTimeFormat)
             };
+        }
+
+        public UpdatePromotionalCodeResponseDTO ToUpdatePromotionalCodeResponseDTO()
+        {
+            var result = new UpdatePromotionalCodeResponseDTO()
+            {
+                Id = Id,
+                Code = Code,
+                Status = Status,
+                Percentage = Percentage,
+                IsUniversal = IsUniversal,
+                StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
+                ExpirationDate = ExpirationDate.ToString(GlobalVariables.DateTimeFormat),
+                UsesPerCustomer = UsesPerCustomer
+            };
+
+            if (SalonsCodes.Any())
+            {
+                result.Salons = new List<UpdatePromotionalCodeResponseSalonDTO>();
+                foreach (var salonCode in SalonsCodes)
+                {
+                    result.Salons.Add(new UpdatePromotionalCodeResponseSalonDTO()
+                    {
+                        SalonId = Id,
+                        SalonName = salonCode.Salon.Name
+                    });
+                }
+            }
+
+            return result;
         }
     }
 }
