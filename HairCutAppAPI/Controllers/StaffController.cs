@@ -96,7 +96,7 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
-        /// Get list of staff that have available work slot between start date and end date(dd/MM/yyyy)
+        /// Get list of stylist that have available work slot between start date and end date(dd/MM/yyyy)
         /// </summary>
         [Authorize]
         [HttpPost("get_available_staffs_in_span_of_day")]
