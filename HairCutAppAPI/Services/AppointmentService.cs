@@ -93,6 +93,7 @@ namespace HairCutAppAPI.Services
             }
 
             Staff chosenStylist = null;
+            var chosenWorkSlots = new List<WorkSlot>();
             //If user has already chosen a stylist
             if (createAppointmentDTO.StylistStaffId >= 0)
             {
@@ -109,12 +110,12 @@ namespace HairCutAppAPI.Services
                 }
                 
                 //Get all work slot that has the right SLotOfDayId, StaffId(Stylist's Id), of the correct date and is available
-                var chosenWorkSlots = await
+                chosenWorkSlots = await
                     _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
                         chosenSlotsOfDayIds.Contains(slot.SlotOfDayId) &&
                         slot.StaffId == createAppointmentDTO.StylistStaffId &&
                         slot.Date.DayOfYear == chosenDate.DayOfYear && 
-                        slot.Status == GlobalVariables.WorkSlotStatuses[0]) as List<WorkSlot>;
+                        slot.Status == GlobalVariables.AvailableWorkSlotStatus) as List<WorkSlot>;
 
                 //If no available work slot is found
                 if (chosenWorkSlots is null)
@@ -170,6 +171,7 @@ namespace HairCutAppAPI.Services
                 ComboId = combo.Id,
                 PaidAmount = 0,
                 ChosenStaffId = chosenStylist?.Id,
+                WorkSlots = chosenWorkSlots
             };
 
             //Pend create change
@@ -235,6 +237,7 @@ namespace HairCutAppAPI.Services
              //Get unique staff Id associated with the appointment
              var staffIds = await 
                  _repositoryWrapper.AppointmentDetail.GetUniqueStaffIds(appointmentId);
+             
             //If the appointment already has a crew chosen, change the status of WorkSlots associated with the crew
             if (staffIds!= null && staffIds.Any())
             {
@@ -275,14 +278,16 @@ namespace HairCutAppAPI.Services
                 {
                     //If this work slot is less than TimeToCreateAppointmentInAdvanced(Default 2 hours) away, change status of that slot to not available, else set available
                     slot.Status = appointment.StartDate <= now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) ? GlobalVariables.NotAvailableWorkSlotStatus : GlobalVariables.AvailableWorkSlotStatus;
-
+                    slot.AppointmentId = null;
                     //Pend change
                     await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
                 }
             }
             
-            //Get WorkSlots associated with the appointment
+            //Change appointment's status and last update
             appointment.Status = GlobalVariables.CanceledAppointmentStatus;
+            appointment.LastUpdated = DateTime.Now;
+            
             var result = await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
 
             try
@@ -436,6 +441,8 @@ namespace HairCutAppAPI.Services
                 }
                 //Change the work slot's status
                 workSlot.Status = GlobalVariables.TakenAppointmentStatus;
+                //Change work slot's appointment
+                workSlot.AppointmentId = appointment.Id;
                 //Pend Changes
                 await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(workSlot, workSlot.Id);
             }
@@ -455,6 +462,8 @@ namespace HairCutAppAPI.Services
             
             //Change appointment status to approved
             appointment.Status = GlobalVariables.ApprovedAppointmentStatus;
+            appointment.LastUpdated = DateTime.Now;
+            
             appointment.AppointmentDetails = appointmentDetails;
         
             //Save to Database

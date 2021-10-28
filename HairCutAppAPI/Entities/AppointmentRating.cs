@@ -11,9 +11,5 @@ namespace HairCutAppAPI.Entities
         
         [MaxLength(500)]
         public string RatingComment { get; set; }
-        
-        [ForeignKey("Appointment")]
-        public int AppointmentId { get; set; }
-        public Appointment Appointment { get; set; }
     }
 }

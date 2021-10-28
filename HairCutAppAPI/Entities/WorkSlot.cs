@@ -13,11 +13,15 @@ namespace HairCutAppAPI.Entities
         
         [ForeignKey("Staff")]
         public int StaffId { get; set; }
-        public Staff Staff { get; set; }
+        public virtual Staff Staff { get; set; }
+        
+        [ForeignKey("Appointment")]
+        public int? AppointmentId { get; set; }
+        public virtual Appointment Appointment { get; set; }
         
         [ForeignKey("SlotOfDay")]
         public int SlotOfDayId { get; set; }
-        public SlotOfDay SlotOfDay { get; set; }
+        public virtual SlotOfDay SlotOfDay { get; set; }
         
         [Required]
         [MaxLength(20)]

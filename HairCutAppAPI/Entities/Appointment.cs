@@ -33,6 +33,9 @@ namespace HairCutAppAPI.Entities
         public int? RatingId { get; set; }
         public virtual AppointmentRating Rating { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; }
+        
+        public virtual ICollection<WorkSlot> WorkSlots { get; set; }
+        
         [Required]
         [MaxLength(20)]
         public string Status { get; set; }

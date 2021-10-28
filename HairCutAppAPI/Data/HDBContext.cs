@@ -39,11 +39,6 @@ namespace HairCutAppAPI.Data
         {
             base.OnModelCreating(builder);
             using var hmac = new HMACSHA512();
-            
-            builder.Entity<Appointment>()
-                .HasOne(a => a.Rating)
-                .WithOne(r => r.Appointment)
-                .HasForeignKey<AppointmentRating>(b => b.AppointmentId);
 
             #region SeedData
 

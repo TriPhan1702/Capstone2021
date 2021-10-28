@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HairCutAppAPI.DTOs.ReviewDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -25,5 +27,20 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Salon")]
         public int SalonId { get; set; }
         public Salon Salon { get; set; }
+
+        public ReviewDTO ToReviewDTO(Salon salon, Customer customer)
+        {
+            return new ReviewDTO()
+            {
+                Id = Id,
+                CustomerId = AuthorId,
+                SalonId = SalonId,
+                Description = Description,
+                Rating = Rating,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                CustomerName = customer.FullName,
+                SalonName = salon.Name
+            };
+        }
     }
 }

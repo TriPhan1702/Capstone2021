@@ -72,5 +72,7 @@ namespace HairCutAppAPI.Utilities
         public const string ActivePromotionalCodeStatus = "active";
         public const string ActiveComboStatus = "active";
         public const string ActiveUserStatus = "active";
+        public const string ActiveSalonStatus = "active";
+        public const string InActiveUserStatus = "inactive";
     }
 }
