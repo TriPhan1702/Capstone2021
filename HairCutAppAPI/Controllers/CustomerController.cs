@@ -32,6 +32,18 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For admin, manager and staff
         /// </summary>
+        /// <param name="id">UserId</param>
+        /// <returns></returns>
+        // [Authorize]
+        [HttpGet("get_all_customers")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllCustomers()
+        {
+            return await _customerService.GetAllCustomers();
+        }
+        
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("advanced_get_customers")]
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCustomers(
@@ -50,7 +62,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> Register(CreateCustomerDto dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> Register([FromForm] CreateCustomerDto dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as CreateCustomerDto;

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.CustomerDTO;
 using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Entities;
@@ -11,5 +12,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
     {
         Task<Customer> GetCustomerDetail(int userId);
         Task<PagedList<CustomerDetailDTO>> AdvancedGetCustomers(AdvancedGetCustomerDTO advancedGetCustomerDTO);
+        Task<IEnumerable<Customer>> GetAllCustomersWithDetail();
     }
 }

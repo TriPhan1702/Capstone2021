@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -105,6 +106,12 @@ namespace HairCutAppAPI.Services
             
             var result = await _repositoryWrapper.Customer.AdvancedGetCustomers(advancedGetCustomerDTO);
             return new CustomHttpCodeResponse(200, "" , result);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllCustomers()
+        {
+            return new CustomHttpCodeResponse(200, "",
+                (await _repositoryWrapper.Customer.GetAllCustomersWithDetail()).ToList().Select(customer => customer.ToCustomerDetailDTO()));
         }
 
         //Check if user exists by username and email

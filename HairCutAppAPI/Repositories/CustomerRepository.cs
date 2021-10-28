@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.DTOs.CustomerDTO;
@@ -22,6 +23,11 @@ namespace HairCutAppAPI.Repositories
         public async Task<Customer> GetCustomerDetail(int userId)
         {
             return await _hdbContext.Customers.Include(customer => customer.User).FirstOrDefaultAsync(customer => customer.UserId == userId);
+        }
+
+        public async Task<IEnumerable<Customer>> GetAllCustomersWithDetail()
+        {
+            return await _hdbContext.Customers.Include(customer => customer.User).ToListAsync();
         }
 
         public async Task<PagedList<CustomerDetailDTO>> AdvancedGetCustomers(AdvancedGetCustomerDTO advancedGetCustomerDTO)

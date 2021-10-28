@@ -39,6 +39,8 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For admin, manager and staff
         /// </summary>
+        /// <param name="dto">Empty ot null fields will not be changed, negative number value = null</param>
+        /// <returns></returns>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("advanced_get_code")]
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetPromotionalCode(
