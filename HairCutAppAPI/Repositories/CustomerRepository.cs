@@ -20,7 +20,7 @@ namespace HairCutAppAPI.Repositories
             _hdbContext = hdbContext;
         }
 
-        public async Task<Customer> GetCustomerDetail(int userId)
+        public async Task<Customer> GetCustomerDetailFromUserId(int userId)
         {
             return await _hdbContext.Customers.Include(customer => customer.User).FirstOrDefaultAsync(customer => customer.UserId == userId);
         }

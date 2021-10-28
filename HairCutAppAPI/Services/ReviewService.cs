@@ -38,7 +38,7 @@ namespace HairCutAppAPI.Services
             }
 
             var customerId = GetCurrentUserId();
-            var customer = await _repositoryWrapper.Customer.GetCustomerDetail(customerId);
+            var customer = await _repositoryWrapper.Customer.GetCustomerDetailFromUserId(customerId);
             if (customer is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Customer with id {customerId} not found");

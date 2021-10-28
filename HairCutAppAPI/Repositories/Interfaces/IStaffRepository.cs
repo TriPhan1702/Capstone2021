@@ -7,7 +7,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
 {
     public interface IStaffRepository : IRepositoryBase<Staff>
     {
-        Task<Staff> GetStaffDetail(int userId);
+        Task<Staff> GetStaffDetailFromUserId(int userId);
         Task<PagedList<AdvancedGetStaffResponseDTO>> AdvancedGetStaffs(AdvancedGetStaffDTO advancedGetUserDTO);
     }
 }

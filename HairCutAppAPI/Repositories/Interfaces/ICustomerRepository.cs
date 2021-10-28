@@ -10,7 +10,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
 {
     public interface ICustomerRepository : IRepositoryBase<Customer>
     {
-        Task<Customer> GetCustomerDetail(int userId);
+        Task<Customer> GetCustomerDetailFromUserId(int userId);
         Task<PagedList<CustomerDetailDTO>> AdvancedGetCustomers(AdvancedGetCustomerDTO advancedGetCustomerDTO);
         Task<IEnumerable<Customer>> GetAllCustomersWithDetail();
     }

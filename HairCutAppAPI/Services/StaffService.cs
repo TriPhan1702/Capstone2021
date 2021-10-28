@@ -69,7 +69,7 @@ namespace HairCutAppAPI.Services
             var currentUserRole = GetCurrentUserRole();
 
             //Get customer from database
-            var staff = await _repositoryWrapper.Staff.GetStaffDetail(userId);
+            var staff = await _repositoryWrapper.Staff.GetStaffDetailFromUserId(userId);
             if (staff is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Staff with UserId {userId} not found");
