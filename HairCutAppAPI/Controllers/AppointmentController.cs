@@ -29,6 +29,17 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For Current customer to check if they have any completed Appointment
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.CustomerRole)]
+        [HttpGet("check_has_completed_appointment")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> CheckCustomerHasCompletedAppointment()
+        {
+            return await _appointmentService.CheckCustomerHasCompletedAppointment();
+        }
+        
+        /// <summary>
         /// For admin, manager and staff
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]

@@ -485,6 +485,21 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"Crew Assigned"); 
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> CheckCustomerHasCompletedAppointment()
+        {
+            var customerId = GetCurrentUserId();
+            var customer =
+                _repositoryWrapper.Customer.FindSingleByConditionAsync(customer1 => customer1.User.Id == customerId);
+            if (customer is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,$"Customer with user Id {customerId} not found");
+            }
+
+            return new CustomHttpCodeResponse(200,"",await _repositoryWrapper.Appointment.AnyAsync(appointment =>
+                appointment.CustomerId == customer.Id &&
+                appointment.Status == GlobalVariables.CompleteAppointmentStatus)); 
+        }
+
         #region private functions
         
         private int GetCurrentUserId()
