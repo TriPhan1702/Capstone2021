@@ -99,7 +99,7 @@ namespace HairCutAppAPI.Controllers
         /// Get list of stylist that have available work slot between start date and end date(dd/MM/yyyy)
         /// </summary>
         [Authorize]
-        [HttpPost("get_available_staffs_in_span_of_day")]
+        [HttpPost("get_available_stylists_in_span_of_day")]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStylistsOfASalonInSpanOfDay(
             GetAvailableStylistsOfASalonInSpanOfDayDTO dto)
         {
@@ -113,6 +113,17 @@ namespace HairCutAppAPI.Controllers
             }
             
             return  await _staffService.GetAvailableStylistsOfASalonInSpanOfDay(dto);;
+        }
+        
+        /// <summary>
+        /// Get list of stylist in a salon
+        /// </summary>
+        [Authorize]
+        [HttpGet("get_available_stylist_in_salon/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetStylistListOfSalon(int id)
+        {
+            
+            return  await _staffService.GetStylistListOfSalon(id);;
         }
     }
 }

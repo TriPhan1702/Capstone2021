@@ -70,5 +70,15 @@ namespace HairCutAppAPI.Entities
                 PhoneNumber = User.PhoneNumber,
             };
         }
+
+        public GetAvailableStylistsOfASalonInSpanOfDayResponseDTO ToGetAvailableStylistsOfASalonInSpanOfDayResponseDTO()
+        {
+            return new GetAvailableStylistsOfASalonInSpanOfDayResponseDTO()
+            {
+                StaffId = Id, 
+                UserId = UserId, 
+                Name = FullName
+            };
+        }
     }
 }

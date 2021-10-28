@@ -158,12 +158,26 @@ namespace HairCutAppAPI.Services
             );
             
             //Map to result dto
-            var result = staffs.Select(staff => new GetAvailableStylistsOfASalonInSpanOfDayResponseDTO() 
-                {
-                    StaffId = staff.Id, 
-                    UserId = staff.UserId, 
-                    Name = staff.FullName
-                }).ToList();
+            var result = staffs.Select(staff => staff.ToGetAvailableStylistsOfASalonInSpanOfDayResponseDTO()).ToList();
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetStylistListOfSalon(int salonId)
+        {
+            //Check if Salon Id is Valid
+            if (!await  SalonExists(salonId))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon with id {salonId} not found");
+            }
+
+            //Get Active Stylist that's in the salon
+            var staffs =await _repositoryWrapper.Staff.FindByConditionAsync(staff => staff.SalonId == salonId &&
+                                                                                staff.User.Status ==
+                                                                                GlobalVariables.ActiveUserStatus);
+            
+            //Map from list of entities to list of dtos
+            var result = staffs.Select(staff => staff.ToGetAvailableStylistsOfASalonInSpanOfDayResponseDTO()).ToList();
             
             return new CustomHttpCodeResponse(200,"",result);
         }

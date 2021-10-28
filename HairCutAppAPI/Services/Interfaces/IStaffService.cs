@@ -18,5 +18,7 @@ namespace HairCutAppAPI.Services.Interfaces
 
         Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStylistsOfASalonInSpanOfDay(
             GetAvailableStylistsOfASalonInSpanOfDayDTO dto);
+
+        Task<ActionResult<CustomHttpCodeResponse>> GetStylistListOfSalon(int salonId);
     }
 }
