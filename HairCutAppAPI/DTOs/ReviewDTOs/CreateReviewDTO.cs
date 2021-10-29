@@ -23,7 +23,6 @@ namespace HairCutAppAPI.DTOs.ReviewDTOs
                 Description = Description,
                 AuthorId = customerId,
                 CreatedDate = DateTime.Now,
-                LastUpdate = DateTime.Now
             };
         }
     }

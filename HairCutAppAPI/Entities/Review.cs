@@ -17,23 +17,41 @@ namespace HairCutAppAPI.Entities
         public bool Rating { get; set; }
         [Required]
         public DateTime CreatedDate { get; set; }
-        [Required]
-        public DateTime LastUpdate { get; set; }
+        
+        // [Required]
+        // public DateTime LastUpdate { get; set; }
         
         [ForeignKey("Author")]
         public int AuthorId { get; set; }
-        public AppUser Author { get; set; }
+        public Customer Author { get; set; }
 
         [ForeignKey("Salon")]
         public int SalonId { get; set; }
         public Salon Salon { get; set; }
-
-        public ReviewDTO ToReviewDTO(Salon salon, Customer customer)
+        
+        public ReviewDTO ToReviewDTO()
         {
             return new ReviewDTO()
             {
                 Id = Id,
-                CustomerId = AuthorId,
+                CustomerId = Author.Id,
+                CustomerUserId = Author.UserId,
+                SalonId = SalonId,
+                Description = Description,
+                Rating = Rating,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                CustomerName = Author.FullName,
+                SalonName = Salon.Name
+            };
+        }
+
+        public ReviewDTO ToReviewDTO(Salon salon, Customer customer, int userId)
+        {
+            return new ReviewDTO()
+            {
+                Id = Id,
+                CustomerId = customer.Id,
+                CustomerUserId = userId,
                 SalonId = SalonId,
                 Description = Description,
                 Rating = Rating,

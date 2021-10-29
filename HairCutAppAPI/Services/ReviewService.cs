@@ -23,6 +23,17 @@ namespace HairCutAppAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetReview(AdvancedGetReviewDTO dto)
+        {
+            if (!string.IsNullOrWhiteSpace(dto.SortBy) && !AdvancedGetReviewDTO.OrderingParams.Contains(dto.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetReviewDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.Review.AdvancedGetReview(dto);
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
+
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateReview(CreateReviewDTO dto)
         {
             var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(sal =>
@@ -41,7 +52,7 @@ namespace HairCutAppAPI.Services
             var customer = await _repositoryWrapper.Customer.GetCustomerDetailFromUserId(customerId);
             if (customer is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Customer with id {customerId} not found");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Customer with User Id {customerId} not found");
             }
 
             if (customer.User.Status == GlobalVariables.InActiveUserStatus)
@@ -65,7 +76,7 @@ namespace HairCutAppAPI.Services
 
             var newReview = dto.ToNewReview(customerId);
             var result = await _repositoryWrapper.Review.CreateAsync(newReview);
-            return new CustomHttpCodeResponse(200, "Review created", result.ToReviewDTO(salon, customer));
+            return new CustomHttpCodeResponse(200, "Review created", result.ToReviewDTO(salon, customer, customerId));
         }
         
         private int GetCurrentUserId()

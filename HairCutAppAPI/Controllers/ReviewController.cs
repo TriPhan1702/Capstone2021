@@ -16,6 +16,20 @@ namespace HairCutAppAPI.Controllers
         {
             _reviewService = reviewService;
         }
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        [Authorize]
+        [HttpPost("advanced_get_reviews")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetReviews(
+            AdvancedGetReviewDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as AdvancedGetReviewDTO;
+            var salons = await _reviewService.AdvancedGetReview(dto);
+            return salons;
+        }
 
         /// <summary>
         /// For Customer to create review for a salon

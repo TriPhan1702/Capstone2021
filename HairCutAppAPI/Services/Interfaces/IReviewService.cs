@@ -8,5 +8,6 @@ namespace HairCutAppAPI.Services.Interfaces
     public interface IReviewService
     {
         Task<ActionResult<CustomHttpCodeResponse>> CreateReview(CreateReviewDTO dto);
+        Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetReview(AdvancedGetReviewDTO dto);
     }
 }
