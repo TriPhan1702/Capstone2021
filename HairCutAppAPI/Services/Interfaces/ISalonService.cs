@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.SalonDTOs;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services.Interfaces
@@ -13,5 +14,6 @@ namespace HairCutAppAPI.Services.Interfaces
         
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetSalons(AdvancedGetSalonDTO advancedGetSalonDTO);
         Task<ActionResult<CustomHttpCodeResponse>> UpdateSalon(UpdateSalonDTO updateSalonDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> UploadSalonImage(UploadImageDTO dto);
     }
 }

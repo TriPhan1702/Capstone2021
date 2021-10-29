@@ -162,7 +162,7 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
-        /// For user to upload their avatar image
+        /// For user to upload or update their avatar image
         /// </summary>
         /// <param name="dto">Id is UserId, if user is not admin or manager, then they can only upload their own image</param>
         /// <returns></returns>

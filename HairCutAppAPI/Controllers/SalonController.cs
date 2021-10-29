@@ -4,6 +4,7 @@ using HairCutAppAPI.DTOs;
 using HairCutAppAPI.DTOs.SalonDTOs;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,7 +51,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_salon")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon([FromForm] CreateSalonDTO createSalonDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon([FromBody] CreateSalonDTO createSalonDTO)
         {
             //Trim All Strings in object
             createSalonDTO = ObjectTrimmer.TrimObject(createSalonDTO) as CreateSalonDTO;
@@ -62,6 +63,18 @@ namespace HairCutAppAPI.Controllers
             }
 
             return await _salonService.CreateSalon(createSalonDTO);
+        }
+        
+        /// <summary>
+        /// For Admin to upload or update a salon's avatar
+        /// </summary>
+        /// <param name="dto">Id is Salon's Id</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPost("upload_salon_image")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadSalonImage([FromForm] UploadImageDTO dto)
+        {
+            return await _salonService.UploadSalonImage(dto);
         }
         
         /// <summary>

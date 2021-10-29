@@ -81,5 +81,27 @@ namespace HairCutAppAPI.Services
             
             return new CustomHttpCodeResponse(200,"Salon Update",salon.ToUpdateSalonResponseDTO());
         }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadSalonImage(UploadImageDTO dto)
+        {
+            var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(salon1 => salon1.Id == dto.Id);
+            if (salon is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon with id {dto.Id} not found");
+            }
+            
+            var imageUploadResult = await _photoService.AppPhotoAsync(dto.ImageFile);
+            //If there's error
+            if (imageUploadResult.Error != null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+            }
+
+            salon.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+
+            var result = await _repositoryWrapper.Salon.UpdateAsync(salon, salon.Id);
+            
+            return new CustomHttpCodeResponse(200,"Salon's avatar uploaded",result.AvatarUrl);
+        }
     }
 }
