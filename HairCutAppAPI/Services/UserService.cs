@@ -257,12 +257,12 @@ namespace HairCutAppAPI.Services
             });
         }
 
-        public async Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar(int userId, IFormFile imageFile)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar(UploadImageDTO dto)
         {
-            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == userId);
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == dto.Id);
             if (user is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"User with id{userId} not found");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"User with id{dto.Id} not found");
             }
 
             var currentUserId = GetCurrentUserId();
@@ -274,7 +274,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"The current user doesn't the permission to upload the avatar of the User with the provided Id");
             }
             
-            var imageUploadResult = await _photoService.AppPhotoAsync(imageFile);
+            var imageUploadResult = await _photoService.AppPhotoAsync(dto.ImageFile);
             //If there's error
             if (imageUploadResult.Error != null)
             {

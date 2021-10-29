@@ -10,6 +10,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Extensions;
+using HairCutAppAPI.Utilities.ImageUpload;
 using HairCutAppAPI.Utilities.JWTToken;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -161,13 +162,15 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
-        /// For User to upload or update their avatar
+        /// For user to upload their avatar image
         /// </summary>
+        /// <param name="dto">Id is UserId, if user is not admin or manager, then they can only upload their own image</param>
+        /// <returns></returns>
         [Authorize]
-        [HttpPost("upload_avatar/{id}")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> Login(int id, [FromForm] IFormFile imageFile)
+        [HttpPost("upload_avatar")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> Login([FromForm] UploadImageDTO dto)
         {
-            return await _userService.UploadAvatar(id, imageFile);
+            return await _userService.UploadAvatar(dto);
         }
     }
 }
