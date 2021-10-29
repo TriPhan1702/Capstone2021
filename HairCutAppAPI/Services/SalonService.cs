@@ -7,6 +7,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services
@@ -14,10 +15,12 @@ namespace HairCutAppAPI.Services
     public class SalonService : ISalonService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly IPhotoService _photoService;
 
-        public SalonService(IRepositoryWrapper repositoryWrapper)
+        public SalonService(IRepositoryWrapper repositoryWrapper, IPhotoService photoService)
         {
             _repositoryWrapper = repositoryWrapper;
+            _photoService = photoService;
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList()
@@ -29,6 +32,19 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon(CreateSalonDTO salonDTO)
         {
             var newSalon = salonDTO.ToNewSalon();
+            
+            //If there's image
+            if (salonDTO.ImageFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(salonDTO.ImageFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,imageUploadResult.Error.Message);
+                }
+
+                newSalon.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
 
             var result = await _repositoryWrapper.Salon.CreateAsync(newSalon);
 

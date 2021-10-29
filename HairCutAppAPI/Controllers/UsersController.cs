@@ -13,6 +13,7 @@ using HairCutAppAPI.Utilities.Extensions;
 using HairCutAppAPI.Utilities.JWTToken;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Controllers
@@ -159,6 +160,14 @@ namespace HairCutAppAPI.Controllers
             }
         }
         
-        
+        /// <summary>
+        /// For User to upload or update their avatar
+        /// </summary>
+        [Authorize]
+        [HttpPost("upload_avatar/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> Login(int id, [FromForm] IFormFile imageFile)
+        {
+            return await _userService.UploadAvatar(id, imageFile);
+        }
     }
 }

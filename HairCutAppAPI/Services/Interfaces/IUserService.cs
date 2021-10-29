@@ -4,6 +4,7 @@ using HairCutAppAPI.DTOs;
 using HairCutAppAPI.DTOs.UserDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services.Interfaces
@@ -19,5 +20,6 @@ namespace HairCutAppAPI.Services.Interfaces
         // Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO);
         Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken);
         Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken);
+        Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar(int userId, IFormFile imageFile);
     }
 }

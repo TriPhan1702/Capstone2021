@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Http;
 
 namespace HairCutAppAPI.DTOs.SalonDTOs
 {
@@ -13,8 +14,8 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
         
         public string Description { get; set; }
         
-        [Url]
-        public string AvatarUrl { get; set; }
+        [DataType(DataType.Upload)]
+        public IFormFile ImageFile { get; set; }
         
         //TODO: Validate coordinate
         public string Longitude { get; set; }
@@ -28,7 +29,6 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
             {
                 Name = Name,
                 Description = Description,
-                AvatarUrl = AvatarUrl,
                 CreatedDate = now,
                 LastUpdate = now,
                 Status = GlobalVariables.NewSalonStatus

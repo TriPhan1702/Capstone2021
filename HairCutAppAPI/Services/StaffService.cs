@@ -12,6 +12,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,11 +23,13 @@ namespace HairCutAppAPI.Services
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPhotoService _photoService;
 
-        public StaffService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor)
+        public StaffService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor, IPhotoService photoService)
         {
             _repositoryWrapper = repositoryWrapper;
             _httpContextAccessor = httpContextAccessor;
+            _photoService = photoService;
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateStaff(CreateStaffDTO dto)
@@ -50,6 +53,19 @@ namespace HairCutAppAPI.Services
         
             // from Dto to Staff
             var newStaff = dto.ToNewStaff(dto.Password, dto.StaffType, dto.SalonId);
+            
+            //If there's image
+            if (dto.ImageFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(dto.ImageFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+                }
+
+                newStaff.User.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
         
             //Save New User to Database
             var result = await _repositoryWrapper.Staff.CreateAsync(newStaff);

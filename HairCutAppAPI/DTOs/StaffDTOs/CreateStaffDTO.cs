@@ -1,11 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Http;
 
-namespace HairCutAppAPI.DTOs
+namespace HairCutAppAPI.DTOs.StaffDTOs
 {
     public class CreateStaffDTO
     {
@@ -41,6 +41,9 @@ namespace HairCutAppAPI.DTOs
         [Required]
         [MaxLength(20)]
         public string StaffType { get; set; }
+        
+        [DataType(DataType.Upload)]
+        public IFormFile ImageFile { get; set; }
 
         public Staff ToNewStaff(string password, string staffType, int salonId = -1)
         {

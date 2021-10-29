@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,9 @@ using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Email;
 using HairCutAppAPI.Utilities.Errors;
 using HairCutAppAPI.Utilities.GoogleAuth;
+using HairCutAppAPI.Utilities.ImageUpload;
 using HairCutAppAPI.Utilities.JWTToken;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -36,14 +39,18 @@ namespace HairCutAppAPI.Services
         private readonly IConfiguration _configuration;
         private readonly IEmailSender _emailSender;
         private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService, IConfiguration configuration, IEmailSender emailSender, IMapper mapper)
+        public UserService(IRepositoryWrapper repositoryWrapper, ITokenService tokenService, IConfiguration configuration, IEmailSender emailSender, IMapper mapper, IPhotoService photoService, IHttpContextAccessor httpContextAccessor)
         {
             _repositoryWrapper = repositoryWrapper;
             _tokenService = tokenService;
             _configuration = configuration;
             _emailSender = emailSender;
             _mapper = mapper;
+            _photoService = photoService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateUser(CreateUserDTO createUserDTO, string role)
@@ -229,12 +236,12 @@ namespace HairCutAppAPI.Services
         
         public async Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken)
         {
-            var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
-        
-            if (!tokenValidationResult)
-            {
-                return new BadRequestObjectResult("Access Token is not from a valid app");
-            }
+            // var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
+            //
+            // if (!tokenValidationResult)
+            // {
+            //     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Access Token is not from a valid app");
+            // }
         
             var user = await CheckFacebookAccessToken(accessToken);
             if (user is null)
@@ -248,6 +255,57 @@ namespace HairCutAppAPI.Services
                 Email = user.Email,
                 Token = await _tokenService.CreateToken(user)
             });
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar(int userId, IFormFile imageFile)
+        {
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == userId);
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"User with id{userId} not found");
+            }
+
+            var currentUserId = GetCurrentUserId();
+            var currentUser = await 
+                _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == currentUserId);
+            
+            if (currentUser.Role!=GlobalVariables.AdministratorRole && currentUser.Role!=GlobalVariables.ManagerRole && user.Id != currentUserId)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"The current user doesn't the permission to upload the avatar of the User with the provided Id");
+            }
+            
+            var imageUploadResult = await _photoService.AppPhotoAsync(imageFile);
+            //If there's error
+            if (imageUploadResult.Error != null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+            }
+
+            user.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            var result = await _repositoryWrapper.User.UpdateAsync(user, user.Id);
+            
+            return new CustomHttpCodeResponse(200, "Avatar Uploaded", result.AvatarUrl);
+        }
+        
+        private int GetCurrentUserId()
+        {
+            int customerId;
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
+            }
+
+            try
+            {
+                //Get Current customer Id
+                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Current User Id not Found");
+            }
+
+            return customerId;
         }
         
         #region private functions
