@@ -107,6 +107,11 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid Email");
             }
 
+            if (user.Status != GlobalVariables.ActiveUserStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"This account is not active");
+            }
+
             //Check Password
             using var hmac = new HMACSHA512(user.PasswordSalt);
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
@@ -132,65 +137,6 @@ namespace HairCutAppAPI.Services
                 Token = await _tokenService.CreateToken(user)
             });
         }
-        
-        // private async Task CheckUserDevice(LoginDTO loginDTO, int userId)
-        // {
-        //     var devices = await _repositoryWrapper.Device.FindByConditionAsync(d => d.UserId == userId);
-        //     //If it hasn't existed, save to database
-        //     if (devices is null)
-        //     {
-        //         await _repositoryWrapper.Device.CreateAsync(new Device()
-        //         {
-        //             Status = GlobalVariables.DeviceStatuses[0],
-        //             DeviceToken = loginDTO.DeviceToken,
-        //             DeviceId = loginDTO.DeviceId,
-        //             UserId = userId
-        //         });
-        //     }
-        // }
-        //
-        // public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
-        // {
-        //     //Search if user with this email exists
-        //     var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Email == email);
-        //     if (user is null)
-        //     {
-        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid Password");
-        //     }
-        //     
-        //     //Generate Password Reset Token
-        //     var token = await _repositoryWrapper.User.GeneratePasswordResetTokenAsync(user);
-        //      //Encode token again because the generated token sometimes contain special characters
-        //     var validToken = EncodeToken(token);
-        //     
-        //     //Generate Url to change password an sen it to user's email
-        //     //TODO: Change AppUrl to a valid one once the front end web site is up 
-        //     var url = $"{_configuration["AppUrl"]}/ResetPassword?email={email}&token={validToken}";
-        //     var message = new EmailMessage(email, "Forget Password for HairCut App", $"To change your password go to the following link: <a href='{url}'>Click Here</a>");
-        //     await _emailSender.SendEmailAsync(message);
-        //     return new CustomHttpCodeResponse(200, "Email Sent");
-        // }
-        //
-        // //Reset user's password
-        // public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO)
-        // {
-        //     //Find if user exists
-        //     var user = await _repositoryWrapper.User.FindByEmailAsync(resetPasswordDTO.Email);
-        //     if (user is null)
-        //     {
-        //         return new BadRequestObjectResult("User with this email doesn't exist");
-        //     }
-        //
-        //     //Change password through UserManager
-        //     var result =
-        //         await _repositoryWrapper.User.ResetPasswordAsync(user, DecodeToken(resetPasswordDTO.Token),
-        //             resetPasswordDTO.NewPassword);
-        //     if (!result.Succeeded)
-        //     {
-        //         return new BadRequestObjectResult(result.Errors);
-        //     }
-        //     return new CustomHttpCodeResponse(200,"User's Password Changed");
-        // }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken)
         {
@@ -269,7 +215,14 @@ namespace HairCutAppAPI.Services
             var currentUser = await 
                 _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == currentUserId);
             
+            //If User is not an admin or manager, they can't upload image for others
             if (currentUser.Role!=GlobalVariables.AdministratorRole && currentUser.Role!=GlobalVariables.ManagerRole && user.Id != currentUserId)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"The current user doesn't the permission to upload the avatar of the User with the provided Id");
+            }
+
+            //Admin and Manager can't upload image for eachother
+            if (currentUser.Role==GlobalVariables.ManagerRole && user.Role != GlobalVariables.StylistRole && user.Role != GlobalVariables.BeauticianRole && currentUser.Id != user.Id)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"The current user doesn't the permission to upload the avatar of the User with the provided Id");
             }
@@ -286,6 +239,27 @@ namespace HairCutAppAPI.Services
             
             return new CustomHttpCodeResponse(200, "Avatar Uploaded", result.AvatarUrl);
         }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateUser(int userId)
+        {
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == userId);
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"User with id {userId} not found");
+            }
+
+            if (user.Status == GlobalVariables.InActiveUserStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"User is already not active");
+            }
+
+            user.Status = GlobalVariables.InActiveUserStatus;
+            var result = await _repositoryWrapper.User.UpdateAsync(user, user.Id);
+            
+            return new CustomHttpCodeResponse(200, "User deactivated", result.Status);
+        }
+        
+        #region private functions
         
         private int GetCurrentUserId()
         {
@@ -308,9 +282,67 @@ namespace HairCutAppAPI.Services
             return customerId;
         }
         
-        #region private functions
+        // private async Task CheckUserDevice(LoginDTO loginDTO, int userId)
+        // {
+        //     var devices = await _repositoryWrapper.Device.FindByConditionAsync(d => d.UserId == userId);
+        //     //If it hasn't existed, save to database
+        //     if (devices is null)
+        //     {
+        //         await _repositoryWrapper.Device.CreateAsync(new Device()
+        //         {
+        //             Status = GlobalVariables.DeviceStatuses[0],
+        //             DeviceToken = loginDTO.DeviceToken,
+        //             DeviceId = loginDTO.DeviceId,
+        //             UserId = userId
+        //         });
+        //     }
+        // }
+        //
+        // public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
+        // {
+        //     //Search if user with this email exists
+        //     var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Email == email);
+        //     if (user is null)
+        //     {
+        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid Password");
+        //     }
+        //     
+        //     //Generate Password Reset Token
+        //     var token = await _repositoryWrapper.User.GeneratePasswordResetTokenAsync(user);
+        //      //Encode token again because the generated token sometimes contain special characters
+        //     var validToken = EncodeToken(token);
+        //     
+        //     //Generate Url to change password an sen it to user's email
+        //     //TODO: Change AppUrl to a valid one once the front end web site is up 
+        //     var url = $"{_configuration["AppUrl"]}/ResetPassword?email={email}&token={validToken}";
+        //     var message = new EmailMessage(email, "Forget Password for HairCut App", $"To change your password go to the following link: <a href='{url}'>Click Here</a>");
+        //     await _emailSender.SendEmailAsync(message);
+        //     return new CustomHttpCodeResponse(200, "Email Sent");
+        // }
+        //
+        // //Reset user's password
+        // public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        // {
+        //     //Find if user exists
+        //     var user = await _repositoryWrapper.User.FindByEmailAsync(resetPasswordDTO.Email);
+        //     if (user is null)
+        //     {
+        //         return new BadRequestObjectResult("User with this email doesn't exist");
+        //     }
+        //
+        //     //Change password through UserManager
+        //     var result =
+        //         await _repositoryWrapper.User.ResetPasswordAsync(user, DecodeToken(resetPasswordDTO.Token),
+        //             resetPasswordDTO.NewPassword);
+        //     if (!result.Succeeded)
+        //     {
+        //         return new BadRequestObjectResult(result.Errors);
+        //     }
+        //     return new CustomHttpCodeResponse(200,"User's Password Changed");
+        // }
         
         //Check if user exists by username and email
+        
         private async Task<bool> UserExists(string email)
         {
             return await _repositoryWrapper.User.AnyAsync(u => u.Email == email.ToLower() || u.Email == email);
@@ -419,5 +451,6 @@ namespace HairCutAppAPI.Services
         }
         
         #endregion private functions
+        
     }
 }

@@ -22,5 +22,6 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken);
         Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken);
         Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar(UploadImageDTO dto);
+        Task<ActionResult<CustomHttpCodeResponse>> DeactivateUser(int userId);
     }
 }

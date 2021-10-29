@@ -64,7 +64,7 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateSalon(UpdateSalonDTO updateSalonDTO)
         {
-            var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(salon => salon.Id == updateSalonDTO.Id);
+            var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(salon1 => salon1.Id == updateSalonDTO.Id);
             if (salon is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon with id {updateSalonDTO.Id} not found");
@@ -102,6 +102,32 @@ namespace HairCutAppAPI.Services
             var result = await _repositoryWrapper.Salon.UpdateAsync(salon, salon.Id);
             
             return new CustomHttpCodeResponse(200,"Salon's avatar uploaded",result.AvatarUrl);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateSalon(int salonId)
+        {
+            var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(salon1 => salon1.Id == salonId);
+            if (salon is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon with Id {salonId} not found");
+            }
+
+            if (salon.Status == GlobalVariables.InActiveSalonStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon is already inactive");
+            }
+
+            //If there are appointments in the salon that are not completed or canceled, abort
+            if (await _repositoryWrapper.Appointment.AnyAsync(appointment =>
+                appointment.Status != GlobalVariables.CompleteAppointmentStatus &&
+                appointment.Status != GlobalVariables.CanceledAppointmentStatus))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Salon still has active appointments");
+            }
+
+            salon.Status = GlobalVariables.InActiveSalonStatus;
+            var result = await _repositoryWrapper.Salon.UpdateAsync(salon, salon.Id);
+            return new CustomHttpCodeResponse(200,"Salon deactivated", result.Status);
         }
     }
 }

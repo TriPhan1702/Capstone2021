@@ -97,5 +97,17 @@ namespace HairCutAppAPI.Controllers
 
             return await _salonService.UpdateSalon(updateSalonDTO);
         }
+        
+        /// <summary>
+        /// For admin to deactivate a salon
+        /// </summary>
+        /// <param name="id">Salon's id</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPut("deactivate_user/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateSalon(int id)
+        {
+            return await _salonService.DeactivateSalon(id);
+        }
     }
 }

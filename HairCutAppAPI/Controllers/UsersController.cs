@@ -172,5 +172,17 @@ namespace HairCutAppAPI.Controllers
         {
             return await _userService.UploadAvatar(dto);
         }
+        
+        /// <summary>
+        /// For admin to deactivate a user's account
+        /// </summary>
+        /// <param name="id">UserId</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPut("deactivate_user/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateUser(int id)
+        {
+            return await _userService.DeactivateUser(id);
+        }
     }
 }

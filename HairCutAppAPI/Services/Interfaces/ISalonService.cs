@@ -15,5 +15,6 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetSalons(AdvancedGetSalonDTO advancedGetSalonDTO);
         Task<ActionResult<CustomHttpCodeResponse>> UpdateSalon(UpdateSalonDTO updateSalonDTO);
         Task<ActionResult<CustomHttpCodeResponse>> UploadSalonImage(UploadImageDTO dto);
+        Task<ActionResult<CustomHttpCodeResponse>> DeactivateSalon(int salonId);
     }
 }
