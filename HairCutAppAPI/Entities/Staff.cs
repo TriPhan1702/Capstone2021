@@ -68,6 +68,7 @@ namespace HairCutAppAPI.Entities
                 StaffId = Id,
                 AvatarUrl = User.AvatarUrl,
                 PhoneNumber = User.PhoneNumber,
+                Status = User.Status
             };
         }
 
