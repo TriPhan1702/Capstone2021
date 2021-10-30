@@ -162,7 +162,7 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
-        /// For user to upload or update their avatar image
+        /// For user to upload or update the target user avatar image
         /// </summary>
         /// <param name="dto">Id is UserId, if user is not admin or manager, then they can only upload their own image</param>
         /// <returns></returns>
@@ -171,6 +171,18 @@ namespace HairCutAppAPI.Controllers
         public async Task<ActionResult<CustomHttpCodeResponse>> Login([FromForm] UploadImageDTO dto)
         {
             return await _userService.UploadAvatar(dto);
+        }
+        
+        /// <summary>
+        /// For user to upload or update their own avatar image
+        /// </summary>
+        /// <param name="dto">Id is UserId</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("upload_own_avatar")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> Login([FromForm] UploadCurrentUserAvatarDTO dto)
+        {
+            return await _userService.UploadOwnAvatar(dto);
         }
         
         /// <summary>

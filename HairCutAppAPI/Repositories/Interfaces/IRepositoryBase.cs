@@ -11,6 +11,10 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<bool> AnyAsync(Expression<Func<T, bool>> expression);
         Task<T> FindSingleByConditionAsync(Expression<Func<T, bool>> expression);
         Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression);
+        Task<IEnumerable<T>> FindByConditionAsyncWithInclude(Expression<Func<T, bool>> expression,
+            Expression<Func<T, object>> include);
+        Task<IEnumerable<T>> FindByConditionAsyncWithMultipleIncludes(Expression<Func<T, bool>> expression,
+            Expression<Func<T, object>>[] includes);
         Task<T> CreateAsync(T entity);
         Task<T> CreateWithoutSaveAsync(T entity);
         Task<T> UpdateAsync(T entity, object key);

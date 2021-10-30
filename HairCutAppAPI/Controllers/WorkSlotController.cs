@@ -144,5 +144,11 @@ namespace HairCutAppAPI.Controllers
         {
             return new CustomHttpCodeResponse(200,"",GlobalVariables.WorkSlotStatuses);
         }
+
+        [HttpPost("debug_populate_work_slots")]
+        public Task<ActionResult<CustomHttpCodeResponse>> PopulateWorkSlots(string date)
+        {
+            return _workSlotService.PopulateWorkSlot(date);
+        }
     }
 }

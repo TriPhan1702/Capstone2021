@@ -15,5 +15,6 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> AddAvailableWorkSlotBulk(ICollection<AddWorkSlotDTO> addWorkSlotsDTO);
         Task<ActionResult<CustomHttpCodeResponse>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO);
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetWorkSlots(AdvancedGetWorkSlotsDTO advancedGetWorkSlotsDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> PopulateWorkSlot(string date);
     }
 }

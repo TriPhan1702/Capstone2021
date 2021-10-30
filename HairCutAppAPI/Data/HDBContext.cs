@@ -59,7 +59,7 @@ namespace HairCutAppAPI.Data
             (
                 new AppUser(){
                     Id = 1, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "admin123@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -68,7 +68,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 2, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "manager123@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -77,7 +77,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 3, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "stylist123@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -86,7 +86,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 4, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "beautician123@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -95,7 +95,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 5, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "stylist1234@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -104,7 +104,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 6, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "beautician1234@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -113,7 +113,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 7, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "customer1@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -122,7 +122,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 8, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "customer2@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
@@ -131,7 +131,7 @@ namespace HairCutAppAPI.Data
                 },
                 new AppUser(){
                     Id = 9, 
-                    Status = "Active",
+                    Status = GlobalVariables.ActiveUserStatus,
                     Email = "customer3@gmail.com", 
                     PhoneNumber = "0869190061",
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),

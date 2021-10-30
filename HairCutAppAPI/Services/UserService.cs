@@ -107,7 +107,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid Email");
             }
 
-            if (user.Status != GlobalVariables.ActiveUserStatus)
+            if (user.Status.ToLower() != GlobalVariables.ActiveUserStatus.ToLower())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"This account is not active");
             }
@@ -240,6 +240,25 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "Avatar Uploaded", result.AvatarUrl);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadOwnAvatar(UploadCurrentUserAvatarDTO dto)
+        {
+            var currentUserId = GetCurrentUserId();
+            var currentUser = await 
+                _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == currentUserId);
+            var imageUploadResult = await _photoService.AppPhotoAsync(dto.ImageFile);
+            
+            //If there's error
+            if (imageUploadResult.Error != null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+            }
+
+            currentUser.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            var result = await _repositoryWrapper.User.UpdateAsync(currentUser, currentUser.Id);
+            
+            return new CustomHttpCodeResponse(200, "Avatar Uploaded", result.AvatarUrl);
+        }
+
         public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateUser(int userId)
         {
             var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == userId);
@@ -248,7 +267,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"User with id {userId} not found");
             }
 
-            if (user.Status == GlobalVariables.InActiveUserStatus)
+            if (user.Status.ToLower() == GlobalVariables.InActiveUserStatus.ToLower())
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"User is already not active");
             }

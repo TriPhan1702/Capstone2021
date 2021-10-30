@@ -36,6 +36,21 @@ namespace HairCutAppAPI.Repositories
         {
             return await HDBContext.Set<T>().Where(expression).ToListAsync();
         }
+        
+        public async Task<IEnumerable<T>> FindByConditionAsyncWithInclude(Expression<Func<T, bool>> expression, Expression<Func<T, object>> include)
+        {
+            return await HDBContext.Set<T>().Where(expression).Include(include).ToListAsync();
+        }
+        
+        public async Task<IEnumerable<T>> FindByConditionAsyncWithMultipleIncludes(Expression<Func<T, bool>> expression, Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = HDBContext.Set<T>().Where(expression);
+            foreach (var include in includes)
+            {
+                query = HDBContext.Set<T>().Include(include);
+            }
+            return await query.ToListAsync();
+        }
 
         public async Task<T> CreateAsync(T entity)
         {

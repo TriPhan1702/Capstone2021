@@ -159,7 +159,7 @@ namespace HairCutAppAPI.Services
             var startDate = ParseDate(dto.StartDate);
             var endDate = ParseDate(dto.EndDate);
 
-            var staffs = await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+            var staffs = await _repositoryWrapper.Staff.FindByConditionAsyncWithInclude(staff =>
                 //Find Staffs with same salon Id
                 staff.SalonId == dto.SalonId &&
                 //With active status
@@ -171,7 +171,7 @@ namespace HairCutAppAPI.Services
                     slot.Status == GlobalVariables.AvailableWorkSlotStatus) &&
                 //That is a stylist
                 staff.StaffType == GlobalVariables.StylistRole
-            );
+            , staff => staff.User);
             
             //Map to result dto
             var result = staffs.Select(staff => staff.ToGetAvailableStylistsOfASalonInSpanOfDayResponseDTO()).ToList();

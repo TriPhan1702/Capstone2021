@@ -50,7 +50,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_staff")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateStaff([FromBody] CreateStaffDTO createStaffDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateStaff([FromForm] CreateStaffDTO createStaffDTO)
         {
             //Trim All Strings in object
             createStaffDTO = ObjectTrimmer.TrimObject(createStaffDTO) as CreateStaffDTO;

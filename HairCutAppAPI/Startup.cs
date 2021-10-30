@@ -65,7 +65,7 @@ namespace HairCutAppAPI
             //Have to between UseRouting and UseEndpoints
             //Allow any methods from 4200 or the The web origin when deployed
             // app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"));
-            app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod());
+            app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             //After Cors and before UseAuthorization
             app.UseAuthentication();

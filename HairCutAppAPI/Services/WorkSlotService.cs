@@ -198,6 +198,50 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "" , result);
         }
 
+        /// <summary>
+        /// Fill work slot of a day of all staff for DEBUG
+        /// </summary>
+        public async Task<ActionResult<CustomHttpCodeResponse>> PopulateWorkSlot(string date)
+        {
+            var convertedDate = DateTime.ParseExact(date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+
+            //Get all active staff
+            var staffs = await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+                staff.User.Status == GlobalVariables.ActiveUserStatus &&
+                (staff.StaffType == GlobalVariables.StylistRole || staff.StaffType == GlobalVariables.BeauticianRole));
+
+            var slots = await _repositoryWrapper.SlotOfDay.FindAllAsync();
+
+            foreach (var staff in staffs)
+            {
+                foreach (var slot in slots)
+                {
+                    await _repositoryWrapper.WorkSlot.CreateWithoutSaveAsync(new WorkSlot()
+                    {
+                        StaffId = staff.Id,
+                        Date = convertedDate,
+                        SlotOfDayId = slot.Id,
+                        Status = GlobalVariables.AvailableWorkSlotStatus
+                    });
+                }
+            }
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Some thing went wrong went Populating Work Slots: " + e.Message);
+            }
+            
+            return new CustomHttpCodeResponse(200,"Work Slots created", true);
+        }
+
         #region private functions
         /// <summary>
         /// Check if inputted date is valid, can be a day before and can be more than 2 weeks in the future

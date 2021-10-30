@@ -77,7 +77,8 @@ namespace HairCutAppAPI.Entities
             {
                 StaffId = Id, 
                 UserId = UserId, 
-                Name = FullName
+                Name = FullName,
+                AvatarUrl = User.AvatarUrl
             };
         }
     }
