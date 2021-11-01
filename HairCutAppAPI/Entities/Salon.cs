@@ -32,6 +32,7 @@ namespace HairCutAppAPI.Entities
         [MaxLength(20)]
         public string Status { get; set; }
         
+        public string Address { get; set; }
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
         
@@ -52,6 +53,7 @@ namespace HairCutAppAPI.Entities
                 Latitude = Latitude?.ToString(),
                 Longitude = Longitude?.ToString(),
                 AvatarUrl = AvatarUrl,
+                Address = Address
             };
         } 
         
@@ -65,6 +67,7 @@ namespace HairCutAppAPI.Entities
                 Name = Name,
                 Description = Description,
                 AvatarUrl = AvatarUrl,
+                Address = Address
             };
             if (Longitude != null)
             {
@@ -72,7 +75,7 @@ namespace HairCutAppAPI.Entities
             }
             if (Latitude != null)
             {
-                result.Longitude = Longitude.ToString();
+                result.Longitude = Latitude.ToString();
             }
 
             return result;
@@ -87,6 +90,7 @@ namespace HairCutAppAPI.Entities
                 Name = Name,
                 Status = Status,
                 AvatarUrl = AvatarUrl,
+                Address = Address,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
                 LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat),
             };

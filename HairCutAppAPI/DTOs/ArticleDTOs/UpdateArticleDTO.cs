@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using HairCutAppAPI.Entities;
@@ -45,7 +46,11 @@ namespace HairCutAppAPI.DTOs.ArticleDTOs
                 hasChanged = true;
             }
 
-            if (!hasChanged)
+            if (hasChanged)
+            {
+                article.LastUpdate = DateTime.Now;
+            }
+            else
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Nothing can be changed from the information provided");
             }

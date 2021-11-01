@@ -114,6 +114,24 @@ namespace HairCutAppAPI.Services
                 (await _repositoryWrapper.Customer.GetAllCustomersWithDetail()).ToList().Select(customer => customer.ToCustomerDetailDTO()));
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCustomer(UpdateCustomerDTO dto)
+        {
+            var currentUserId = GetCurrentUserId();
+
+            var customer = await _repositoryWrapper.Customer.GetCustomerDetailFromUserId(currentUserId);
+            if (customer is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer with UserId {currentUserId} not found");
+            }
+
+            customer = dto.CompareAndUpdateCustomer(customer);
+
+            var result = _repositoryWrapper.Customer.UpdateAsync(customer, customer.Id);
+            
+            return new CustomHttpCodeResponse(200,"Customer profile updated", true);
+        }
+
+        #region Private Functions
         //Check if user exists by username and email
         private async Task<bool> UserExists(string email)
         {
@@ -122,7 +140,7 @@ namespace HairCutAppAPI.Services
         
         private int GetCurrentUserId()
         {
-            int customerId;
+            int currentUserId;
             if (_httpContextAccessor.HttpContext == null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
@@ -131,14 +149,14 @@ namespace HairCutAppAPI.Services
             try
             {
                 //Get Current customer Id
-                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+                currentUserId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
             }
             catch (ArgumentNullException e)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Current User Id not Found");
             }
 
-            return customerId;
+            return currentUserId;
         }
         
         private string GetCurrentUserRole()
@@ -161,5 +179,9 @@ namespace HairCutAppAPI.Services
 
             return role;
         }
+
+        #endregion Private Functions
+        
+        
     }
 }

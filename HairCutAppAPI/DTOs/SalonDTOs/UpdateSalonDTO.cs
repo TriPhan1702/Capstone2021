@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities.Errors;
 
 namespace HairCutAppAPI.DTOs.SalonDTOs
 {
@@ -14,7 +16,7 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
         public string Name { get; set; }
         
         public string Description { get; set; }
-        public string AvatarUrl { get; set; }
+        public string Address { get; set; }
         
         [Required]
         [MaxLength(20)]
@@ -25,43 +27,45 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
 
         public Salon CompareAndMapToSalon(Salon salon)
         {
-            var changes = 0;
-            //If name is not null, mapp
-            if (!string.IsNullOrWhiteSpace(Name))
+            var hasChanged = false;
+            //If name is not null, map
+            if (!string.IsNullOrWhiteSpace(Name) && Name != salon.Name)
             {
                 salon.Name = Name;
-                changes++;
+                hasChanged = true;
             }
 
             if (!string.IsNullOrWhiteSpace(Description))
             {
                 salon.Description = Description;
-                changes++;
+                hasChanged = true;
             }
-            
-            //TODO:MAP Image
 
-            if (!string.IsNullOrWhiteSpace(Status))
+            if (!string.IsNullOrWhiteSpace(Status) && Status.ToLower() != salon.Status.ToLower())
             {
                 salon.Status = Status;
-                changes++;
+                hasChanged = true;
             }
 
             if (Longitude >= 0)
             {
                 salon.Longitude = Longitude;
-                changes++;
+                hasChanged = true;
             }
 
             if (Latitude >= 0)
             {
                 salon.Latitude = Latitude;
-                changes++;
+                hasChanged = true;
             }
 
-            if (changes > 0)
+            if (hasChanged)
             {
                 salon.LastUpdate = DateTime.Now;
+            }
+            else
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Nothing can be changed with the provided information");
             }
 
             return salon;

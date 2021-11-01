@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.Errors;
 using Microsoft.Data.SqlClient;
 
 namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
@@ -49,6 +51,10 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
             if (hasChanged)
             {
                 promotionalCode.LastUpdate = DateTime.Now;
+            }
+            else
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Nothing can be changed from the information provided");
             }
 
             return promotionalCode;

@@ -198,6 +198,22 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"",result);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateStaff(UpdateStaffDTO dto)
+        {
+            var currentUserId = GetCurrentUserId();
+
+            var staff = await _repositoryWrapper.Staff.GetStaffDetailFromUserId(currentUserId);
+            if (staff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer with UserId {currentUserId} not found");
+            }
+
+            staff = dto.CompareAndUpdateStaff(staff);
+
+            var result = _repositoryWrapper.Staff.UpdateAsync(staff, staff.Id);
+            
+            return new CustomHttpCodeResponse(200,"Staff profile updated", true);
+        }
 
         #region private functions
 

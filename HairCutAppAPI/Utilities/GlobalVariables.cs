@@ -13,6 +13,7 @@ namespace HairCutAppAPI.Utilities
         
         //Messages
         public const string DateRegexMessage = "dd/MM/yyyy";
+        public const string PhoneNumberRegexMessage = "Phone Number is Invalid";
         
         //Social Login Platforms
         public const string Google = "google";

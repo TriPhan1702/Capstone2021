@@ -125,5 +125,24 @@ namespace HairCutAppAPI.Controllers
             
             return  await _staffService.GetStylistListOfSalon(id);;
         }
+        
+        /// <summary>
+        /// For Staff and manager to update their information
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPut("update_staff")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateStaff([FromBody] UpdateStaffDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as UpdateStaffDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            
+            return await _staffService.UpdateStaff(dto);
+        }
     }
 }

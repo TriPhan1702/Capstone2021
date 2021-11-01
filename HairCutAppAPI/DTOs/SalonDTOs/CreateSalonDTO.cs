@@ -17,6 +17,8 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
         [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
         
+        public string Address { get; set; }
+        
         //TODO: Validate coordinate
         public string Longitude { get; set; }
         public string Latitude { get; set; }
@@ -31,7 +33,8 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
                 Description = Description,
                 CreatedDate = now,
                 LastUpdate = now,
-                Status = GlobalVariables.NewSalonStatus
+                Status = GlobalVariables.NewSalonStatus,
+                Address = Address,
             };
 
             if (!string.IsNullOrWhiteSpace(Longitude) && !string.IsNullOrWhiteSpace(Latitude))

@@ -13,5 +13,6 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> GetCustomerDetail(int userId);
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCustomers(AdvancedGetCustomerDTO advancedGetCustomerDTO);
         Task<ActionResult<CustomHttpCodeResponse>> GetAllCustomers();
+        Task<ActionResult<CustomHttpCodeResponse>> UpdateCustomer(UpdateCustomerDTO dto);
     }
 }

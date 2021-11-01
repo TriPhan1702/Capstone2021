@@ -74,5 +74,24 @@ namespace HairCutAppAPI.Controllers
             
             return await _customerService.Register(dto);
         }
+
+        /// <summary>
+        /// For Customer to update their information
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.CustomerRole)]
+        [HttpPut("update_customer")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCustomer([FromBody] UpdateCustomerDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as UpdateCustomerDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            
+            return await _customerService.UpdateCustomer(dto);
+        }
     }
 }
