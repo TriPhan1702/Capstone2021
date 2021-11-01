@@ -39,7 +39,7 @@ namespace HairCutAppAPI.DTOs
         [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
 
-        public AppUser ToNewAppUser(string password)
+        public AppUser ToNewAppUser(string fullName, string password)
         {
             using var hmac = new HMACSHA512();
             var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
@@ -48,6 +48,7 @@ namespace HairCutAppAPI.DTOs
             return new AppUser()
             {
                 Email = Email,
+                FullName = fullName,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 Status = GlobalVariables.NewUserStatus,

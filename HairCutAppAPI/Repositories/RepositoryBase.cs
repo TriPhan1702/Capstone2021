@@ -31,6 +31,11 @@ namespace HairCutAppAPI.Repositories
         {
             return await HDBContext.Set<T>().FirstOrDefaultAsync(expression);
         }
+        
+        public async Task<T> FindSingleByConditionWithIncludeAsync(Expression<Func<T, bool>> expression, Expression<Func<T, object>> include)
+        {
+            return await HDBContext.Set<T>().Include(include).FirstOrDefaultAsync(expression);
+        }
 
         public async Task<IEnumerable<T>> FindByConditionAsync(Expression<Func<T, bool>> expression)
         {

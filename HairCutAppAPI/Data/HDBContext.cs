@@ -30,6 +30,7 @@ namespace HairCutAppAPI.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<AppointmentDetail> AppointmentDetails { get; set; }
         public DbSet<AppointmentRating> AppointmentRatings { get; set; }
+        public DbSet<Article> Articles { get; set; }
         
         public HDBContext(DbContextOptions options) : base(options)
         {

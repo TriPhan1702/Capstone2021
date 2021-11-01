@@ -45,7 +45,7 @@ namespace HairCutAppAPI.Services
             }
         
             // from Dto to AppUser
-            var newUser = dto.ToNewAppUser(dto.Password);
+            var newUser = dto.ToNewAppUser(dto.FullName, dto.Password);
         
             var customer = new Customer()
             {

@@ -28,5 +28,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
         IPromotionalCodeRepository PromotionalCode { get; }
         ISalonsCodesRepository SalonsCodes { get; }
         ICustomersCodesRepository CustomersCodes { get; }
+        IArticleRepository Article { get; }
     }
 }

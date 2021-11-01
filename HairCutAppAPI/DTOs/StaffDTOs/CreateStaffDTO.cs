@@ -45,7 +45,7 @@ namespace HairCutAppAPI.DTOs.StaffDTOs
         [DataType(DataType.Upload)]
         public IFormFile ImageFile { get; set; }
 
-        public Staff ToNewStaff(string password, string staffType, int salonId = -1)
+        public Staff ToNewStaff(string fullName, string password, string staffType, int salonId = -1)
         {
             using var hmac = new HMACSHA512();
             
@@ -54,6 +54,7 @@ namespace HairCutAppAPI.DTOs.StaffDTOs
                 User = new AppUser()
                 {
                     Email = Email,
+                    FullName = fullName,
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
                     PasswordSalt = hmac.Key,
                     Status = GlobalVariables.NewUserStatus,

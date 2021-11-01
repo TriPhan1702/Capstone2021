@@ -14,6 +14,11 @@ namespace HairCutAppAPI.DTOs.UserDTOs
         public string Email { get; set; }
         
         [Required]
+        [MinLength(3)]
+        [MaxLength(50)]
+        public string FullName { get; set; }
+        
+        [Required]
         [MinLength(3), MaxLength(50)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
@@ -28,13 +33,14 @@ namespace HairCutAppAPI.DTOs.UserDTOs
         [RegularExpression(GlobalVariables.PhoneNumberRegex, ErrorMessage = "Phone Number is Invalid")]
         public string PhoneNumber { get; set; }
 
-        public AppUser ToNewUser(string password, string role)
+        public AppUser ToNewUser( string role)
         {
             using var hmac = new HMACSHA512();
             return new AppUser()
             {
                 Email = Email,
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password)),
+                FullName = FullName,
+                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(Password)),
                 PasswordSalt = hmac.Key,
                 Status = GlobalVariables.NewUserStatus,
                 PhoneNumber = PhoneNumber,

@@ -17,6 +17,10 @@ namespace HairCutAppAPI.Entities
         public string Email { get; set; }
         public byte[] PasswordHash { get; set; }
         
+        [MinLength(3)]
+        [MaxLength(50)]
+        public string FullName { get; set; }
+        
         public byte[] PasswordSalt { get; set; }
         
         [Required]
@@ -43,6 +47,7 @@ namespace HairCutAppAPI.Entities
             var result = new GetUserListResponseDTO
             {
                 Id = Id,
+                FullName = FullName,
                 Email = Email,
                 Status = Status,
                 AvatarUrl = AvatarUrl,

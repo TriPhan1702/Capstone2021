@@ -52,7 +52,7 @@ namespace HairCutAppAPI.Services
             }
         
             // from Dto to Staff
-            var newStaff = dto.ToNewStaff(dto.Password, dto.StaffType, dto.SalonId);
+            var newStaff = dto.ToNewStaff(dto.FullName, dto.Password, dto.StaffType, dto.SalonId);
             
             //If there's image
             if (dto.ImageFile != null)

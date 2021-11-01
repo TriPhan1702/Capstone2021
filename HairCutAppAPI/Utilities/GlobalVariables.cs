@@ -56,6 +56,7 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] ActiveAppointmentStatuses = {"pending","approved","ongoing"};
         public static readonly string[] WorkSlotStatuses = {"available","not available","taken"};
         public static readonly string[] PromotionalCodeStatuses = {"active", "inactive", "canceled"};
+        public static readonly string[] ArticleStatuses = {"active", "inactive"};
         
         //The Default Status a new entity will get
         public const string NewUserStatus = "active";
@@ -75,5 +76,8 @@ namespace HairCutAppAPI.Utilities
         public const string ActiveSalonStatus = "active";
         public const string InActiveUserStatus = "inactive";
         public const string InActiveSalonStatus = "inactive";
+        public const string NewArticleStatus = "active";
+        public const string ActiveArticleStatus = "active";
+        public const string InActiveArticleStatus = "inactive";
     }
 }

@@ -67,7 +67,7 @@ namespace HairCutAppAPI.Services
             }
         
             // from Dto to AppUser
-            var newUser = createUserDTO.ToNewUser(createUserDTO.Password, role);
+            var newUser = createUserDTO.ToNewUser(role);
         
             //Save New User to Database
             var result = await _repositoryWrapper.User.CreateAsync(newUser);
