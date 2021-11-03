@@ -17,6 +17,15 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// DEBUG get all articles
+        /// </summary>
+        [HttpGet]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllArticles()
+        {
+            return await _articleService.GetAllArticles();
+        }
+        
+        /// <summary>
         /// For Admin and Manager to create new article
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole)]
@@ -92,8 +101,8 @@ namespace HairCutAppAPI.Controllers
         /// For admin, manager and staff
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
-        [HttpPost("advanced_get_combos")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCombos(
+        [HttpPost("advanced_get_articles")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetArticle(
             AdvancedGetArticleDTO dto)
         {
             //Trim All Strings in object
@@ -106,8 +115,8 @@ namespace HairCutAppAPI.Controllers
         /// For customer
         /// </summary>
         [Authorize]
-        [HttpPost("customer_advanced_get_combos")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerAdvancedGetCombos(
+        [HttpPost("customer_advanced_get_articles")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerAdvancedGetArticles(
             CustomerAdvancedGetArticleDTO dto)
         {
             //Trim All Strings in object

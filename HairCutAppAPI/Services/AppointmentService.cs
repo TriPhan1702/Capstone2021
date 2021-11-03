@@ -27,6 +27,20 @@ namespace HairCutAppAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// Debug
+        /// </summary>
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAppAppointments()
+        {
+            var appointments = await _repositoryWrapper.Appointment.FindAllAsync();
+            return new CustomHttpCodeResponse(200,"", appointments);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllAppointmentStatuses()
+        {
+            return new CustomHttpCodeResponse(200,"", GlobalVariables.AppointmentStatuses.ToList());
+        }
+        
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment(CreateAppointmentDTO createAppointmentDTO)
         {
             //Get Current User's Id
@@ -128,35 +142,19 @@ namespace HairCutAppAPI.Services
                 {
                     var unavailableSlots =
                         chosenWorkSlots.Select(s => s.SlotOfDayId).ToList().Except(chosenSlotsOfDayIds);
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"The Following slots are not available: " + string.Join(", ", unavailableSlots));
+                    var unavailableSlots2 =
+                        chosenSlotsOfDayIds.Except(chosenWorkSlots.Select(s => s.SlotOfDayId).ToList());
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"The Following slots are not available: " + string.Join(", ", unavailableSlots) + " The Following slots are not available: " + string.Join(", ", unavailableSlots2));
                 }
                 
                 //If all chosen Work Slot are valid, change then status of each workslot to taken
                 foreach (var workSlot in chosenWorkSlots)
                 {
                     //Change Status to Taken
-                    workSlot.Status = GlobalVariables.TakenAppointmentStatus;
+                    workSlot.Status = GlobalVariables.TakenWorkSlotStatus;
                     await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(workSlot, workSlot.Id);
                 }
             }
-            
-            // //Prepare new list of appointment detail
-            // var newAppointmentDetails = new List<AppointmentDetail>();
-            // var staffId = -1;
-            // if (stylistUser != null)
-            // {
-            //     staffId = stylistUser.Id;
-            // }
-            // foreach (var comboDetail in combo.ComboDetails)
-            // {
-            //     
-            //     newAppointmentDetails.Add(new AppointmentDetail()
-            //     {
-            //         ServiceId = comboDetail.ServiceId,
-            //         Price = comboDetail.Service.Price,
-            //         StaffId = staffId,
-            //     });
-            // }
             
             //Prepare new appointment
             var newAppointment = new Appointment()
@@ -171,8 +169,18 @@ namespace HairCutAppAPI.Services
                 ComboId = combo.Id,
                 PaidAmount = 0,
                 ChosenStaffId = chosenStylist?.Id,
-                WorkSlots = chosenWorkSlots
+                WorkSlots = chosenWorkSlots,
+                AppointmentDetails = new List<AppointmentDetail>()
             };
+
+            foreach (var detail in combo.ComboDetails)
+            {
+                newAppointment.AppointmentDetails.Add(new AppointmentDetail()
+                {
+                    Price = detail.Service.Price,
+                    ServiceId = detail.ServiceId,
+                });
+            }
 
             //Pend create change
             await _repositoryWrapper.Appointment.CreateWithoutSaveAsync(newAppointment);
@@ -338,33 +346,42 @@ namespace HairCutAppAPI.Services
             var result = await _repositoryWrapper.Appointment.AdvancedGetAppointments(advancedGetAppointmentsDTO);
             return new CustomHttpCodeResponse(200, "" , result);
         }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerAdvancedGetAppointments(CustomerAdvancedGetAppointmentDTO dto)
+        {
+            var currentUserId = GetCurrentUserId();
+            
+            if (!string.IsNullOrWhiteSpace(dto.SortBy) && !CustomerAdvancedGetAppointmentDTO.OrderingParams.Contains(dto.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", CustomerAdvancedGetAppointmentDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.Appointment.AdvancedGetAppointments(dto.ToAdvancedGetAppointmentsResponseDTO(currentUserId));
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
 
         public async Task<CustomHttpCodeResponse> AssignStaff(AssignStaffDTO assignStaffDTO)
         {
+            var currentUserId = GetCurrentUserId();
+            var currentManager = await 
+                _repositoryWrapper.Staff.FindSingleByConditionAsync(staff => staff.UserId == currentUserId);
+            if (currentManager is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Manager with User Id{currentUserId} not found");
+            }
+            
             var now = DateTime.Now;
             //If assign list is empty
             if (!assignStaffDTO.StaffDetailDTOs.Any())
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment with id {assignCrewDTO.AppointmentId} not found");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with id {assignStaffDTO.AppointmentId} not found");
             }
             
             //Get appointment with its combo's detail 
-            var appointment = await _repositoryWrapper.Appointment.GetAppointmentWithComboDetail(assignStaffDTO.AppointmentId);
+            var appointment = await _repositoryWrapper.Appointment.GetAppointmentWithDetail(assignStaffDTO.AppointmentId);
             if (appointment is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment with id {assignCrewDTO.AppointmentId} not found");
-            }
-            
-            //Get list of services from appointment's combo
-            var services = appointment.Combo.ComboDetails.Select(detail => detail.Service).ToList();
-            //If there services that are not in the dto, abort
-            if (services.Select(service => service.Id).Except(assignStaffDTO.StaffDetailDTOs.Select(detail => detail.ServiceId)).Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "All of Combo's Service's staff must be filled in");
-            }
-            if ((assignStaffDTO.StaffDetailDTOs.Select(detail => detail.ServiceId)).Except(services.Select(service => service.Id)).Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Some service are not in the appointment's combo");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with id {assignStaffDTO.AppointmentId} not found");
             }
         
             //Check if appointment has pending status
@@ -393,6 +410,11 @@ namespace HairCutAppAPI.Services
             if ( staffs.Count != staffIds.Count)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Some Staff is not found or not from the same salon");
+            }
+
+            if (!staffs.Select(staff => staff.SalonId).Contains(currentManager.Id))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Current Manager is not form Salon with Id {appointment.SalonId}");
             }
             
             //Check if there's staff with invalid role
@@ -440,7 +462,7 @@ namespace HairCutAppAPI.Services
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"WorkSlot {workSlot.Id} is less than {GlobalVariables.TimeToConfirmAppointmentInAdvanced} hours away");
                 }
                 //Change the work slot's status
-                workSlot.Status = GlobalVariables.TakenAppointmentStatus;
+                workSlot.Status = GlobalVariables.TakenWorkSlotStatus;
                 //Change work slot's appointment
                 workSlot.AppointmentId = appointment.Id;
                 //Pend Changes
@@ -448,23 +470,16 @@ namespace HairCutAppAPI.Services
             }
         
             //Prepare list of AppointmentDetail
-            var appointmentDetails = new List<AppointmentDetail>();
             foreach (var detail in assignStaffDTO.StaffDetailDTOs)
             {
-                appointmentDetails.Add(new AppointmentDetail()
-                {
-                    AppointmentId = appointment.Id,
-                    StaffId = detail.StaffId,
-                    ServiceId = detail.ServiceId,
-                    Price = services.Find(service => service.Id == detail.ServiceId).Price,
-                });
+                appointment.AppointmentDetails
+                        .First(appointmentDetail => appointmentDetail.ServiceId == detail.ServiceId).StaffId =
+                    detail.StaffId;
             }
             
             //Change appointment status to approved
             appointment.Status = GlobalVariables.ApprovedAppointmentStatus;
             appointment.LastUpdated = DateTime.Now;
-            
-            appointment.AppointmentDetails = appointmentDetails;
         
             //Save to Database
             await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);

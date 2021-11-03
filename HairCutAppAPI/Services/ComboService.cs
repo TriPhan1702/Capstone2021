@@ -22,6 +22,16 @@ namespace HairCutAppAPI.Services
             _repositoryWrapper = repositoryWrapper;
         }
 
+        /// <summary>
+        /// DEBUG
+        /// </summary>
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllCombos()
+        {
+            var combos = await _repositoryWrapper.Combo.FindAllAsync();
+            
+            return new CustomHttpCodeResponse(200, "", combos);
+        }
+        
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO)
         {
             //If Status is not null of empty

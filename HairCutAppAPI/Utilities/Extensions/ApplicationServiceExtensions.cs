@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using CorePush.Google;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.Repositories;
@@ -12,6 +13,7 @@ using HairCutAppAPI.Utilities.Notification;
 using Hangfire;
 using Hangfire.MemoryStorage;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -24,15 +26,20 @@ namespace HairCutAppAPI.Utilities.Extensions
             //Add Cloudinary for image upload
             services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
             
-            services.AddScoped<ITokenService, TokenService>();
-            //Add dbcontext and add connection string
-            services.AddDbContext<HDBContext>(options =>
-            {
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
-            });
-
             //Add Repository Wrapper
             services.AddScoped<IRepositoryWrapper, RepositoryWrapper>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddDbContext<HDBContext>(options =>
+            {
+                options.UseSqlServer(config.GetConnectionString("DefaultConnection"),
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 10,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+                    });
+            });
 
             //Add AutoMapper
             services.AddAutoMapper(typeof(AutoMapperProfiles));

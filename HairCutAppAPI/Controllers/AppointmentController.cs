@@ -17,6 +17,27 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// DEBUG get all appointments
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllAppointments()
+        {
+            return await _appointmentService.GetAppAppointments();
+        }
+        
+        /// <summary>
+        /// for registered users to get list of all statuses that an appointment can have
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("all_appointment_statuses")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllAppointmentStatuses()
+        {
+            return await _appointmentService.GetAllAppointmentStatuses();
+        }
+        
+        /// <summary>
         /// Get detail about an appointment
         /// </summary>
         /// <param name="id">Appointment Id</param>
@@ -44,12 +65,26 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("advanced_get_appointments")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetWorkSlots(
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetAppointments(
             AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO)
         {
             //Trim All Strings in object
             advancedGetAppointmentsDTO = ObjectTrimmer.TrimObject(advancedGetAppointmentsDTO) as AdvancedGetAppointmentsDTO;
             var appointments = await _appointmentService.AdvancedGetAppointments(advancedGetAppointmentsDTO);
+            return appointments;
+        }
+        
+        /// <summary>
+        /// For customer to view appointment history
+        /// </summary>
+        [Authorize]
+        [HttpPost("customer_advanced_get_appointments")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerAdvancedGetAppointments(
+            CustomerAdvancedGetAppointmentDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as CustomerAdvancedGetAppointmentDTO;
+            var appointments = await _appointmentService.CustomerAdvancedGetAppointments(dto);
             return appointments;
         }
         

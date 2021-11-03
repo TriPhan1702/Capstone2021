@@ -27,12 +27,33 @@ namespace HairCutAppAPI.Services
 
             if (pendingAppointments.Any())
             {
+                var appointmentIds = pendingAppointments.Select(appointment => appointment.Id);
+                var workslots =
+                    await _repositoryWrapper.WorkSlot.FindByConditionAsyncWithInclude(slot =>
+                        appointmentIds.Contains(slot.AppointmentId.Value), slot => slot.SlotOfDay);
+                
                 //Change status of all appointments to canceled
                 foreach (var appointment in pendingAppointments)
                 {
                     appointment.Status = GlobalVariables.CanceledAppointmentStatus;
-                    Console.WriteLine(appointment.Status);
                     await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
+                }
+
+                foreach (var slot in workslots)
+                {
+                    //If lot is still more than TimeToCreateAppointmentInAdvanced(default 2 hours) away, turn to available
+                    if (slot.Date.Add(slot.SlotOfDay.StartTime).AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) > DateTime.Now)
+                    {
+                        slot.Status = GlobalVariables.AvailableWorkSlotStatus;
+                        
+                    }
+                    //If lot is still less than TimeToCreateAppointmentInAdvanced(default 2 hours) away, turn to not available available
+                    else
+                    {
+                        slot.Status = GlobalVariables.NotAvailableWorkSlotStatus;
+                    }
+                    slot.AppointmentId = null;
+                    await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
                 }
                 
                 try

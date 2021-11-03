@@ -23,6 +23,16 @@ namespace HairCutAppAPI.Services
         {
             _repositoryWrapper = repositoryWrapper;
         }
+        
+        /// <summary>
+        /// DEBUG
+        /// </summary>
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllWorkSlots()
+        {
+            var slots = await _repositoryWrapper.WorkSlot.FindAllAsync();
+            
+            return new CustomHttpCodeResponse(200, "", slots);
+        }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfTimeSpan(FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO)
         {
@@ -204,6 +214,14 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> PopulateWorkSlot(string date)
         {
             var convertedDate = DateTime.ParseExact(date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var existedWorkslots =
+                await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                    slot.Date.DayOfYear == convertedDate.DayOfYear);
+            if (existedWorkslots != null && existedWorkslots.Any())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Day already has Work Slots, adding with this function will be dangerous");
+            }
 
             //Get all active staff
             var staffs = await _repositoryWrapper.Staff.FindByConditionAsync(staff =>

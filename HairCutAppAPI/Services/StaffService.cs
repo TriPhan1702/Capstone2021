@@ -215,6 +215,57 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"Staff profile updated", true);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStaffsForAppointment(int appointmentId)
+        {
+            //Get appointment from database
+            var appointment =
+                await _repositoryWrapper.Appointment.FindSingleByConditionAsync(app => app.Id == appointmentId);
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with Id {appointmentId} not found");
+            }
+            
+            //Get Ids of Slots of day that the appointment goes through
+            var slotsOfDayIds = (await _repositoryWrapper.SlotOfDay.FindByConditionAsync(slot => 
+                slot.StartTime >= appointment.StartDate.TimeOfDay && 
+                slot.EndTime <= appointment.EndDate.TimeOfDay)).Select(slot => slot.Id).ToList();
+
+            //Find staffs that has all the available workslots that the appointment goes through
+            var workSLots = (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                slot.Status == GlobalVariables.AvailableWorkSlotStatus &&
+                slotsOfDayIds.Contains(slot.SlotOfDayId) &&
+                slot.Date.DayOfYear == appointment.StartDate.DayOfYear)).ToList();
+            var staffIdsFromWorkSlot = workSLots.Select(slot => slot.StaffId).ToHashSet();
+            var availableStaffIds = new List<int>();
+            var test = 0;
+            foreach (var staffId in staffIdsFromWorkSlot)
+            {
+                if (workSLots.Count(slot => slot.StaffId == staffId && slotsOfDayIds.Contains(slot.SlotOfDayId)) == slotsOfDayIds.Count)
+                {
+                    availableStaffIds.Add(staffId);
+                }
+            }
+
+            var availableStaffs =
+                (await _repositoryWrapper.Staff.FindByConditionAsyncWithInclude(
+                    staff => availableStaffIds.Contains(staff.Id), staff => staff.User)).ToList();
+            
+            //If there's already staff chosen, add to the list
+            if (appointment.ChosenStaffId != null)
+            {
+                var chosenStaff =
+                    await _repositoryWrapper.Staff.FindSingleByConditionWithIncludeAsync(
+                        staff => staff.Id == appointment.ChosenStaffId, staff => staff.User);
+                if (chosenStaff is null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Staff with Id {appointment.ChosenStaffId} not found");
+                }
+                availableStaffs.Add(chosenStaff);
+            }
+            
+            return new CustomHttpCodeResponse(200,"",availableStaffs.Select(staff => staff.ToGetAvailableStylistsOfASalonInSpanOfDayResponseDTO()));
+        }
+
         #region private functions
 
         //Check if user exists by username and email

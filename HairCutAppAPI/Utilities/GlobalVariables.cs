@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
+using HairCutAppAPI.Entities;
 
 namespace HairCutAppAPI.Utilities
 {
@@ -38,47 +40,76 @@ namespace HairCutAppAPI.Utilities
         public const string CustomerRole = "customer";
         public static readonly string[] Roles = {AdministratorRole, ManagerRole, StylistRole,BeauticianRole,CustomerRole};
         public static readonly string[] UserRolesWithoutSeparateTable = {AdministratorRole};
+        public static readonly string[] AppointmentPerformingRoles = {StylistRole, BeauticianRole};
         
-        //Names of authorization policies
-        public const string RequireAdministratorRole = "RequireAdministratorRole";
-        public const string RequireCustomerRole = "RequireCustomerRole";
-        public const string RequireManagerRole = "RequireManagerRole";
-        public const string RequireStylistRole = "RequireStylistRole";
-        public const string RequireBeauticianRole = "RequireBeauticianRole";
+        // //Names of authorization policies
+        // public const string RequireAdministratorRole = "RequireAdministratorRole";
+        // public const string RequireCustomerRole = "RequireCustomerRole";
+        // public const string RequireManagerRole = "RequireManagerRole";
+        // public const string RequireStylistRole = "RequireStylistRole";
+        // public const string RequireBeauticianRole = "RequireBeauticianRole";
 
-        //Status Lists
-        public static readonly string[] UserStatuses = {"active", "inactive", "new"};
-        public static readonly string[] StaffTypes = {"stylist", "beautician", "manager"};
-        public static readonly string[] ServiceStatuses = {"active", "inactive"};
-        public static readonly string[] ComboStatuses = {"active", "inactive"};
-        public static readonly string[] DeviceStatuses = {"active", "inactive"};
-        public static readonly string[] SalonStatuses = {"active", "inactive"};
-        public static readonly string[] AppointmentStatuses = {"pending","approved","ongoing","canceled","completed"};
-        public static readonly string[] ActiveAppointmentStatuses = {"pending","approved","ongoing"};
-        public static readonly string[] WorkSlotStatuses = {"available","not available","taken"};
-        public static readonly string[] PromotionalCodeStatuses = {"active", "inactive", "canceled"};
-        public static readonly string[] ArticleStatuses = {"active", "inactive"};
         
-        //The Default Status a new entity will get
-        public const string NewUserStatus = "active";
-        public const string NewAppointmentStatus = "pending";
+        //Statuses
+        public const string ActiveUserStatus = "active";
+        public const string InActiveUserStatus = "inactive";
+        public const string NewUserStatus = ActiveUserStatus;
+        
         public const string PendingAppointmentStatus = "pending";
         public const string ApprovedAppointmentStatus = "approved";
         public const string CompleteAppointmentStatus = "completed";
         public const string CanceledAppointmentStatus = "canceled";
-        public const string TakenAppointmentStatus = "taken";
-        public const string NewSalonStatus = "active";
+        public const string OnGoingAppointmentStatus = "ongoing";
+        public const string NewAppointmentStatus = PendingAppointmentStatus;
+        
         public const string AvailableWorkSlotStatus = "available";
         public const string NotAvailableWorkSlotStatus = "not available";
-        public const string NewPromotionalCodeStatus = ActivePromotionalCodeStatus;
+        public const string TakenWorkSlotStatus = "taken";
+        
         public const string ActivePromotionalCodeStatus = "active";
+        public const string InActivePromotionalCodeStatus = "inactive";
+        public const string CanceledPromotionalCodeStatus = "canceled";
+        public const string NewPromotionalCodeStatus = ActivePromotionalCodeStatus;
+        
         public const string ActiveComboStatus = "active";
-        public const string ActiveUserStatus = "active";
+        public const string InActiveComboStatus = "inactive";
+        
+        public const string ActiveServiceStatus = "active";
+        public const string InActiveServiceStatus = "inactive";
+        
+        public const string ActiveDeviceStatus = "active";
+        public const string InActiveDeviceStatus = "inactive";
+        
         public const string ActiveSalonStatus = "active";
-        public const string InActiveUserStatus = "inactive";
+        public const string NewSalonStatus = ActiveSalonStatus;
         public const string InActiveSalonStatus = "inactive";
-        public const string NewArticleStatus = "active";
+        
         public const string ActiveArticleStatus = "active";
         public const string InActiveArticleStatus = "inactive";
+        public const string NewArticleStatus = ActiveArticleStatus;
+        
+        //Status Lists
+        public static readonly string[] UserStatuses = {ActiveUserStatus, InActiveUserStatus};
+        public static readonly string[] StaffTypes = {StylistRole, BeauticianRole, ManagerRole};
+        public static readonly string[] ServiceStatuses = {ActiveServiceStatus, InActiveServiceStatus};
+        public static readonly string[] ComboStatuses = {ActiveComboStatus, InActiveComboStatus};
+        public static readonly string[] DeviceStatuses = {ActiveDeviceStatus, InActiveDeviceStatus};
+        public static readonly string[] SalonStatuses = {ActiveSalonStatus, InActiveSalonStatus};
+        public static readonly string[] AppointmentStatuses = {PendingAppointmentStatus,ApprovedAppointmentStatus,OnGoingAppointmentStatus,CanceledAppointmentStatus,CompleteAppointmentStatus};
+        public static readonly string[] ActiveAppointmentStatuses = {PendingAppointmentStatus,ApprovedAppointmentStatus,OnGoingAppointmentStatus};
+        public static readonly string[] WorkSlotStatuses = {AvailableWorkSlotStatus,NotAvailableWorkSlotStatus,TakenWorkSlotStatus};
+        public static readonly string[] PromotionalCodeStatuses = {ActivePromotionalCodeStatus, InActivePromotionalCodeStatus, CanceledPromotionalCodeStatus};
+        public static readonly string[] ArticleStatuses = {ActiveArticleStatus, InActiveArticleStatus};
+        
+        public static readonly ViolationType ManagerApproveViolationId = new ViolationType()
+            {Id = 1, Name = "Manager Failed to Approve of Disapprove an appointment"};
+        
+        public static ReadOnlyCollection<ViolationType> ViolationTypes { get; } = new ReadOnlyCollection<ViolationType>(
+            new ViolationType[] { 
+                ManagerApproveViolationId
+            }
+        );
+
+        
     }
 }

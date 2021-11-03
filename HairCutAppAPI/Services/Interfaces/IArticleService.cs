@@ -7,6 +7,10 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IArticleService
     {
+        /// <summary>
+        /// DEBUG
+        /// </summary>
+        Task<ActionResult<CustomHttpCodeResponse>> GetAllArticles();
         Task<ActionResult<CustomHttpCodeResponse>> CreateArticle(CreateArticleDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> GetArticleDetail(int id);
         Task<ActionResult<CustomHttpCodeResponse>> UpdateArticle(UpdateArticleDTO dto);

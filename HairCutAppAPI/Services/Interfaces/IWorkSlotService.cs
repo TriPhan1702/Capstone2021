@@ -8,6 +8,10 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IWorkSlotService
     {
+        /// <summary>
+        /// DEBUG
+        /// </summary>
+        Task<ActionResult<CustomHttpCodeResponse>> GetAllWorkSlots();
         Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfTimeSpan(FindWorkSlotsOfTimeSpanDTO findWorkSlotsOfTimeSpanDTO);
         Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfDay(FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO);
         Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlot(GetWorkSlotDTO getWorkSlotDTO);

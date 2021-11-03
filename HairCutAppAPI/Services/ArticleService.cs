@@ -23,6 +23,16 @@ namespace HairCutAppAPI.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
+        /// <summary>
+        /// DEBUG
+        /// </summary>
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllArticles()
+        {
+            var articles = await _repositoryWrapper.Article.FindAllAsync();
+            
+            return new CustomHttpCodeResponse(200, "", articles);
+        }
+
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateArticle( CreateArticleDTO dto)
         {
             var currentUserId = GetCurrentUserId();

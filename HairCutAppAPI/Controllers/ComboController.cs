@@ -20,6 +20,15 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// DEBUG get all combos
+        /// </summary>
+        [HttpGet]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllCombos()
+        {
+            return await _comboService.GetAllCombos();
+        }
+        
+        /// <summary>
         /// Get Combo price from Combo Id
         /// </summary>
         /// <param name="id">Combo Id</param>
@@ -92,7 +101,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For admin, manager and staff
         /// </summary>
-        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        // [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("advanced_get_combos")]
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetCombos(
             AdvancedGetCombosDTO advancedGetCombosDTO)

@@ -7,6 +7,12 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IAppointmentService
     {
+        /// <summary>
+        /// Debug
+        /// </summary>
+        Task<ActionResult<CustomHttpCodeResponse>> GetAppAppointments();
+
+        Task<ActionResult<CustomHttpCodeResponse>> GetAllAppointmentStatuses();
         Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment(CreateAppointmentDTO createAppointmentDTO);
         
         Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int appointmentId);
@@ -16,6 +22,9 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<CustomHttpCodeResponse> AssignStaff(AssignStaffDTO assignCrewDTO);
         
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO);
+
+        Task<ActionResult<CustomHttpCodeResponse>> CustomerAdvancedGetAppointments(
+            CustomerAdvancedGetAppointmentDTO dto);
 
         Task<ActionResult<CustomHttpCodeResponse>> CheckCustomerHasCompletedAppointment();
     }

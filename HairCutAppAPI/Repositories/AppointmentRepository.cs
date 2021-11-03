@@ -58,6 +58,18 @@ namespace HairCutAppAPI.Repositories
                 query = query.Where(appointment =>
                     advancedGetAppointmentsDTO.Statuses.Select(status => status.ToLower()).Contains(appointment.Status.ToLower()));
             }
+            
+            //If There's UserId Filtering
+            if (advancedGetAppointmentsDTO.CustomerUserIds != null && advancedGetAppointmentsDTO.CustomerUserIds.Any())
+            {
+                query = query.Where(appointment => advancedGetAppointmentsDTO.CustomerUserIds.Contains(appointment.Customer.UserId));
+            }
+            
+            //If There's CustomerId Filtering
+            if (advancedGetAppointmentsDTO.CustomerIds != null && advancedGetAppointmentsDTO.CustomerIds.Any())
+            {
+                query = query.Where(appointment => advancedGetAppointmentsDTO.CustomerIds.Contains(appointment.Customer.Id));
+            }
 
             //If There's Customer Name Filtering
             if (!string.IsNullOrWhiteSpace(advancedGetAppointmentsDTO.CustomerName))

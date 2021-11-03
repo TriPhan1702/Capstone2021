@@ -149,7 +149,7 @@ namespace HairCutAppAPI.Controllers
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
         
-            switch (socialLoginDTO.Platform.Trim().ToLower())
+            switch (socialLoginDTO.Platform.ToLower())
             {
                 case GlobalVariables.Google: return await _userService.LoginByGoogle(socialLoginDTO.Token);
                 

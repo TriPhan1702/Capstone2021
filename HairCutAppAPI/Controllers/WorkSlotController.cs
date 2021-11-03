@@ -20,6 +20,15 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// DEBUG get all work slots
+        /// </summary>
+        [HttpGet]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAllWorkSlots()
+        {
+            return await _workSlotService.GetAllWorkSlots();
+        }
+        
+        /// <summary>
         /// For authorized users
         /// </summary>
         [Authorize]

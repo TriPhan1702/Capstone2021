@@ -127,6 +127,16 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Get list of available staff that can perform an appointment
+        /// </summary>
+        // [Authorize(Roles = GlobalVariables.ManagerRole)]
+        [HttpGet("get_available_staff_for_appointment/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStaffsForAppointment(int id)
+        {
+            return  await _staffService.GetAvailableStaffsForAppointment(id);;
+        }
+        
+        /// <summary>
         /// For Staff and manager to update their information
         /// </summary>
         /// <returns></returns>
