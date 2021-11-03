@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities.Payment;
+using HairCutAppAPI.Utilities.Violation;
 
 namespace HairCutAppAPI.Utilities
 {
@@ -12,6 +14,13 @@ namespace HairCutAppAPI.Utilities
         public const string DateRegex = @"(((0|1)[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/((19|20)\d\d))$";
         public const string EmailRegex = @"^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$";
         public const string PhoneNumberRegex = @"^(?:[0-9]{10})$";
+        
+        //Payment Types
+        public static ReadOnlyCollection<PaymentType> PaymentTypes { get; } = new ReadOnlyCollection<PaymentType>(
+            new PaymentType[] { 
+                new PaymentType(){Id = 1, Name = "Trả trực tiếp"}, 
+            }
+        );
         
         //Messages
         public const string DateRegexMessage = "dd/MM/yyyy";

@@ -11,5 +11,8 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         [Required]
         [DataType(DataType.Upload)]
         public IFormFile Image { get; set; }
+        
+        [MaxLength(255)]
+        public string Note { get; set; }
     }
 }

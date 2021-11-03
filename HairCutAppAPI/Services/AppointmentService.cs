@@ -377,7 +377,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with id {assignStaffDTO.AppointmentId} not found");
             }
             
-            //Get appointment with its combo's detail 
+            //Get appointment with its detail 
             var appointment = await _repositoryWrapper.Appointment.GetAppointmentWithDetail(assignStaffDTO.AppointmentId);
             if (appointment is null)
             {
@@ -391,7 +391,8 @@ namespace HairCutAppAPI.Services
             }
             
             //Get a list of staff ids from dto
-            var staffIds = assignStaffDTO.StaffDetailDTOs.Select(detail => detail.StaffId).ToList();
+            var staffIds = assignStaffDTO.StaffDetailDTOs.Select(detail => detail.StaffId).ToHashSet();
+
             //If customer has already chosen a stylist, check if that stylist is in the assign list
             if (appointment.ChosenStaffId != null && !staffIds.Contains(appointment.ChosenStaffId.Value))
             {
@@ -411,8 +412,8 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Some Staff is not found or not from the same salon");
             }
-
-            if (!staffs.Select(staff => staff.SalonId).Contains(currentManager.Id))
+            
+            if (!staffs.Select(staff => staff.SalonId).Contains(currentManager.SalonId))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Current Manager is not form Salon with Id {appointment.SalonId}");
             }
@@ -435,22 +436,22 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"There is no work slot available");
             }
-            if (appointment.ChosenStaffId is null)
-            {
-                //If every work slot of every staff are available, the count of workSlots should be slotsOfDayIds.Count * staffIds.Count
-                if (workSlots.Count != staffIds.Count * slotsOfDayIds.Count)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Some staffs are not available in the appointment's span of time");
-                } 
-            }
-            else
-            {
-                //If every work slot of every staff are available, the count of workSlots should be slotsOfDayIds.Count * staffIds.Count - slotsOfDayIds.Count, excluding workslot of the chosen stylist
-                if (workSlots.Count != (staffIds.Count * slotsOfDayIds.Count) - slotsOfDayIds.Count)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Some staffs are not available in the appointment's span of time");
-                } 
-            }
+            
+            //TODO: test this
+            // //Get List of unique staff ids from list of work slots
+            // var staffListFromWorkSlot = workSlots.Select(slot => slot.StaffId).ToHashSet();
+            // if (appointment.ChosenStaffId != null)
+            // {
+            //     staffListFromWorkSlot.RemoveWhere(i => i == appointment.ChosenStaffId);
+            // }
+            // //Check if remaining staff is available
+            // foreach (var staffId in staffListFromWorkSlot)
+            // {
+            //     if (workSlots.Count(slot => slot.StaffId == staffId) != slotsOfDayIds.Count)
+            //     {
+            //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Staff with Id{staffId} is not available in all of the work slots that of the appointment");
+            //     }
+            // }
             
             //If every work slot is valid, change all of their status to taken
             foreach (var workSlot in workSlots)
@@ -459,7 +460,7 @@ namespace HairCutAppAPI.Services
                 //If a work slot is less than 1 hour away, abort
                 if (appointment.StartDate.DayOfYear == now.DayOfYear && workSlot.Date.Add(workSlot.SlotOfDay.StartTime).AddMinutes(GlobalVariables.TimeToConfirmAppointmentInAdvanced) >= now )
                 {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"WorkSlot {workSlot.Id} is less than {GlobalVariables.TimeToConfirmAppointmentInAdvanced} hours away");
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Appointment is less than {GlobalVariables.TimeToConfirmAppointmentInAdvanced} minutes away, it can not be confirmed");
                 }
                 //Change the work slot's status
                 workSlot.Status = GlobalVariables.TakenWorkSlotStatus;
@@ -468,19 +469,18 @@ namespace HairCutAppAPI.Services
                 //Pend Changes
                 await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(workSlot, workSlot.Id);
             }
-        
+            
             //Prepare list of AppointmentDetail
             foreach (var detail in assignStaffDTO.StaffDetailDTOs)
             {
                 appointment.AppointmentDetails
-                        .First(appointmentDetail => appointmentDetail.ServiceId == detail.ServiceId).StaffId =
-                    detail.StaffId;
+                        .First(appointmentDetail => appointmentDetail.ServiceId == detail.ServiceId).StaffId = detail.StaffId;
             }
             
             //Change appointment status to approved
             appointment.Status = GlobalVariables.ApprovedAppointmentStatus;
             appointment.LastUpdated = DateTime.Now;
-        
+            
             //Save to Database
             await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
             

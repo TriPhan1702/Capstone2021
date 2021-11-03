@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace HairCutAppAPI.Entities
+﻿namespace HairCutAppAPI.Utilities.Violation
 {
     public class ViolationType
     {
