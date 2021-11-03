@@ -391,7 +391,7 @@ namespace HairCutAppAPI.Services
             }
             
             //Get a list of staff ids from dto
-            var staffIds = assignStaffDTO.StaffDetailDTOs.Select(detail => detail.StaffId).ToHashSet();
+            var staffIds = assignStaffDTO.StaffDetailDTOs.Select(detail => detail.StaffId).ToList();
 
             //If customer has already chosen a stylist, check if that stylist is in the assign list
             if (appointment.ChosenStaffId != null && !staffIds.Contains(appointment.ChosenStaffId.Value))
