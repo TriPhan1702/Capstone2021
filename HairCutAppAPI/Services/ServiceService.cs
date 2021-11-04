@@ -56,6 +56,12 @@ namespace HairCutAppAPI.Services
 
             return new CustomHttpCodeResponse(200,"", result);
         }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetServiceDetail(int id)
+        {
+            var combo = await _repositoryWrapper.Service.FindSingleByConditionAsync(service => service.Id == id);
+            return new CustomHttpCodeResponse(200,"", combo.ToServiceDTO());
+        }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateService(CreateServiceDTO createServiceDTO)
         {

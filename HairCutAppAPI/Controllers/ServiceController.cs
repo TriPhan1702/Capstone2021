@@ -19,6 +19,17 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Get a service's detail, for staff, admin, manager
+        /// </summary>
+        /// <param name="id">Service Id</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("{id}")] public async Task<ActionResult<CustomHttpCodeResponse>> GetServiceDetail(int id)
+        {
+            return await _serviceService.GetServiceDetail(id);
+        }
+        
+        /// <summary>
         /// For admin, manager and staff
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]

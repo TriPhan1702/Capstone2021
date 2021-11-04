@@ -10,6 +10,7 @@ namespace HairCutAppAPI.Services.Interfaces
     {
         Task<CustomHttpCodeResponse> UpdateService(UpdateServiceDto updateServiceDto);
         Task<ActionResult<CustomHttpCodeResponse>> GetAllServices();
+        Task<ActionResult<CustomHttpCodeResponse>> GetServiceDetail(int id);
         Task<ActionResult<CustomHttpCodeResponse>> CreateService(CreateServiceDTO createServiceDTO);
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetServices(AdvancedGetServiceDTO advancedGetServiceDTO);
     }

@@ -39,6 +39,17 @@ namespace HairCutAppAPI.Controllers
         {
             return await _comboService.GetComboPrice(id);
         }
+
+        /// <summary>
+        /// Get a combo's detail, for staff, admin, manager
+        /// </summary>
+        /// <param name="id">Combo Id</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("{id}")] public async Task<ActionResult<CustomHttpCodeResponse>> GetComboDetail(int id)
+        {
+            return await _comboService.GetComboDetail(id);
+        }
         
         /// <summary>
         /// For Admin to create new combo

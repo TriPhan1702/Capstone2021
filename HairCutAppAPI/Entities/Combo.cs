@@ -77,5 +77,25 @@ namespace HairCutAppAPI.Entities
                 Price = ComboDetails.Sum(detail => detail.Service.Price)
             };
         }
+
+        public ComboDetailDTO ToComboDetailDTO()
+        {
+            return new ComboDetailDTO()
+            {
+                Id = Id,
+                Description = Description,
+                Name = Name,
+                Price = ComboDetails.Sum(detail => detail.Service.Price),
+                Status = Status,
+                Duration = Duration,
+                Services = ComboDetails.Select(detail => new ComboDetailServiceDTO()
+                {
+                    Id = detail.ServiceId,
+                    Name = detail.Service.Name,
+                    Description = detail.Service.Description,
+                    Price = detail.Service.Price
+                }).ToList(),
+            };
+        }
     }
 }

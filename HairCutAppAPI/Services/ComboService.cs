@@ -31,6 +31,12 @@ namespace HairCutAppAPI.Services
             
             return new CustomHttpCodeResponse(200, "", combos);
         }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboDetail(int id)
+        {
+            var combo = await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(id);
+            return new CustomHttpCodeResponse(200,"", combo.ToComboDetailDTO());
+        }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO)
         {
@@ -149,7 +155,7 @@ namespace HairCutAppAPI.Services
             //Get Active Combo
             var comboDetails = await _repositoryWrapper.Combo.GetActiveCombosWithDetailsAndServiceDetails();
             
-            return new CustomHttpCodeResponse(200, "" , comboDetails.Select(c=>c.ToComboDTO()).ToList());
+            return new CustomHttpCodeResponse(200, "" , comboDetails.Select(c=>c.ToComboDetailDTO()).ToList());
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo(CreateComboDTO createComboDTO)
