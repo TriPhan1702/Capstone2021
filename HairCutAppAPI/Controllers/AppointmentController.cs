@@ -44,7 +44,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("{id}")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentDetail(int id)
         {
             return await _appointmentService.GetAppointmentDetail(id);
         }

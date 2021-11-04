@@ -36,6 +36,8 @@ namespace HairCutAppAPI.Repositories
                 .Include(appointment => appointment.Rating)
                 .Include(appointment => appointment.Salon)
                 .Include(appointment => appointment.AppointmentDetails)
+                .ThenInclude(detail => detail.Staff)
+                .Include(appointment => appointment.Combo)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
 

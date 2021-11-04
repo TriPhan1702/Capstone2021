@@ -42,10 +42,10 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
     public class GetAppointmentDetailResponseDetailDTO
     {
         public int ServiceId { get; set; }
-        public int ServiceName { get; set; }
+        public string ServiceName { get; set; }
         public string ServiceDescription { get; set; }
-        public int ServicePrice { get; set; }
-        public int StaffId { get; set; }
+        public decimal ServicePrice { get; set; }
+        public int? StaffId { get; set; }
         public string StaffName { get; set; }
         public string StaffType { get; set; }
     }

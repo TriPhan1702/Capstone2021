@@ -121,7 +121,13 @@ namespace HairCutAppAPI.Entities
                 ComboDescription = Combo.Description,
                 AppointmentDetails = AppointmentDetails.Select(detail => new GetAppointmentDetailResponseDetailDTO()
                 {
-                    ServiceId = detail.ServiceId, ServiceDescription = detail.Service.Description,
+                    ServiceId = detail.ServiceId, 
+                    ServiceDescription = detail.Service.Description, 
+                    ServiceName = detail.Service.Name,
+                    ServicePrice = detail.Service.Price,
+                    StaffId = detail.StaffId,
+                    StaffName = detail.Staff.FullName,
+                    StaffType = detail.Staff.StaffType
                 }).ToList(),
                 PaidAmount = PaidAmount,
                 // TotalPrice = Combo.Price,
