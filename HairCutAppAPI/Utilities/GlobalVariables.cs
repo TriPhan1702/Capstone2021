@@ -40,6 +40,7 @@ namespace HairCutAppAPI.Utilities
         //Time variables
         public const int TimeToCreateAppointmentInAdvanced = 120;
         public const int TimeToConfirmAppointmentInAdvanced = 60;
+        public const int TimeToFinishAppointmentInAdvanced = 300;
         
         //Name of roles
         public const string AdministratorRole = "administrator";

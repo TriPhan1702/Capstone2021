@@ -20,6 +20,8 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentDetail(int appointmentId);
         
         Task<CustomHttpCodeResponse> AssignStaff(AssignStaffDTO assignCrewDTO);
+
+        Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment(FinishAppointmentDTO dto);
         
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO);
 

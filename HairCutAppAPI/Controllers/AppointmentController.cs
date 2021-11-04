@@ -127,6 +127,25 @@ namespace HairCutAppAPI.Controllers
 
             return await _appointmentService.AssignStaff(assignStaffDTO);
         }
+        
+        /// <summary>
+        /// For Manager, Admin, Staff to finish an appointment
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("finish_appointment")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment([FromForm] FinishAppointmentDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as FinishAppointmentDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+
+            return await _appointmentService.FinishAppointment(dto);
+        }
 
         /// <summary>
         /// Cancel an Appointment

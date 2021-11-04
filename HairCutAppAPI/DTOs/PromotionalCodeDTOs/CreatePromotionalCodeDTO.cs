@@ -32,7 +32,7 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
             {
                 Code = Code.ToLower(),
                 Percentage = Percentage,
-                Status = GlobalVariables.NewPromotionalCodeStatus,
+                Status = DateTime.Now >= startDate?GlobalVariables.ActivePromotionalCodeStatus:GlobalVariables.InActivePromotionalCodeStatus,
                 CreatedDate = DateTime.Now,
                 LastUpdate = DateTime.Now,
                 StartDate = startDate,

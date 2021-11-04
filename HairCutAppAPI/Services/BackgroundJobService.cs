@@ -36,6 +36,7 @@ namespace HairCutAppAPI.Services
                 foreach (var appointment in pendingAppointments)
                 {
                     appointment.Status = GlobalVariables.CanceledAppointmentStatus;
+                    appointment.LastUpdated = DateTime.Now;
                     await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
                 }
 
@@ -72,6 +73,117 @@ namespace HairCutAppAPI.Services
             }
         }
 
+        /// <summary>
+        /// BACKGROUND JOB: Check if there are approved appointments that passed start time and need to be set to ongoing appointment
+        /// </summary>
+        public async Task CheckAndUpdateApprovedAppointments()
+        {
+            //Get all appointments with approved status
+            var approvedAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
+                appointment.Status == GlobalVariables.ApprovedAppointmentStatus && 
+                appointment.StartDate >= DateTime.Now && 
+                DateTime.Now < appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointmentInAdvanced))).ToList();
+            //If there are
+            if (approvedAppointments.Any())
+            {
+                foreach (var appointment in approvedAppointments)
+                {
+                    appointment.Status = GlobalVariables.OnGoingAppointmentStatus;
+                    appointment.LastUpdated = DateTime.Now;
+                    await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
+                }
+                
+                try
+                {
+                    //Save all changes above to database 
+                    await _repositoryWrapper.SaveAllAsync();
+                }
+                catch (Exception e)
+                {
+                    //clear pending changes if fail
+                    _repositoryWrapper.DeleteChanges();
+                    //TODO: Log failure to update appointment status
+                }
+            }
+        }
+
+        /// <summary>
+        /// BACKGROUND JOB: Check if there are ongoing appointments that went passed time to finish
+        /// </summary>
+        public async Task CheckAndUpdateOngoingAppointments()
+        {
+            //Get all appointments with ongoing status
+            var ongoingAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
+                appointment.Status == GlobalVariables.OnGoingAppointmentStatus && DateTime.Now >= appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointmentInAdvanced))).ToList();
+            
+            //If there are
+            if (ongoingAppointments.Any())
+            {
+                //TODO Send notification to staff and manager
+            }
+        }
+
+        public async Task CheckAndUpdateInActivePromotionalCodes()
+        {
+            var codes = (await _repositoryWrapper.PromotionalCode.FindByConditionAsync(code =>
+                code.Status == GlobalVariables.InActiveArticleStatus &&
+                DateTime.Now >= code.StartDate && DateTime.Now < code.ExpirationDate)).ToList();
+
+            if (codes.Any())
+            {
+                foreach (var code in codes)
+                {
+                    code.Status = GlobalVariables.ActivePromotionalCodeStatus;
+                    code.LastUpdate = DateTime.Now;
+                    await _repositoryWrapper.PromotionalCode.UpdateAsyncWithoutSave(code, code.Id);
+                }
+                
+                try
+                {
+                    //Save all changes above to database 
+                    await _repositoryWrapper.SaveAllAsync();
+                }
+                catch (Exception e)
+                {
+                    //clear pending changes if fail
+                    _repositoryWrapper.DeleteChanges();
+                    //TODO: Log failure to update code status
+                }
+            }
+        }
+        
+        /// <summary>
+        /// BACKGROUND JOB: Check active codes if it has passed expirationdate
+        /// </summary>
+        public async Task CheckAndUpdateActivePromotionalCodes()
+        {
+            var codes = (await _repositoryWrapper.PromotionalCode.FindByConditionAsync(code =>
+                code.Status == GlobalVariables.ActivePromotionalCodeStatus &&
+                DateTime.Now >= code.ExpirationDate)).ToList();
+
+            if (codes.Any())
+            {
+                foreach (var code in codes)
+                {
+                    code.Status = GlobalVariables.InActivePromotionalCodeStatus;
+                    code.LastUpdate = DateTime.Now;
+                    await _repositoryWrapper.PromotionalCode.UpdateAsyncWithoutSave(code, code.Id);
+                }
+                
+                try
+                {
+                    //Save all changes above to database 
+                    await _repositoryWrapper.SaveAllAsync();
+                }
+                catch (Exception e)
+                {
+                    //clear pending changes if fail
+                    _repositoryWrapper.DeleteChanges();
+                    //TODO: Log failure to update code status
+                }
+            }
+        }
+        
         public async Task CheckAndUpdateActiveWorkSlotJob()
         {
             //Get list of available work slots

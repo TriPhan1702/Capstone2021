@@ -41,6 +41,7 @@ namespace HairCutAppAPI.Services
                 CultureInfo.InvariantCulture);
             var endDate = DateTime.ParseExact(createPromotionalCodeDTO.ExpirationDate, GlobalVariables.DateTimeFormat,
                 CultureInfo.InvariantCulture);
+            
             var newPromotionalCode = createPromotionalCodeDTO.ToPromotionalCode(startDate, endDate);
 
             var result = await _repositoryWrapper.PromotionalCode.CreateAsync(newPromotionalCode);

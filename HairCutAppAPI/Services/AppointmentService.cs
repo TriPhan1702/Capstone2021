@@ -11,6 +11,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,11 +21,13 @@ namespace HairCutAppAPI.Services
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPhotoService _photoService;
 
-        public AppointmentService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor)
+        public AppointmentService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor, IPhotoService photoService)
         {
             _repositoryWrapper = repositoryWrapper;
             _httpContextAccessor = httpContextAccessor;
+            _photoService = photoService;
         }
 
         /// <summary>
@@ -498,6 +501,42 @@ namespace HairCutAppAPI.Services
             }
             
             return new CustomHttpCodeResponse(200,"Crew Assigned"); 
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment(FinishAppointmentDTO dto)
+        {
+            //Get appointment from database
+            var appointment = await _repositoryWrapper.Appointment.FindSingleByConditionAsync(app => app.Id == dto.Id);
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Appointment with Id {dto.Id} not found");
+            }
+
+            //Check if appointment is ongoing, if not, abort
+            if (appointment.Status != GlobalVariables.OnGoingAppointmentStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Appointment has to have {GlobalVariables.OnGoingAppointmentStatus} Status");
+            }
+
+            //Upload image
+            var imageUploadResult = await _photoService.AppPhotoAsync(dto.Image);
+            //If there's error
+            if (imageUploadResult.Error != null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+            }
+            
+            //Change Appointment
+            appointment.Status = GlobalVariables.CompleteAppointmentStatus;
+            appointment.Note = dto.Note;
+            appointment.ImageUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            appointment.LastUpdated = DateTime.Now;
+
+            var result = await _repositoryWrapper.Appointment.UpdateAsync(appointment, appointment.Id);
+            
+            //TODO:Send notifications
+            
+            return new CustomHttpCodeResponse(200,"Appointment is completed", true);
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CheckCustomerHasCompletedAppointment()
