@@ -555,6 +555,10 @@ namespace HairCutAppAPI.Services
             //If Combo of appoint only has 1 service and staff is already assigned, just change to approved and save
             if (appointment.AppointmentDetails.Count == 1 && appointment.AppointmentDetails.First().StaffId != null)
             {
+                if (appointment.Status == GlobalVariables.ApprovedAppointmentStatus)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Appointment only has 1 service, with stylist already chosen, and has already been approved");
+                }
                 appointment.LastUpdated = DateTime.Now;
                 appointment.Status = GlobalVariables.ApprovedAppointmentStatus;
                 await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
