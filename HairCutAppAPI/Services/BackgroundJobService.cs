@@ -81,7 +81,7 @@ namespace HairCutAppAPI.Services
             //Get all appointments with approved status
             var approvedAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
                 appointment.Status == GlobalVariables.ApprovedAppointmentStatus && 
-                appointment.StartDate >= DateTime.Now && 
+                appointment.StartDate <= DateTime.Now && 
                 DateTime.Now < appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointmentInAdvanced))).ToList();
             //If there are
             if (approvedAppointments.Any())

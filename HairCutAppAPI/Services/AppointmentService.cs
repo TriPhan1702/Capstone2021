@@ -566,10 +566,20 @@ namespace HairCutAppAPI.Services
                     appointment.AppointmentDetails.Select(detail => detail.StaffId).ToList();
                 var staffIdsFromDTO = dto.StaffDetailDTOs.Select(detail => detail.StaffId).ToList();
 
-                //Check staff from dto
+                //Check if chosen stylist is in the request
+                if (appointment.ChosenStaffId != null && !staffIdsFromDTO.Contains(appointment.ChosenStaffId.Value))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Stylist chosen by Customer is not in the staff List in request");
+                }
+
+                //Check staff from dto if they are from the same salon, and is active
                 var hasInvalidStaff = await _repositoryWrapper.Staff.AnyAsync(staff =>
                     staffIdsFromDTO.Contains(staff.Id) && staff.User.Status != GlobalVariables.ActiveUserStatus &&
                     staff.SalonId != appointment.SalonId);
+                if (hasInvalidStaff)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"There's invalid staff in Request");
+                }
 
                 //Check if the service are the same from the appointment to dto
                 CompareAssignStaffServices(appointment, dto);
@@ -597,7 +607,7 @@ namespace HairCutAppAPI.Services
                         hasChanged = true;
                         //Add old staff to delete list, chosen staff is untouched
                         if (detail.StaffId != null && !deletedStaffIds.Contains(detail.StaffId.Value) &&
-                            detail.StaffId != appointment.ChosenStaffId &&
+                            dtoDetail.StaffId != appointment.ChosenStaffId &&
                             !staffIdsFromDTO.Contains(detail.StaffId.Value))
                         {
                             deletedStaffIds.Add(detail.StaffId.Value);
@@ -819,7 +829,7 @@ namespace HairCutAppAPI.Services
             }
 
             if (appointment.Status != GlobalVariables.PendingAppointmentStatus &&
-                appointment.Status == GlobalVariables.ApprovedAppointmentStatus)
+                appointment.Status != GlobalVariables.ApprovedAppointmentStatus)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment is not pending or approved");
             }
