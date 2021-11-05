@@ -95,43 +95,42 @@ namespace HairCutAppAPI.Entities
             };
         }
 
-        public GetAppointmentDetailResponseDTO ToGetAppointmentDetailResponseDTO(Combo combo)
+        public GetAppointmentDetailResponseDTO ToGetAppointmentDetailResponseDTO()
         {
-            var result = new GetAppointmentDetailResponseDTO
+            var result = new GetAppointmentDetailResponseDTO();
+            result.Id = Id;
+            result.Note = Note;
+            result.Rating = RatingId;
+            result.Status = Status;
+            result.CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat);
+            result.LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat);
+            result.CustomerId = CustomerId;
+            result.CustomerName = Customer?.FullName;
+            result.SalonId = SalonId;
+            result.SalonName = Salon?.Name;
+            result.StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat);
+            result.EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat);
+            result.ImageUrl = ImageUrl;
+            result.PaymentType = PaymentType;
+            result.PromotionalCode = PromotionalCode;
+            result.RatingId = RatingId;
+            result.RatingComment = Rating?.RatingComment;
+            result.ComboId = ComboId;
+            result.ComboName = Combo?.Name;
+            result.ComboDescription = Combo?.Description;
+            result.AppointmentDetails = AppointmentDetails.Select(detail => new GetAppointmentDetailResponseDetailDTO()
             {
-                Id = Id,
-                Note = Note,
-                Rating = RatingId,
-                Status = Status,
-                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
-                LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat),
-                CustomerId = CustomerId,
-                CustomerName = Customer.FullName,
-                SalonId = SalonId,
-                SalonName = Salon.Name,
-                StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
-                EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat),
-                ImageUrl = ImageUrl,
-                PaymentType = PaymentType,
-                PromotionalCode = PromotionalCode,
-                RatingId = RatingId,
-                RatingComment = Rating?.RatingComment,
-                ComboId = ComboId,
-                ComboName = Combo.Name,
-                ComboDescription = Combo.Description,
-                AppointmentDetails = AppointmentDetails.Select(detail => new GetAppointmentDetailResponseDetailDTO()
-                {
-                    ServiceId = detail.ServiceId, 
-                    ServiceDescription = detail.Service.Description, 
-                    ServiceName = detail.Service.Name,
-                    ServicePrice = detail.Service.Price,
-                    StaffId = detail.StaffId,
-                    StaffName = detail.Staff.FullName,
-                    StaffType = detail.Staff.StaffType
-                }).ToList(),
-                PaidAmount = PaidAmount,
-                // TotalPrice = Combo.Price,
-            };
+                ServiceId = detail.ServiceId,
+                ServiceDescription = detail.Service.Description,
+                ServiceName = detail.Service.Name,
+                ServicePrice = detail.Service.Price,
+                StaffId = detail.StaffId,
+                StaffName = detail.Staff?.FullName,
+                StaffType = detail.Staff?.StaffType
+            }).ToList();
+            result.PaidAmount = PaidAmount;
+            result.TotalPrice = AppointmentDetails.Sum(detail => detail.Price);
+            
             return result;
         }
         

@@ -129,6 +129,26 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For manager to assign staff to appointment
+        /// </summary>
+        /// <param name="assignStaffDTO">Stylist Id can be null, StylistId<0 => null</param>
+        [Authorize(Roles = GlobalVariables.ManagerRole)]
+        [HttpPost("assign_appointment_staff_test")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AssignStaffToAppointmentTest([FromBody] AssignStaffDTO assignStaffDTO)
+        {
+            //Trim All Strings in object
+            assignStaffDTO = ObjectTrimmer.TrimObject(assignStaffDTO) as AssignStaffDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+
+            return await _appointmentService.AssignStaff2(assignStaffDTO);
+        }
+        
+        /// <summary>
         /// For Manager, Admin, Staff to finish an appointment
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]

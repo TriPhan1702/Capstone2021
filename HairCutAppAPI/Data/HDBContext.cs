@@ -32,7 +32,6 @@ namespace HairCutAppAPI.Data
         public DbSet<AppointmentRating> AppointmentRatings { get; set; }
         public DbSet<Article> Articles { get; set; }
         public DbSet<Param> Params { get; set; }
-        public DbSet<Violation> Violations { get; set; }
         
         public HDBContext(DbContextOptions options) : base(options)
         {
@@ -54,7 +53,11 @@ namespace HairCutAppAPI.Data
                 new Salon(){Id = 1, Name = "Salon 1", Description = "Salon 1", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
                 new Salon(){Id = 2, Name = "Salon 2", Description = "Salon 2", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
                 new Salon(){Id = 3, Name = "Salon 3", Description = "Salon 3", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
-                new Salon(){Id = 4, Name = "Salon 4", Description = "Salon 4", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus}
+                new Salon(){Id = 4, Name = "Salon 4", Description = "Salon 4", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 5, Name = "Salon Quan 5", Description = "Salon 5", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 6, Name = "Salon Quan 6", Description = "Salon 6", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 7, Name = "Salon Thu Duc", Description = "Salon Thu Duc", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus},
+                new Salon(){Id = 8, Name = "Salon Binh Chanh", Description = "Salon Binh Chanh", CreatedDate = now, LastUpdate = now, Status = GlobalVariables.NewSalonStatus}
             );
 
             //Seed Admin
@@ -68,6 +71,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.AdministratorRole,
+                    FullName = "Phạm Văn A"
                 },
                 new AppUser(){
                     Id = 2, 
@@ -77,6 +81,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.ManagerRole,
+                    FullName = "Manager 1"
                 },
                 new AppUser(){
                     Id = 3, 
@@ -86,6 +91,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.StylistRole,
+                    FullName = "Stylist 1"
                 },
                 new AppUser(){
                     Id = 4, 
@@ -95,6 +101,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.BeauticianRole,
+                    FullName = "Beautician 1"
                 },
                 new AppUser(){
                     Id = 5, 
@@ -104,6 +111,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.StylistRole,
+                    FullName = "Stylist 2"
                 },
                 new AppUser(){
                     Id = 6, 
@@ -113,6 +121,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.BeauticianRole,
+                    FullName = "Beautician 2"
                 },
                 new AppUser(){
                     Id = 7, 
@@ -122,6 +131,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.CustomerRole,
+                    FullName = "Customer 1"
                 },
                 new AppUser(){
                     Id = 8, 
@@ -131,6 +141,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.CustomerRole,
+                    FullName = "Customer 2"
                 },
                 new AppUser(){
                     Id = 9, 
@@ -140,6 +151,7 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.CustomerRole,
+                    FullName = "Customer 3"
                 }
             );
             
@@ -177,24 +189,27 @@ namespace HairCutAppAPI.Data
                 new Combo(){Id = 3, Name = "Cắt Tóc Gội Đầu Rửa Mặt",Description = "Cắt Tóc Gội Đầu Rửa Mặt", Duration = 2, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
                 new Combo(){Id = 4, Name = "Chăm sóc đầy đử",Description = "Cắt Tóc, Ráy Táy, Gội Đầu, Rửa Mặt, Dắp mặt", Duration = 3, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
                 new Combo(){Id = 5, Name = "Cắt tóc ráy tai",Description = "Cắt Tóc, Ráy Táy", Duration = 1, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now}
+                // new Combo(){Id = 6, Name = "Thay đổi bản thân",Description = "Cắt Tóc, Nhuộm tóc,Uốn tóc,Tạo kiểu", Duration = 4, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
+                // new Combo(){Id = 7, Name = "Nhuộm tóc",Description = "Nhuộm tóc", Duration = 1, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now},
+                // new Combo(){Id = 8, Name = "Uốn tóc",Description = "Uốn tóc", Duration = 1, Status = GlobalVariables.ComboStatuses[0],CreatedDate = now, LastUpdated = now}
             );
             
             //Seed ComboDetail
             builder.Entity<ComboDetail>().HasData
             (
-                new ComboDetail(){Id = 1,ComboId = 1, ServiceId = 1, Order = 0},
-                new ComboDetail(){Id = 2,ComboId = 2, ServiceId = 1, Order = 0},
-                new ComboDetail(){Id = 3,ComboId = 2, ServiceId = 2, Order = 1},
-                new ComboDetail(){Id = 4,ComboId = 3, ServiceId = 1, Order = 0},
-                new ComboDetail(){Id = 5,ComboId = 3, ServiceId = 2, Order = 1},
-                new ComboDetail(){Id = 6,ComboId = 3, ServiceId = 4, Order = 2},
-                new ComboDetail(){Id = 7,ComboId = 4, ServiceId = 1, Order = 0},
-                new ComboDetail(){Id = 8,ComboId = 4, ServiceId = 2, Order = 1},
-                new ComboDetail(){Id = 9,ComboId = 4, ServiceId = 3, Order = 2},
-                new ComboDetail(){Id = 10,ComboId = 4, ServiceId = 4, Order = 3},
-                new ComboDetail(){Id = 11,ComboId = 4, ServiceId = 5, Order = 4},
-                new ComboDetail(){Id = 12,ComboId = 5, ServiceId = 1, Order = 0},
-                new ComboDetail(){Id = 13,ComboId = 5, ServiceId = 3, Order = 1}
+                new ComboDetail(){Id = 1,ComboId = 1, ServiceId = 1},
+                new ComboDetail(){Id = 2,ComboId = 2, ServiceId = 1},
+                new ComboDetail(){Id = 3,ComboId = 2, ServiceId = 2},
+                new ComboDetail(){Id = 4,ComboId = 3, ServiceId = 1},
+                new ComboDetail(){Id = 5,ComboId = 3, ServiceId = 2},
+                new ComboDetail(){Id = 6,ComboId = 3, ServiceId = 4},
+                new ComboDetail(){Id = 7,ComboId = 4, ServiceId = 1},
+                new ComboDetail(){Id = 8,ComboId = 4, ServiceId = 2},
+                new ComboDetail(){Id = 9,ComboId = 4, ServiceId = 3},
+                new ComboDetail(){Id = 10,ComboId = 4, ServiceId = 4},
+                new ComboDetail(){Id = 11,ComboId = 4, ServiceId = 5},
+                new ComboDetail(){Id = 12,ComboId = 5, ServiceId = 1},
+                new ComboDetail(){Id = 13,ComboId = 5, ServiceId = 3}
             );
             
             //Seed SlotOfDay

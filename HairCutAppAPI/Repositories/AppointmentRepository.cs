@@ -40,6 +40,15 @@ namespace HairCutAppAPI.Repositories
                 .Include(appointment => appointment.Combo)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
+        
+        public async Task<Appointment> GetAllAppointmentWithCustomerAndSalonAndComboAndRating(int appointmentId)
+        {
+            return await _hdbContext.Appointments.Include(appointment => appointment.Customer)
+                .Include(appointment => appointment.Rating)
+                .Include(appointment => appointment.Salon)
+                .Include(appointment => appointment.Combo)
+                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+        }
 
         public async Task<Appointment> GetAppointmentWithDetail(int appointmentId)
         {
@@ -47,6 +56,12 @@ namespace HairCutAppAPI.Repositories
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
 
+        public async Task<Appointment> GetAppointmentWithDetailAndStaff(int appointmentId)
+        {
+            return await _hdbContext.Appointments.Include(a => a.AppointmentDetails).ThenInclude(detail => detail.Staff)
+                .FirstOrDefaultAsync(a => a.Id == appointmentId);
+        }
+ 
         public async Task<PagedList<AdvancedGetAppointmentsResponseDTO>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO)
         {
             var query = _hdbContext.Appointments.Include(appointment => appointment.Customer)

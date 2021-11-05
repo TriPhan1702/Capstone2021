@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.AppointmentDTOs;
+using HairCutAppAPI.DTOs.WorkSlotDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
@@ -322,11 +323,16 @@ namespace HairCutAppAPI.Services
             //Get Current User's Id
             var userId = GetCurrentUserId();
             
-            var appointment = await _repositoryWrapper.Appointment.GetAllAppointmentDetail(appointmentId);
+            var appointment = await _repositoryWrapper.Appointment.GetAllAppointmentWithCustomerAndSalonAndComboAndRating(appointmentId);
             if (appointment is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Appointment not found");
             }
+
+            var details =
+                await _repositoryWrapper.AppointmentDetail.GetAppointmentDetailWithStaffAndService(appointment.Id);
+            
+            appointment.AppointmentDetails = details.ToList();
         
             //If current User is a customer and the id doesn't match with the appointment's customer Id, abort
             if ( await CheckUserOfRoleExists(userId, GlobalVariables.CustomerRole) && appointment.CustomerId != userId)
@@ -334,9 +340,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Current user is not the owner of this appointment");
             }
         
-            var combo = await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(appointment.ComboId);
-        
-            return new CustomHttpCodeResponse(200,"",appointment.ToGetAppointmentDetailResponseDTO(combo));
+            return new CustomHttpCodeResponse(200,"",appointment.ToGetAppointmentDetailResponseDTO());
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO)
@@ -503,6 +507,162 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"Crew Assigned"); 
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> AssignStaff2(AssignStaffDTO dto)
+        {
+            //Get Id of current user
+            var currentUserId = GetCurrentUserId();
+            
+            //Get Appointment from database, with detail and staff information
+            var appointment = await GetAppointmentWithDetailAndStaff(dto.AppointmentId);
+            
+            //Get Manager and Manager's User information
+            var manager = await GetManagerWithUser(currentUserId);
+
+            if (manager.SalonId is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "This manager is mot from a salon");
+            }
+
+            if (manager.SalonId != appointment.SalonId)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "This manager is mot from the same salon as the appointment");
+            }
+
+            //Check if the service are the same from the appointment to dto
+            CompareAssignStaffServices(appointment, dto);
+
+            //Staffs to be removed from appointment's detail
+            var deletedStaffIds = new List<int>(); 
+            //Staffs to be added from appointment's detail
+            var addedStaffIds = new List<int>();
+
+            var staffIdsFromAppointmentDetail = appointment.AppointmentDetails.Select(detail => detail.StaffId).ToList();
+            var staffIdsFromDTO = dto.StaffDetailDTOs.Select(detail => detail.StaffId).ToList();
+
+            var hasChanged = false;
+            foreach (var detail in appointment.AppointmentDetails)
+            {
+                //Find dto with the same Service Id as detail
+                var dtoDetail =
+                    dto.StaffDetailDTOs.FirstOrDefault(detailDTO => detailDTO.ServiceId == detail.ServiceId);
+                if (dtoDetail is null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Services from request are not the same as in Appointment's combo");
+                }
+                
+                //If staff Id of the service is different
+                if (detail.StaffId != dtoDetail.StaffId)
+                {
+                    hasChanged = true;
+                    //Add old staff to delete list, chosen staff is untouched
+                    if (detail.StaffId != null && !deletedStaffIds.Contains(detail.StaffId.Value) && detail.StaffId != appointment.ChosenStaffId && !staffIdsFromDTO.Contains(detail.StaffId.Value))
+                    {
+                        deletedStaffIds.Add(detail.StaffId.Value);
+                    }
+                    //Add old staff to added list, chosen staff is untouched
+                    if ((!addedStaffIds.Contains(dtoDetail.StaffId) && dtoDetail.StaffId != appointment.ChosenStaffId && !staffIdsFromAppointmentDetail.Contains(dtoDetail.StaffId)))
+                    {
+                        addedStaffIds.Add(dtoDetail.StaffId);
+                    }
+
+                    //Replace the old staff Id with new one
+                    detail.StaffId = dtoDetail.StaffId;
+                }
+            }
+            
+            //If there's no changes, abort
+            if (!hasChanged)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "No changes can be made from the provided information");
+            }
+            
+            //Get slot of day ids that the appointment goes through
+            var slotsOfDayIds = (await _repositoryWrapper.SlotOfDay.FindByConditionAsync(slot =>
+                slot.StartTime >= appointment.StartDate.TimeOfDay &&
+                slot.EndTime <= appointment.EndDate.TimeOfDay)).Select(slot => slot.Id).ToList();
+
+            //If there's any deleted staff
+            if (deletedStaffIds.Any())
+            {
+                //Check And Update the Work Slots of Deleted Staffs
+                var deletedWorkSlots = await GetWorkSlotsRelatedToStaff(appointment, deletedStaffIds, slotsOfDayIds,
+                    GlobalVariables.TakenWorkSlotStatus);
+                foreach (var slot in deletedWorkSlots)
+                {
+                    //If slot is more than (default 2 hours) away, set to available, else to not available
+                    slot.Status = DateTime.Now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) < slot.Date.Add(slot.SlotOfDay.StartTime) ? 
+                        GlobalVariables.AvailableWorkSlotStatus : GlobalVariables.NotAvailableWorkSlotStatus;
+                    slot.AppointmentId = null;
+                    await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
+                }
+            }
+            
+            //Check And Update the Work Slots of Added Staffs
+            if (addedStaffIds.Any())
+            {
+                var addedWorkSlots = (await GetWorkSlotsRelatedToStaff(appointment, addedStaffIds, slotsOfDayIds,
+                    GlobalVariables.AvailableWorkSlotStatus)).ToList();
+                //Check if staff is available throughout the appointment
+                foreach (var staffId in addedStaffIds)
+                {
+                    if (addedWorkSlots.Count(slot => slot.StaffId == staffId) != slotsOfDayIds.Count)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Staff with Id{staffId} is not available in all the work slots");
+                    }
+                }
+                foreach (var slot in addedWorkSlots)
+                {
+                    slot.Status = GlobalVariables.TakenWorkSlotStatus;
+                    slot.AppointmentId = appointment.Id;
+                    await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
+                }
+            }
+
+            appointment.LastUpdated = DateTime.Now;
+            await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Some thing went wrong went assigning staff " + e.Message);
+            }
+            
+            return new CustomHttpCodeResponse(200,"Staffs assigned", true);
+        }
+
+        private async Task<IEnumerable<WorkSlot>> GetWorkSlotsRelatedToStaff(Appointment appointment, ICollection<int> staffIds, ICollection<int> slotsOfDayIds, string status)
+        {
+            
+            //Get the work slot of the staffs in dto
+            var workSlots = (await _repositoryWrapper.WorkSlot.FindByConditionAsyncWithInclude(slot =>
+                //Slots that has staff id in the staffId list
+                staffIds.Contains(slot.StaffId) &&
+                //Get available work slots
+                slot.Status == status &&
+                //That has the right slot of day
+                slotsOfDayIds.Contains(slot.SlotOfDayId) && 
+                //That is one the same day as the appointment
+                slot.Date.DayOfYear == appointment.StartDate.DayOfYear, slot => slot.SlotOfDay)).ToList();
+            if (!workSlots.Any())
+            {
+                switch (status)
+                {
+                    case GlobalVariables.TakenWorkSlotStatus:
+                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"No Work Slots found for deleted Staffs");
+                    case GlobalVariables.AvailableWorkSlotStatus:
+                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"No Work Slots found for Added Staffs");
+                }
+            }
+            return workSlots;
+        }
+
         public async Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment(FinishAppointmentDTO dto)
         {
             //Get appointment from database
@@ -575,6 +735,48 @@ namespace HairCutAppAPI.Services
             }
 
             return customerId;
+        }
+
+        /// <summary>
+        /// Get Appointment from database, with detail and staff information
+        /// </summary>
+        /// <param name="id"></param>
+        private async Task<Appointment> GetAppointmentWithDetailAndStaff(int id)
+        {
+            var appointment = await _repositoryWrapper.Appointment.GetAppointmentWithDetailAndStaff(id);
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Appointment with Id {id} not found");
+            }
+            return appointment;
+        }
+
+        /// <summary>
+        /// //Get Manager and Manager's User information
+        /// </summary>
+        /// <param name="userId">UserId</param>
+        /// <returns></returns>
+        private async Task<Staff> GetManagerWithUser(int userId)
+        {
+            var manager= await _repositoryWrapper.Staff.FindSingleByConditionWithIncludeAsync(staff =>
+                staff.StaffType == GlobalVariables.ManagerRole && staff.UserId == userId, staff => staff.User);
+            if (manager is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Manager with UserId {userId} not found");
+            }
+
+            return manager;
+        }
+
+        /// <summary>
+        /// Check if the service are the same from the appointment to dto
+        /// </summary>
+        private void CompareAssignStaffServices(Appointment appointment, AssignStaffDTO dto)
+        {
+            if (appointment.AppointmentDetails.Count != dto.StaffDetailDTOs.Count)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Request doesn't have all the services that the appointment has");
+            }
         }
 
         private async Task<bool> SalonExists(int salonId)

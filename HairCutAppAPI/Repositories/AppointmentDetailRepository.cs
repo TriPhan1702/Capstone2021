@@ -39,5 +39,10 @@ namespace HairCutAppAPI.Repositories
 
             return uniqueStaffId.ToList();
         }
+
+        public async Task<IEnumerable<AppointmentDetail>> GetAppointmentDetailWithStaffAndService(int appointmentId)
+        {
+            return await _hdbContext.AppointmentDetails.Include(detail => detail.Staff).Include(detail => detail.Service).Where(detail => detail.AppointmentId == appointmentId).ToListAsync();
+        }
     }
 }
