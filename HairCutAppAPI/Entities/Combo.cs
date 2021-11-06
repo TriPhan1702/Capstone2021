@@ -35,9 +35,9 @@ namespace HairCutAppAPI.Entities
         public DateTime LastUpdated { get; set; }
         
         //Many-Many
-        public ICollection<ComboDetail> ComboDetails { get; set; }
+        public virtual ICollection<ComboDetail> ComboDetails { get; set; }
         
-        public ICollection<Appointment> Appointments { get; set;}
+        public virtual ICollection<Appointment> Appointments { get; set;}
 
         public ComboDTO ToComboDTO()
         {

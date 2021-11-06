@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using Microsoft.AspNetCore.Http;
 
 namespace HairCutAppAPI.DTOs.ArticleDTOs
 {
@@ -13,8 +14,10 @@ namespace HairCutAppAPI.DTOs.ArticleDTOs
         
         [Required]
         public string Description { get; set; }
+        
+        public IFormFile AvatarFile { get; set; }
 
-        public Article ToNewArticle(int authorUserId)
+        public Article ToNewArticle(int authorUserId, string avatarUrl)
         {
             return new Article()
             {
@@ -23,7 +26,8 @@ namespace HairCutAppAPI.DTOs.ArticleDTOs
                 CreatedDate = DateTime.Now,
                 LastUpdate = DateTime.Now,
                 Status = GlobalVariables.NewArticleStatus,
-                AuthorUserId = authorUserId
+                AuthorUserId = authorUserId,
+                AvatarUrl = avatarUrl
             };
         }
     }

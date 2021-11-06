@@ -7,6 +7,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +17,13 @@ namespace HairCutAppAPI.Services
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPhotoService _photoService;
 
-        public ArticleService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor)
+        public ArticleService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor, IPhotoService photoService)
         {
             _repositoryWrapper = repositoryWrapper;
             _httpContextAccessor = httpContextAccessor;
+            _photoService = photoService;
         }
 
         /// <summary>
@@ -37,7 +40,21 @@ namespace HairCutAppAPI.Services
         {
             var currentUserId = GetCurrentUserId();
 
-            var newArticle = dto.ToNewArticle(currentUserId);
+            string avatarUrl = null;
+
+            if (dto.AvatarFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(dto.AvatarFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+                }
+
+                avatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
+
+            var newArticle = dto.ToNewArticle(currentUserId, avatarUrl);
 
             var result = await _repositoryWrapper.Article.CreateAsync(newArticle);
             
@@ -53,6 +70,16 @@ namespace HairCutAppAPI.Services
             }
             return new CustomHttpCodeResponse(200,"", article.ToArticleDetailDTO());
         }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetArticleDetail(int id)
+        {
+            var article = await _repositoryWrapper.Article.FindSingleByConditionWithIncludeAsync(art => art.Id == id && art.Status == GlobalVariables.ActiveArticleStatus, article1 => article1.Author);
+            if (article is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Article with Id {id} not found");
+            }
+            return new CustomHttpCodeResponse(200,"", article.ToArticleDetailDTO());
+        }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateArticle(UpdateArticleDTO dto)
         {
@@ -61,7 +88,22 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Article with Id {dto.Id} not found");
             }
-            article = dto.MapAndUpdateArticle(article);
+
+            string avatarUrl = null;
+
+            if (dto.AvatarFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(dto.AvatarFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+                }
+
+                avatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
+            
+            article = dto.MapAndUpdateArticle(article, avatarUrl);
             await _repositoryWrapper.Article.UpdateAsync(article, article.Id);
             return new CustomHttpCodeResponse(200,"Article Updated", true);
         }
@@ -111,6 +153,11 @@ namespace HairCutAppAPI.Services
             
             var result = await _repositoryWrapper.Article.AdvancedGetArticles(dto);
             return new CustomHttpCodeResponse(200, "" , result);
+        }
+        
+        public ActionResult<CustomHttpCodeResponse> GetSortByForAdvancedGetArticles()
+        {
+            return new CustomHttpCodeResponse(200,"", AdvancedGetArticleDTO.OrderingParams);
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> CustomerAdvancedGetArticles(CustomerAdvancedGetArticleDTO dto)

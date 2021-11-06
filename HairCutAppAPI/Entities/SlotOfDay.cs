@@ -18,7 +18,7 @@ namespace HairCutAppAPI.Entities
         [Required]
         public TimeSpan EndTime { get; set; }
         
-        public ICollection<WorkSlot> WorkSlots { get; set; }
+        public virtual ICollection<WorkSlot> WorkSlots { get; set; }
 
         public SlotOfDayDTO ToSlotOfDayDTO()
         {

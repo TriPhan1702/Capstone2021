@@ -50,6 +50,18 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For manager, staff, admin to check if appointment can be assigned
+        /// </summary>
+        /// <param name="id">Appointment Id</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("check_can_be_assigned/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> CheckAppointmentCanBeAssigned(int id)
+        {
+            return await _appointmentService.CheckAppointmentCanBeAssigned(id);
+        }
+        
+        /// <summary>
         /// For Current customer to check if they have any completed Appointment
         /// </summary>
         /// <returns></returns>
@@ -72,6 +84,13 @@ namespace HairCutAppAPI.Controllers
             advancedGetAppointmentsDTO = ObjectTrimmer.TrimObject(advancedGetAppointmentsDTO) as AdvancedGetAppointmentsDTO;
             var appointments = await _appointmentService.AdvancedGetAppointments(advancedGetAppointmentsDTO);
             return appointments;
+        }
+
+        [Authorize]
+        [HttpGet("get_sort_by_types_advanced_get_appointments")]
+        public ActionResult<CustomHttpCodeResponse> GetSortByForAdvancedGetAppointments()
+        {
+            return _appointmentService.GetSortByForAdvancedGetAppointments();
         }
         
         /// <summary>

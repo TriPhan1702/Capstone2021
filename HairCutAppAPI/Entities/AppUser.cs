@@ -30,9 +30,10 @@ namespace HairCutAppAPI.Entities
         public string Role { get; set; }
         
         public virtual ICollection<Customer> Customers { get; set; }
+        
         public virtual ICollection<Staff> Staffs { get; set; }
         
-        public Device Device { get; set; }
+        public virtual ICollection<Device> Devices { get; set; }
 
         //Numeric only, length 10
         [StringLength(10)]

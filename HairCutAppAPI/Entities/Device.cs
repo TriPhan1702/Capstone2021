@@ -10,7 +10,7 @@ namespace HairCutAppAPI.Entities
         
         [ForeignKey("User")]
         public int UserId { get; set; }
-        public AppUser User { get; set; }
+        public virtual AppUser User { get; set; }
         
         public string DeviceId { get; set; }
         

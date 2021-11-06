@@ -98,6 +98,10 @@ namespace HairCutAppAPI.Utilities
         public const string InActiveArticleStatus = "inactive";
         public const string NewArticleStatus = ActiveArticleStatus;
         
+        public const string PendingNotificationStatus = "pending";
+        public const string DeliveredNotificationStatus = "delivered";
+        public const string SeenNotificationStatus = "seen";
+        
         //Status Lists
         public static readonly string[] UserStatuses = {ActiveUserStatus, InActiveUserStatus};
         public static readonly string[] StaffTypes = {StylistRole, BeauticianRole, ManagerRole};
@@ -110,6 +114,7 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] WorkSlotStatuses = {AvailableWorkSlotStatus,NotAvailableWorkSlotStatus,TakenWorkSlotStatus};
         public static readonly string[] PromotionalCodeStatuses = {ActivePromotionalCodeStatus, InActivePromotionalCodeStatus, CanceledPromotionalCodeStatus};
         public static readonly string[] ArticleStatuses = {ActiveArticleStatus, InActiveArticleStatus};
+        public static readonly string[] NotificationStatuses = {PendingNotificationStatus, DeliveredNotificationStatus, SeenNotificationStatus};
         
         public static readonly ViolationType ManagerApproveViolationId = new ViolationType()
             {Id = 1, Name = "Manager Failed to Approve of Disapprove an appointment"};

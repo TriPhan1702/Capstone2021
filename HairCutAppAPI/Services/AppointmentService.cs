@@ -270,10 +270,16 @@ namespace HairCutAppAPI.Services
             // If User is a customer
             if (user.Role.ToLower() == GlobalVariables.CustomerRole.ToLower())
             {
-                //If Customer Id is not the same as appointment's user id, abort
-                if (userId != appointment.CustomerId)
+                var customer =
+                    await _repositoryWrapper.Customer.FindSingleByConditionAsync(cus => cus.UserId == userId);
+                if (customer is null)
                 {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer Id doesn't match");
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer with User Id {userId} not found");
+                }
+                //If Customer Id is not the same as appointment's user id, abort
+                if (customer.Id != appointment.CustomerId)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Customer doesn't have appointment with Id {appointmentId}");
                 }
             }
             
@@ -319,10 +325,10 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentDetail(int appointmentId)
         {
             //Get Current User's Id
-            var userId = GetCurrentUserId();
+            var currentUserId = GetCurrentUserId();
 
             var appointment =
-                await _repositoryWrapper.Appointment.GetAllAppointmentWithCustomerAndSalonAndComboAndRating(
+                await _repositoryWrapper.Appointment.GetOneAppointmentWithCustomerAndSalonAndComboAndRating(
                     appointmentId);
             if (appointment is null)
             {
@@ -335,7 +341,7 @@ namespace HairCutAppAPI.Services
             appointment.AppointmentDetails = details.ToList();
 
             //If current User is a customer and the id doesn't match with the appointment's customer Id, abort
-            if (await CheckUserOfRoleExists(userId, GlobalVariables.CustomerRole) && appointment.CustomerId != userId)
+            if (await CheckUserOfRoleExists(currentUserId, GlobalVariables.CustomerRole) && appointment.Customer.UserId != currentUserId)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     "Current user is not the owner of this appointment");
@@ -376,6 +382,11 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "", result);
         }
 
+        public ActionResult<CustomHttpCodeResponse> GetSortByForAdvancedGetAppointments()
+        {
+            return new CustomHttpCodeResponse(200,"", AdvancedGetAppointmentsDTO.OrderingParams);
+        }
+        
         public async Task<CustomHttpCodeResponse> AssignStaff(AssignStaffDTO assignStaffDTO)
         {
             var currentUserId = GetCurrentUserId();
@@ -704,6 +715,28 @@ namespace HairCutAppAPI.Services
             }
 
             return new CustomHttpCodeResponse(200, "Staffs assigned", true);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> CheckAppointmentCanBeAssigned(int appointmentId)
+        {
+            var appointment =
+                await _repositoryWrapper.Appointment.GetAppointmentWithComboDetail(appointmentId);
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment not found");
+            }
+
+            if (appointment.Status != GlobalVariables.PendingAppointmentStatus && appointment.Status != GlobalVariables.ApprovedAppointmentStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment is not a pending or approved appointment");
+            }
+
+            if (DateTime.Now.AddMinutes(GlobalVariables.TimeToConfirmAppointmentInAdvanced) >= appointment.StartDate)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment cannot be approved because it is less that {GlobalVariables.TimeToConfirmAppointmentInAdvanced} minutes away");
+            }
+
+            return new CustomHttpCodeResponse(200, "", true);
         }
 
         private async Task<IEnumerable<WorkSlot>> GetWorkSlotsRelatedToStaff(Appointment appointment,

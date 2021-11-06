@@ -36,6 +36,8 @@ namespace HairCutAppAPI.Entities
         
         public virtual ICollection<WorkSlot> WorkSlots { get; set; }
         
+        public virtual ICollection<Notification> Notifications { get; set; }
+        
         [Required]
         [MaxLength(20)]
         public string Status { get; set; }
@@ -126,7 +128,8 @@ namespace HairCutAppAPI.Entities
                 ServicePrice = detail.Service.Price,
                 StaffId = detail.StaffId,
                 StaffName = detail.Staff?.FullName,
-                StaffType = detail.Staff?.StaffType
+                StaffType = detail.Staff?.StaffType,
+                AvatarUrl = detail.Staff?.User?.AvatarUrl
             }).ToList();
             result.PaidAmount = PaidAmount;
             result.TotalPrice = AppointmentDetails.Sum(detail => detail.Price);
@@ -143,13 +146,13 @@ namespace HairCutAppAPI.Entities
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
                 LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat),
                 CustomerId = CustomerId,
-                CustomerName = Customer.FullName,
+                CustomerName = Customer?.FullName,
                 SalonId = SalonId,
-                SalonName = Salon.Name,
+                SalonName = Salon?.Name,
                 StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
                 EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat),
                 ComboId = ComboId,
-                ComboName = Combo.Name,
+                ComboName = Combo?.Name,
                 // TotalPrice = Combo.Price,
             };
             return result;

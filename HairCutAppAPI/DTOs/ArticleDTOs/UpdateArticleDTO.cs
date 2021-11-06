@@ -5,6 +5,7 @@ using System.Net;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using Microsoft.AspNetCore.Http;
 
 namespace HairCutAppAPI.DTOs.ArticleDTOs
 {
@@ -19,8 +20,10 @@ namespace HairCutAppAPI.DTOs.ArticleDTOs
         public string Status { get; set; }
         
         public string Description { get; set; }
+        
+        public IFormFile AvatarFile { get; set; }
 
-        public Article MapAndUpdateArticle(Article article)
+        public Article MapAndUpdateArticle(Article article, string avatarUrl = null)
         {
             var hasChanged = false;
 
@@ -43,6 +46,12 @@ namespace HairCutAppAPI.DTOs.ArticleDTOs
             if (!string.IsNullOrWhiteSpace(Description))
             {
                 article.Description = Description;
+                hasChanged = true;
+            }
+
+            if (avatarUrl!=null)
+            {
+                article.AvatarUrl = avatarUrl;
                 hasChanged = true;
             }
 

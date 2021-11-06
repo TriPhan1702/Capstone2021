@@ -20,7 +20,7 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
                 "enddate_asc","enddate_desc",
                 "createddate_asc","createddate_desc",
                 "lastupdate_asc","lastupdate_desc",
-                "totalprice_desc, toalprice_asc"
+                "totalprice_desc", "toalprice_asc"
             }
         );
         

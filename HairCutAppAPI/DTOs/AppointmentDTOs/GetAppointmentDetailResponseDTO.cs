@@ -48,5 +48,7 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public int? StaffId { get; set; }
         public string StaffName { get; set; }
         public string StaffType { get; set; }
+        
+        public string AvatarUrl { get; set; }
     }
 }

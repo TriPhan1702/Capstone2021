@@ -9,5 +9,7 @@
         public string Status { get; set; }
         public string CreatedDate { get; set; }
         public string LastUpdate { get; set; }
+        
+        public string AvatarUrl { get; set; }
     }
 }

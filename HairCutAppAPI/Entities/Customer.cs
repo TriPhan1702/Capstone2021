@@ -13,14 +13,14 @@ namespace HairCutAppAPI.Entities
         //One-to-One relationship with User
         [ForeignKey("User")]
         public int UserId { get; set; }
-        public AppUser User { get; set; }
+        public virtual AppUser User { get; set; }
         
         [Required]
         [MinLength(3)]
         [MaxLength(50)]
         public string FullName { get; set; }
         
-        public ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
 
         public CustomerDetailDTO ToCustomerDetailDTO()
         {

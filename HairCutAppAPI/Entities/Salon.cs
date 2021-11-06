@@ -36,12 +36,12 @@ namespace HairCutAppAPI.Entities
         public double? Longitude { get; set; }
         public double? Latitude { get; set; }
         
-        public ICollection<Staff> Staffs { get; set; }
-        public ICollection<Review> Reviews { get; set; }
-        public ICollection<Appointment> Appointments { get; set; }
+        public virtual ICollection<Staff> Staffs { get; set; }
+        public virtual ICollection<Review> Reviews { get; set; }
+        public virtual ICollection<Appointment> Appointments { get; set; }
         
         //Many-Many
-        public ICollection<SalonsCodes> SalonsCodes { get; set; }
+        public virtual ICollection<SalonsCodes> SalonsCodes { get; set; }
         
         public CustomerGetSalonListDTO ToCustomerGetSalonListDTO()
         {

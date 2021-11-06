@@ -30,7 +30,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole)]
         [HttpPost("create_article")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateArticle([FromBody] CreateArticleDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateArticle([FromForm] CreateArticleDTO dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as CreateArticleDTO;
@@ -47,6 +47,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For admin, manager, staff to get Detail of an article
         /// </summary>
+        /// /// <param name="id">ArticleId</param>
         /// <returns></returns>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpGet("get_article/{id}")]
@@ -56,12 +57,23 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For customer to get article from id
+        /// </summary>
+        /// <param name="id">ArticleId</param>
+        [Authorize]
+        [HttpGet("customer_get_article/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetArticleDetail(int id)
+        {
+            return await _articleService.CustomerGetArticleDetail(id);
+        }
+        
+        /// <summary>
         /// For Admin to update article
         /// </summary>
         /// <param name="dto"> Empty ot null fields will not be changed, negative duration = null. If Services == null => no change, if Services is empty list => combo has no service</param>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPut("update_article")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo([FromBody] UpdateArticleDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo([FromForm] UpdateArticleDTO dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as UpdateArticleDTO;
@@ -102,13 +114,20 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("advanced_get_articles")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetArticle(
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetArticles(
             AdvancedGetArticleDTO dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as AdvancedGetArticleDTO;
             var articles = await _articleService.AdvancedGetArticles(dto);
             return articles;
+        }
+        
+        [Authorize]
+        [HttpGet("get_sort_by_types_advanced_get_articles")]
+        public ActionResult<CustomHttpCodeResponse> GetSortByForAdvancedGetArticles()
+        {
+            return _articleService.GetSortByForAdvancedGetArticles();
         }
         
         /// <summary>

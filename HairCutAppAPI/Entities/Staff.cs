@@ -28,6 +28,9 @@ namespace HairCutAppAPI.Entities
         [MaxLength(500)]
         public string Description { get; set; }
         
+        [Required]
+        public bool HasAutoSchedule { get; set; }
+        
         //Can be null
         [ForeignKey("Salon")]
         public int? SalonId { get; set; }

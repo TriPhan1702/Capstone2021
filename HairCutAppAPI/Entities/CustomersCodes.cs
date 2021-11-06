@@ -10,11 +10,11 @@ namespace HairCutAppAPI.Entities
         
         [ForeignKey("Customer")]
         public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public virtual Customer Customer { get; set; }
         
         [ForeignKey("Code")]
         public int CodeId { get; set; }
-        public PromotionalCode Code { get; set; }
+        public virtual PromotionalCode Code { get; set; }
         
         public int TimesUsed { get; set; }
         

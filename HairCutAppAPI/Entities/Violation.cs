@@ -12,7 +12,7 @@ namespace HairCutAppAPI.Entities
         [Required]
         [ForeignKey("Offender")]
         public int OffenderUserId { get; set; }
-        public AppUser Offender { get; set; }
+        public virtual AppUser Offender { get; set; }
         
         [Required]
         [ForeignKey("Appointment")]

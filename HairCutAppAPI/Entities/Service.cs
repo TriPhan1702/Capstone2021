@@ -32,7 +32,7 @@ namespace HairCutAppAPI.Entities
         public decimal Price { get; set; }
         
         //Many-Many
-        public ICollection<ComboDetail> ComboDetails { get; set; }
+        public virtual ICollection<ComboDetail> ComboDetails { get; set; }
 
         public ServiceDTO ToServiceDTO()
         {

@@ -32,6 +32,7 @@ namespace HairCutAppAPI.Data
         public DbSet<AppointmentRating> AppointmentRatings { get; set; }
         public DbSet<Article> Articles { get; set; }
         public DbSet<Param> Params { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         
         public HDBContext(DbContextOptions options) : base(options)
         {
@@ -71,7 +72,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.AdministratorRole,
-                    FullName = "Phạm Văn A"
+                    FullName = "Phạm Văn A",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 2, 
@@ -81,7 +83,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.ManagerRole,
-                    FullName = "Manager 1"
+                    FullName = "Manager 1",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 3, 
@@ -91,7 +94,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.StylistRole,
-                    FullName = "Stylist 1"
+                    FullName = "Stylist 1",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 4, 
@@ -101,7 +105,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.BeauticianRole,
-                    FullName = "Beautician 1"
+                    FullName = "Beautician 1",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 5, 
@@ -111,7 +116,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.StylistRole,
-                    FullName = "Stylist 2"
+                    FullName = "Stylist 2",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 6, 
@@ -121,7 +127,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.BeauticianRole,
-                    FullName = "Beautician 2"
+                    FullName = "Beautician 2",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 7, 
@@ -131,7 +138,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.CustomerRole,
-                    FullName = "Customer 1"
+                    FullName = "Customer 1",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 8, 
@@ -141,7 +149,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.CustomerRole,
-                    FullName = "Customer 2"
+                    FullName = "Customer 2",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 },
                 new AppUser(){
                     Id = 9, 
@@ -151,7 +160,8 @@ namespace HairCutAppAPI.Data
                     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("Test123")),
                     PasswordSalt = hmac.Key,
                     Role = GlobalVariables.CustomerRole,
-                    FullName = "Customer 3"
+                    FullName = "Customer 3",
+                    AvatarUrl = "https://thispersondoesnotexist.com/image"
                 }
             );
             

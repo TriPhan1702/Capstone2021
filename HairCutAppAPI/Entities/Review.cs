@@ -23,11 +23,11 @@ namespace HairCutAppAPI.Entities
         
         [ForeignKey("Author")]
         public int AuthorId { get; set; }
-        public Customer Author { get; set; }
+        public virtual Customer Author { get; set; }
 
         [ForeignKey("Salon")]
         public int SalonId { get; set; }
-        public Salon Salon { get; set; }
+        public virtual Salon Salon { get; set; }
         
         public ReviewDTO ToReviewDTO()
         {

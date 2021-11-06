@@ -32,6 +32,8 @@ namespace HairCutAppAPI.Entities
         public DateTime CreatedDate { get; set; }
         [Required]
         public DateTime LastUpdate { get; set; }
+        
+        public string AvatarUrl { get; set; }
 
         public ArticleDetailDTO ToArticleDetailDTO()
         {
@@ -45,6 +47,7 @@ namespace HairCutAppAPI.Entities
                 LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat),
                 AuthorUserId = AuthorUserId,
                 AuthorName = Author.FullName,
+                AvatarUrl = AvatarUrl
             };
         }
         
@@ -74,6 +77,7 @@ namespace HairCutAppAPI.Entities
                 LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat),
                 AuthorUserId = AuthorUserId,
                 AuthorName = Author.FullName,
+                AvatarUrl = AvatarUrl
             };
         }
     }
