@@ -30,6 +30,7 @@ namespace HairCutAppAPI.Repositories
         private ISalonsCodesRepository _salonsCodes;
         private ICustomersCodesRepository _customersCodes;
         private IArticleRepository _article;
+        private INotificationRepository _notification;
 
         public RepositoryWrapper( HDBContext context)
         {
@@ -56,6 +57,7 @@ namespace HairCutAppAPI.Repositories
         public ISalonsCodesRepository SalonsCodes => _salonsCodes ??= new SalonsCodesRepository(_context);
         public ICustomersCodesRepository CustomersCodes => _customersCodes ??= new CustomersCodesRepository(_context);
         public IArticleRepository Article => _article ??= new ArticleRepository(_context);
+        public INotificationRepository Notification => _notification ??= new NotificationRepository(_context);
         
         #endregion Create concrete repositories if there aren't
 

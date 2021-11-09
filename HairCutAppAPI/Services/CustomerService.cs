@@ -68,7 +68,6 @@ namespace HairCutAppAPI.Services
         
             //Save New User to Database
             var result = await _repositoryWrapper.Customer.CreateAsync(customer);
-            var user =  await _repositoryWrapper.User.FindSingleByConditionAsync(u =>u.Id == result.Id);
         
             return new CustomHttpCodeResponse(200, "Customer added", result.Id);
         }

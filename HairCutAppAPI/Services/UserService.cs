@@ -123,11 +123,30 @@ namespace HairCutAppAPI.Services
                 }
             }
             
-            //If Device Token exist, add to user's device
-            // if (!string.IsNullOrWhiteSpace(loginDto.DeviceToken))
-            // {
-            //     await CheckUserDevice(loginDto, user.Id);
-            // }
+            // If Device Token exist, add to user's device
+             if (!string.IsNullOrWhiteSpace(loginDto.DeviceToken) && !string.IsNullOrWhiteSpace(loginDto.DeviceId))
+             {
+                 var devices = await _repositoryWrapper.Device.FindByConditionAsync(device => device.UserId == user.Id);
+                 var device = devices.FirstOrDefault(dev => dev.DeviceId == loginDto.DeviceId);
+                 //If hasn't had this device, register
+                 if (device is null)
+                 {
+                     var newDevice = new Device()
+                     {
+                         Status = GlobalVariables.ActiveDeviceStatus,
+                         DeviceId = loginDto.DeviceId,
+                         DeviceToken = loginDto.DeviceToken,
+                         UserId = user.Id
+                     };
+
+                     await _repositoryWrapper.Device.CreateAsync(newDevice);
+                 }
+                 else if (device.DeviceToken != loginDto.DeviceToken)
+                 {
+                     device.DeviceToken = loginDto.DeviceToken;
+                     await _repositoryWrapper.Device.UpdateAsync(device, device.Id);
+                 }
+             }
             
             return new CustomHttpCodeResponse(200, "User Logged in", new CurrentUserDTO()
             {

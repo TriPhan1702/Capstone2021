@@ -251,7 +251,7 @@ namespace HairCutAppAPI.Services
                     staff => availableStaffIds.Contains(staff.Id), staff => staff.User)).ToList();
             
             //If there's already staff chosen, add to the list
-            if (appointment.ChosenStaffId != null)
+            if (appointment.ChosenStaffId != null && availableStaffs.Any())
             {
                 var chosenStaff =
                     await _repositoryWrapper.Staff.FindSingleByConditionWithIncludeAsync(
