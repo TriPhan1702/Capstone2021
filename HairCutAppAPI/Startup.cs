@@ -81,6 +81,7 @@ namespace HairCutAppAPI
             recurringJobManager.AddOrUpdate("Check and Update Ongoing Appointments",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdateOngoingAppointments(), Cron.Minutely());
             recurringJobManager.AddOrUpdate("Check and Update InActive Codes",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdateInActivePromotionalCodes(), Cron.Minutely());
             recurringJobManager.AddOrUpdate("Check and Update Active Codes",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdateActivePromotionalCodes(), Cron.Minutely());
+            recurringJobManager.AddOrUpdate("Check and Send Pending Notifications",() => serviceProvider.GetService<IBackgroundJobService>().SendNotifications(), Cron.Minutely());
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public interface IPushNotification
     {
-        void Push(string deviceId, string title, string body);
+        void Push(string deviceToken, string title, string body);
     }
 }

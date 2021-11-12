@@ -126,7 +126,7 @@ namespace HairCutAppAPI.Services
             // If Device Token exist, add to user's device
              if (!string.IsNullOrWhiteSpace(loginDto.DeviceToken) && !string.IsNullOrWhiteSpace(loginDto.DeviceId))
              {
-                 var devices = await _repositoryWrapper.Device.FindByConditionAsync(device => device.UserId == user.Id);
+                 var devices = await _repositoryWrapper.Device.FindByConditionAsync(dev => dev.UserId == user.Id);
                  var device = devices.FirstOrDefault(dev => dev.DeviceId == loginDto.DeviceId);
                  //If hasn't had this device, register
                  if (device is null)

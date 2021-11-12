@@ -232,6 +232,9 @@ namespace HairCutAppAPI.Services
             //Get Latest Appointment of customer
             var createdAppointment = await _repositoryWrapper.Appointment.GetLatestAppointmentOfCustomer(customerId);
             var price = await CalculateComboPrice(createAppointmentDTO.ComboId);
+            
+            //Send Appointment Created Notifications
+            await SendAppointmentCreatedNotifications(createdAppointment, GetCurrentUserId(), chosenStylist?.UserId);
 
             return new CustomHttpCodeResponse(200, "Appointment Created",
                 createdAppointment.ToCreateAppointmentResponseDTO(price, chosenStylist?.Id, chosenStylist?.FullName));
@@ -976,6 +979,54 @@ namespace HairCutAppAPI.Services
             }
 
             return slotsOfDayIds;
+        }
+
+        private async Task SendAppointmentCreatedNotifications(Appointment appointment, int customerUserId, int? chosenStaffId = null)
+        {
+            await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, customerUserId));
+
+            var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+                staff.StaffType == GlobalVariables.ManagerRole &&
+                staff.User.Status == GlobalVariables.ActiveUserStatus && staff.SalonId == appointment.SalonId)).ToList();
+            if (managers.Any())
+            {
+                foreach (var manager in managers)
+                {
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, manager.UserId));
+                }
+            }
+
+            if (appointment.ChosenStaffId!=null && chosenStaffId != null)
+            {
+                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, chosenStaffId.Value));
+            }
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                //TODO: Log Failure
+            }
+        }
+        
+        private Notification ToNewAppointmentCreatedNotification(Appointment appointment, int userId)
+        {
+            return new Notification()
+            {
+                Detail = "Appointment Created Notification",
+                Status = GlobalVariables.PendingNotificationStatus,
+                Title = "Appointment Created Notification",
+                Type = GlobalVariables.AppointmentCreatedNotification,
+                AppointmentId = appointment.Id,
+                UserId = userId,
+                CreatedDate = DateTime.Now,
+                LastUpdate = DateTime.Now,
+            };
         }
 
         #endregion private functions

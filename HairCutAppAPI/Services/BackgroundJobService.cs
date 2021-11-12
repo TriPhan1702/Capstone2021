@@ -1,19 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.Notification;
 
 namespace HairCutAppAPI.Services
 {
     public class BackgroundJobService : IBackgroundJobService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly IPushNotification _pushNotification;
 
-        public BackgroundJobService(IRepositoryWrapper repositoryWrapper)
+        public BackgroundJobService(IRepositoryWrapper repositoryWrapper, IPushNotification pushNotification)
         {
             _repositoryWrapper = repositoryWrapper;
+            _pushNotification = pushNotification;
         }
 
         /// <summary>
@@ -23,7 +28,7 @@ namespace HairCutAppAPI.Services
         {
             //Get list of pending assignment from database
             var pendingAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
-                appointment.Status == GlobalVariables.PendingAppointmentStatus && appointment.StartDate.AddMinutes(GlobalVariables.TimeToConfirmAppointmentInAdvanced) <= DateTime.Now)).ToList();
+                appointment.Status == GlobalVariables.PendingAppointmentStatus && DateTime.Now.AddMinutes(GlobalVariables.TimeToConfirmAppointmentInAdvanced) >= appointment.StartDate)).ToList();
 
             if (pendingAppointments.Any())
             {
@@ -212,6 +217,61 @@ namespace HairCutAppAPI.Services
                     _repositoryWrapper.DeleteChanges();
                     //TODO: Log failure to update work slot
                 }
+            }
+        }
+
+        public async Task SendNotifications()
+        {
+            //Get notifications
+            var notifications = (await _repositoryWrapper.Notification.FindByConditionAsync(notification =>
+                //That has pending status
+                notification.Status.ToLower() == GlobalVariables.PendingNotificationStatus &&
+                //That doesn't have delivery date(instant), or has went passed delivery date
+                (notification.DeliveryDate == null || DateTime.Now >= notification.DeliveryDate))).ToList();
+
+            if (notifications.Any())
+            {
+                //Get unique users ids
+                var userIds = notifications.Select(notification => notification.UserId).ToHashSet();
+
+                var users = new List<AppUser>();
+                foreach (var userId in userIds)
+                {
+                    //Get users with their Devices
+                    users = (await _repositoryWrapper.User.FindByConditionAsyncWithInclude(
+                        user => userIds.Contains(userId), user => user.Devices)).ToList();
+                }
+
+                foreach (var notification in notifications)
+                {
+                    var user = users.FirstOrDefault(appUser => appUser.Id == notification.UserId);
+                    if (user is null || user.Devices is null || !user.Devices.Any())
+                    {
+                        notification.Status = GlobalVariables.CanceledAppointmentStatus;
+                    }
+                    else
+                    {
+                        foreach (var device in user.Devices)
+                        {
+                            _pushNotification.Push(device.DeviceToken, notification.Title, notification.Detail);
+                            notification.Status = GlobalVariables.DeliveredNotificationStatus;
+                        }
+                    }
+                    notification.LastUpdate = DateTime.Now;
+                    await _repositoryWrapper.Notification.UpdateAsyncWithoutSave(notification, notification.Id);
+                }
+            }
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                //TODO: Log Failure
             }
         }
     }

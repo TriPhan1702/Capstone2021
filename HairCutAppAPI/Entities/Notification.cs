@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HairCutAppAPI.DTOs.NotificationDTOs;
+using HairCutAppAPI.Utilities;
 
 namespace HairCutAppAPI.Entities
 {
@@ -20,6 +22,11 @@ namespace HairCutAppAPI.Entities
         public virtual Appointment Appointment { get; set; }
         
         [Required]
+        [MaxLength(500)]
+        public string Title { get; set; }
+        
+        [Required]
+        [MaxLength(1024)]
         public string Detail { get; set; }
         
         [Required]
@@ -31,5 +38,21 @@ namespace HairCutAppAPI.Entities
         public DateTime CreatedDate { get; set; }
         [Required]
         public DateTime LastUpdate { get; set; }
+
+        public UserAdvancedGetNotificationResponseDTO ToUserAdvancedGetNotificationResponseDTO()
+        {
+            return new UserAdvancedGetNotificationResponseDTO()
+            {
+                Id = Id,
+                Detail = Detail,
+                Status = Status,
+                Title = Title,
+                Type = Type,
+                AppointmentId = AppointmentId,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                LastUpdate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                UserId = UserId
+            };
+        }
     }
 }

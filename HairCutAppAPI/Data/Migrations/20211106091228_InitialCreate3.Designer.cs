@@ -4,14 +4,16 @@ using HairCutAppAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HairCutAppAPI.Data.Migrations
 {
     [DbContext(typeof(HDBContext))]
-    partial class HDBContextModelSnapshot : ModelSnapshot
+    [Migration("20211106091228_InitialCreate3")]
+    partial class InitialCreate3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,8 +68,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "admin123@gmail.com",
                             FullName = "Phạm Văn A",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "administrator",
                             Status = "active"
@@ -78,8 +80,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "manager123@gmail.com",
                             FullName = "Manager 1",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "manager",
                             Status = "active"
@@ -90,8 +92,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "stylist123@gmail.com",
                             FullName = "Stylist 1",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "stylist",
                             Status = "active"
@@ -102,8 +104,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "beautician123@gmail.com",
                             FullName = "Beautician 1",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "beautician",
                             Status = "active"
@@ -114,8 +116,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "stylist1234@gmail.com",
                             FullName = "Stylist 2",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "stylist",
                             Status = "active"
@@ -126,8 +128,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "beautician1234@gmail.com",
                             FullName = "Beautician 2",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "beautician",
                             Status = "active"
@@ -138,8 +140,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "customer1@gmail.com",
                             FullName = "Customer 1",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "customer",
                             Status = "active"
@@ -150,8 +152,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "customer2@gmail.com",
                             FullName = "Customer 2",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "customer",
                             Status = "active"
@@ -162,8 +164,8 @@ namespace HairCutAppAPI.Data.Migrations
                             AvatarUrl = "https://thispersondoesnotexist.com/image",
                             Email = "customer3@gmail.com",
                             FullName = "Customer 3",
-                            PasswordHash = new byte[] { 42, 26, 33, 4, 146, 236, 28, 233, 115, 73, 29, 222, 27, 55, 45, 15, 236, 245, 107, 94, 141, 30, 101, 106, 243, 8, 26, 156, 34, 240, 225, 193, 135, 42, 120, 171, 157, 89, 29, 63, 78, 66, 13, 16, 219, 208, 252, 255, 121, 216, 123, 158, 49, 118, 107, 2, 191, 164, 246, 253, 82, 126, 183, 240 },
-                            PasswordSalt = new byte[] { 134, 106, 178, 176, 227, 202, 109, 240, 16, 237, 38, 206, 216, 33, 100, 42, 208, 30, 5, 145, 148, 132, 119, 22, 193, 45, 220, 21, 63, 64, 83, 52, 131, 4, 60, 61, 176, 160, 183, 175, 221, 229, 212, 242, 228, 82, 117, 217, 190, 24, 5, 194, 111, 33, 202, 81, 200, 121, 18, 94, 230, 112, 7, 172, 23, 118, 215, 203, 55, 81, 158, 49, 145, 24, 218, 191, 86, 24, 170, 76, 4, 68, 25, 56, 101, 144, 1, 122, 156, 252, 29, 57, 78, 30, 245, 67, 20, 132, 251, 168, 97, 135, 172, 161, 98, 138, 98, 121, 159, 162, 137, 75, 72, 82, 104, 151, 187, 115, 69, 142, 188, 39, 17, 175, 245, 16, 19, 193 },
+                            PasswordHash = new byte[] { 152, 233, 15, 2, 190, 151, 88, 118, 65, 87, 21, 192, 87, 98, 187, 122, 114, 88, 58, 135, 247, 110, 239, 214, 186, 25, 45, 230, 50, 111, 153, 188, 151, 230, 162, 65, 187, 112, 65, 255, 205, 123, 176, 45, 10, 22, 74, 173, 85, 159, 75, 86, 241, 166, 90, 122, 85, 236, 3, 219, 28, 242, 33, 108 },
+                            PasswordSalt = new byte[] { 91, 133, 99, 188, 91, 162, 41, 19, 221, 62, 141, 167, 173, 102, 56, 36, 222, 141, 236, 87, 7, 25, 139, 59, 110, 181, 39, 243, 222, 41, 31, 96, 161, 47, 89, 88, 236, 91, 210, 191, 228, 252, 72, 168, 164, 150, 158, 216, 246, 251, 100, 16, 210, 238, 69, 67, 199, 0, 12, 235, 86, 210, 89, 85, 206, 164, 146, 51, 96, 33, 194, 94, 214, 236, 252, 31, 36, 41, 38, 95, 137, 96, 202, 154, 217, 190, 166, 167, 71, 204, 204, 50, 254, 140, 2, 181, 10, 110, 157, 226, 9, 138, 62, 224, 229, 211, 189, 208, 94, 197, 66, 119, 97, 125, 50, 6, 144, 72, 247, 94, 39, 26, 113, 253, 101, 201, 93, 224 },
                             PhoneNumber = "0869190061",
                             Role = "customer",
                             Status = "active"
@@ -369,50 +371,50 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Cắt Tóc",
                             Duration = 1,
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Cắt Tóc",
                             Status = "active"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Cắt Tóc Gội Đầu",
                             Duration = 2,
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Cắt Tóc Gội Đầu",
                             Status = "active"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Cắt Tóc Gội Đầu Rửa Mặt",
                             Duration = 2,
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Cắt Tóc Gội Đầu Rửa Mặt",
                             Status = "active"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Cắt Tóc, Ráy Táy, Gội Đầu, Rửa Mặt, Dắp mặt",
                             Duration = 3,
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Chăm sóc đầy đử",
                             Status = "active"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Cắt Tóc, Ráy Táy",
                             Duration = 1,
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Cắt tóc ráy tai",
                             Status = "active"
                         });
@@ -639,8 +641,7 @@ namespace HairCutAppAPI.Data.Migrations
 
                     b.Property<string>("Detail")
                         .IsRequired()
-                        .HasMaxLength(1024)
-                        .HasColumnType("nvarchar(1024)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime2");
@@ -649,11 +650,6 @@ namespace HairCutAppAPI.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -816,72 +812,72 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon 1",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon 1",
                             Status = "active"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon 2",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon 2",
                             Status = "active"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon 3",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon 3",
                             Status = "active"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon 4",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon 4",
                             Status = "active"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon 5",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon Quan 5",
                             Status = "active"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon 6",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon Quan 6",
                             Status = "active"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon Thu Duc",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon Thu Duc",
                             Status = "active"
                         },
                         new
                         {
                             Id = 8,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Salon Binh Chanh",
-                            LastUpdate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Salon Binh Chanh",
                             Status = "active"
                         });
@@ -947,9 +943,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Cắt tóc",
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Cắt tóc",
                             Price = 50000m,
                             Status = "active"
@@ -957,9 +953,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Gội Đầu",
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Gội Đầu",
                             Price = 20000m,
                             Status = "active"
@@ -967,9 +963,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Ráy tai",
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Ráy tai",
                             Price = 10000m,
                             Status = "active"
@@ -977,9 +973,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Gội Đầu",
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Rửa Mặt",
                             Price = 20000m,
                             Status = "active"
@@ -987,9 +983,9 @@ namespace HairCutAppAPI.Data.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedDate = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            CreatedDate = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Description = "Đắp Mặt",
-                            LastUpdated = new DateTime(2021, 11, 10, 17, 35, 57, 878, DateTimeKind.Local).AddTicks(7838),
+                            LastUpdated = new DateTime(2021, 11, 6, 16, 12, 27, 719, DateTimeKind.Local).AddTicks(1685),
                             Name = "Đắp Mặt",
                             Price = 20000m,
                             Status = "active"

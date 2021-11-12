@@ -19,5 +19,6 @@ namespace HairCutAppAPI.Services.Interfaces
 
         Task CheckAndUpdateInActivePromotionalCodes();
         Task CheckAndUpdateActivePromotionalCodes();
+        Task SendNotifications();
     }
 }

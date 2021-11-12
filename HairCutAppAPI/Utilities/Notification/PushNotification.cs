@@ -9,7 +9,7 @@ namespace HairCutAppAPI.Utilities.Notification
 {
     public class PushNotification : IPushNotification
     {
-        public async void Push(string deviceId, string title, string body)
+        public async void Push(string deviceToken, string title, string body)
         {
             try
             {    
@@ -27,7 +27,7 @@ namespace HairCutAppAPI.Utilities.Notification
 
                 {
 
-                    to = deviceId,
+                    to = deviceToken,
 
                     notification = new
 
@@ -57,15 +57,13 @@ namespace HairCutAppAPI.Utilities.Notification
                 using var tReader = new StreamReader(dataStreamResponse);
                 var sResponseFromServer = await tReader.ReadToEndAsync();
 
-                var str = sResponseFromServer;
+                // var str = sResponseFromServer;
             }        
 
             catch (Exception ex)
             {
-
                 //TODO:Log
                 var str = ex.Message;
-
             }          
         }
     }

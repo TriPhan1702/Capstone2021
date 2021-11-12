@@ -25,6 +25,7 @@ namespace HairCutAppAPI.Utilities.Extensions
             services.AddScoped<IPromotionalCodeService, PromotionalCodeService>();
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IParamService, ParamService>();
             
             //To do back ground jobs
             services.AddScoped<IBackgroundJobService, BackgroundJobService>();

@@ -51,15 +51,7 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] Roles = {AdministratorRole, ManagerRole, StylistRole,BeauticianRole,CustomerRole};
         public static readonly string[] UserRolesWithoutSeparateTable = {AdministratorRole};
         public static readonly string[] AppointmentPerformingRoles = {StylistRole, BeauticianRole};
-        
-        // //Names of authorization policies
-        // public const string RequireAdministratorRole = "RequireAdministratorRole";
-        // public const string RequireCustomerRole = "RequireCustomerRole";
-        // public const string RequireManagerRole = "RequireManagerRole";
-        // public const string RequireStylistRole = "RequireStylistRole";
-        // public const string RequireBeauticianRole = "RequireBeauticianRole";
 
-        
         //Statuses
         public const string ActiveUserStatus = "active";
         public const string InActiveUserStatus = "inactive";
@@ -101,6 +93,12 @@ namespace HairCutAppAPI.Utilities
         public const string PendingNotificationStatus = "pending";
         public const string DeliveredNotificationStatus = "delivered";
         public const string SeenNotificationStatus = "seen";
+        public const string CanceledNotificationStatus = "canceled";
+        
+        public const string AppointmentCreatedNotification = "appointment_created";
+        public const string AppointmentApprovedNotification = "appointment_approved";
+        public const string AppointmentCanceledNotification = "appointment_canceled";
+        public const string AppointmentCompleteNotification = "appointment_complete";
         
         //Status Lists
         public static readonly string[] UserStatuses = {ActiveUserStatus, InActiveUserStatus};
@@ -114,7 +112,7 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] WorkSlotStatuses = {AvailableWorkSlotStatus,NotAvailableWorkSlotStatus,TakenWorkSlotStatus};
         public static readonly string[] PromotionalCodeStatuses = {ActivePromotionalCodeStatus, InActivePromotionalCodeStatus, CanceledPromotionalCodeStatus};
         public static readonly string[] ArticleStatuses = {ActiveArticleStatus, InActiveArticleStatus};
-        public static readonly string[] NotificationStatuses = {PendingNotificationStatus, DeliveredNotificationStatus, SeenNotificationStatus};
+        public static readonly string[] NotificationStatuses = {PendingNotificationStatus, DeliveredNotificationStatus, SeenNotificationStatus, CanceledNotificationStatus};
         
         public static readonly ViolationType ManagerApproveViolationId = new ViolationType()
             {Id = 1, Name = "Manager Failed to Approve of Disapprove an appointment"};
