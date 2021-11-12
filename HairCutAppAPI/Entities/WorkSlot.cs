@@ -38,7 +38,8 @@ namespace HairCutAppAPI.Entities
                 Status = Status,
                 StaffId = StaffId,
                 SlotOfDayId = SlotOfDayId,
-                Date = Date.ToString(GlobalVariables.DayFormat)
+                Date = Date.ToString(GlobalVariables.DayFormat),
+                AppointmentId = AppointmentId
             };
         }
 
@@ -63,6 +64,7 @@ namespace HairCutAppAPI.Entities
                 StaffName = Staff.FullName,
                 StartTime = SlotOfDay.StartTime.ToString(GlobalVariables.TimeFormat),
                 EndTime = SlotOfDay.EndTime.ToString(GlobalVariables.TimeFormat),
+                AppointmentId = AppointmentId
             };
         }
     }

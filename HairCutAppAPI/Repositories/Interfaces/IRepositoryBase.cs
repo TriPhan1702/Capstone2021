@@ -7,6 +7,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
 {
     public interface IRepositoryBase<T> where T : class
     {
+        Task<int> CountAsync(Expression<Func<T, bool>> expression);
         Task<IEnumerable<T>> FindAllAsync();
         Task<bool> AnyAsync(Expression<Func<T, bool>> expression);
         Task<T> FindSingleByConditionAsync(Expression<Func<T, bool>> expression);

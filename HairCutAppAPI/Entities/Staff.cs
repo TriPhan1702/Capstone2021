@@ -82,7 +82,20 @@ namespace HairCutAppAPI.Entities
                 StaffId = Id, 
                 UserId = UserId, 
                 Name = FullName,
-                AvatarUrl = User.AvatarUrl
+                AvatarUrl = User.AvatarUrl,
+            };
+        }
+        
+        public GetAvailableStaffForAppointmentResponseDTO ToGetAvailableStaffForAppointmentResponseDTO(int numberOfAppointment)
+        {
+            return new GetAvailableStaffForAppointmentResponseDTO()
+            {
+                StaffId = Id, 
+                UserId = UserId, 
+                Name = FullName,
+                AvatarUrl = User.AvatarUrl,
+                StaffType = StaffType,
+                NumberOfAppointmentsOnDate = numberOfAppointment
             };
         }
     }

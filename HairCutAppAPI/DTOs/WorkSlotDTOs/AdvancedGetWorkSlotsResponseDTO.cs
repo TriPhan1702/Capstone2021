@@ -10,5 +10,7 @@
         public string EndTime { get; set; }
         public string Status { get; set; }
         public string Date { get; set; }
+        
+        public int? AppointmentId { get; set; }
     }
 }

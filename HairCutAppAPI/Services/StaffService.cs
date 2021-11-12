@@ -219,7 +219,7 @@ namespace HairCutAppAPI.Services
         {
             //Get appointment from database
             var appointment =
-                await _repositoryWrapper.Appointment.FindSingleByConditionAsync(app => app.Id == appointmentId);
+                await _repositoryWrapper.Appointment.FindSingleByConditionWithIncludeAsync(app => app.Id == appointmentId, app => app.AppointmentDetails);
             if (appointment is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with Id {appointmentId} not found");
@@ -263,7 +263,18 @@ namespace HairCutAppAPI.Services
                 availableStaffs.Add(chosenStaff);
             }
             
-            return new CustomHttpCodeResponse(200,"",availableStaffs.Select(staff => staff.ToGetAvailableStylistsOfASalonInSpanOfDayResponseDTO()));
+            var result = new List<GetAvailableStaffForAppointmentResponseDTO>();
+
+            //Get 
+            foreach (var staff in availableStaffs)
+            {
+                var appointmentCount = await _repositoryWrapper.Appointment.CountAsync(app =>
+                    (app.AppointmentDetails.Select(detail => detail.StaffId).Contains(staff.Id) || app.ChosenStaffId == staff.Id) &&
+                    app.StartDate.DayOfYear == appointment.StartDate.DayOfYear && app.Status != GlobalVariables.CanceledAppointmentStatus);
+                result.Add(staff.ToGetAvailableStaffForAppointmentResponseDTO(appointmentCount));
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
         }
 
         #region private functions

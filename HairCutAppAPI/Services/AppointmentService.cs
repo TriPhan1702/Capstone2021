@@ -301,7 +301,6 @@ namespace HairCutAppAPI.Services
                 //Pend change
                 await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
             }
-            
 
             //Change appointment's status and last update
             appointment.Status = GlobalVariables.CanceledAppointmentStatus;
@@ -981,10 +980,15 @@ namespace HairCutAppAPI.Services
             return slotsOfDayIds;
         }
 
-        private async Task SendAppointmentCreatedNotifications(Appointment appointment, int customerUserId, int? chosenStaffId = null)
+        private async Task SendAppointmentCreatedNotifications(Appointment appointment, int customerUserId, int? chosenStaffUserId = null)
         {
-            await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, customerUserId));
-
+            //Prepare Customer's Notifications
+            await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, 
+                "Appointment Created Notification", 
+                "Appointment Created Notification", 
+                customerUserId));
+                
+            //Prepare Manager's Notifications
             var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
                 staff.StaffType == GlobalVariables.ManagerRole &&
                 staff.User.Status == GlobalVariables.ActiveUserStatus && staff.SalonId == appointment.SalonId)).ToList();
@@ -992,13 +996,20 @@ namespace HairCutAppAPI.Services
             {
                 foreach (var manager in managers)
                 {
-                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, manager.UserId));
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, 
+                        "Appointment Created Notification", 
+                        "Appointment Created Notification", 
+                        manager.UserId));
                 }
             }
 
-            if (appointment.ChosenStaffId!=null && chosenStaffId != null)
+            //Prepare Stylist's Notifications if one was chosen
+            if (chosenStaffUserId != null)
             {
-                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, chosenStaffId.Value));
+                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(appointment, 
+                    "Appointment Created Notification", 
+                    "Appointment Created Notification", 
+                    chosenStaffUserId.Value));
             }
             
             try
@@ -1014,13 +1025,13 @@ namespace HairCutAppAPI.Services
             }
         }
         
-        private Notification ToNewAppointmentCreatedNotification(Appointment appointment, int userId)
+        private Notification ToNewAppointmentCreatedNotification(Appointment appointment, string title, string detail, int userId)
         {
             return new Notification()
             {
-                Detail = "Appointment Created Notification",
+                Detail = detail,
                 Status = GlobalVariables.PendingNotificationStatus,
-                Title = "Appointment Created Notification",
+                Title = title,
                 Type = GlobalVariables.AppointmentCreatedNotification,
                 AppointmentId = appointment.Id,
                 UserId = userId,
