@@ -24,59 +24,59 @@ namespace HairCutAppAPI.Services
         /// <summary>
         /// BACKGROUND JOB: Check if there are pending appointments that has passed the time without approval
         /// </summary>
-        public async Task CheckAndUpdatePendingAppointmentJob()
-        {
-            //Get list of pending assignment from database
-            var pendingAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
-                appointment.Status == GlobalVariables.PendingAppointmentStatus && DateTime.Now.AddMinutes(GlobalVariables.TimeToConfirmAppointmentInAdvanced) >= appointment.StartDate)).ToList();
-
-            if (pendingAppointments.Any())
-            {
-                var appointmentIds = pendingAppointments.Select(appointment => appointment.Id);
-                var workslots =
-                    await _repositoryWrapper.WorkSlot.FindByConditionAsyncWithInclude(slot =>
-                        appointmentIds.Contains(slot.AppointmentId.Value), slot => slot.SlotOfDay);
-                
-                //Change status of all appointments to canceled
-                foreach (var appointment in pendingAppointments)
-                {
-                    appointment.Status = GlobalVariables.CanceledAppointmentStatus;
-                    appointment.LastUpdated = DateTime.Now;
-                    await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
-                }
-
-                foreach (var slot in workslots)
-                {
-                    //If lot is still more than TimeToCreateAppointmentInAdvanced(default 2 hours) away, turn to available
-                    if (slot.Date.Add(slot.SlotOfDay.StartTime).AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) > DateTime.Now)
-                    {
-                        slot.Status = GlobalVariables.AvailableWorkSlotStatus;
-                        
-                    }
-                    //If lot is still less than TimeToCreateAppointmentInAdvanced(default 2 hours) away, turn to not available available
-                    else
-                    {
-                        slot.Status = GlobalVariables.NotAvailableWorkSlotStatus;
-                    }
-                    slot.AppointmentId = null;
-                    await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
-                }
-                
-                try
-                {
-                    //Save all changes above to database 
-                    await _repositoryWrapper.SaveAllAsync();
-                    
-                    //TODO: Send cancel notification
-                }
-                catch (Exception e)
-                {
-                    //clear pending changes if fail
-                    _repositoryWrapper.DeleteChanges();
-                    //TODO: Log failure to update appointment status
-                }
-            }
-        }
+        // public async Task CheckAndUpdatePendingAppointmentJob()
+        // {
+        //     //Get list of pending assignment from database
+        //     var pendingAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
+        //         appointment.Status == GlobalVariables.PendingAppointmentStatus && DateTime.Now.AddMinutes(GlobalVariables.TimeToConfirmAppointmentInAdvanced) >= appointment.StartDate)).ToList();
+        //
+        //     if (pendingAppointments.Any())
+        //     {
+        //         var appointmentIds = pendingAppointments.Select(appointment => appointment.Id);
+        //         var workslots =
+        //             await _repositoryWrapper.WorkSlot.FindByConditionAsyncWithInclude(slot =>
+        //                 appointmentIds.Contains(slot.AppointmentId.Value), slot => slot.SlotOfDay);
+        //         
+        //         //Change status of all appointments to canceled
+        //         foreach (var appointment in pendingAppointments)
+        //         {
+        //             appointment.Status = GlobalVariables.CanceledAppointmentStatus;
+        //             appointment.LastUpdated = DateTime.Now;
+        //             await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
+        //         }
+        //
+        //         foreach (var slot in workslots)
+        //         {
+        //             //If lot is still more than TimeToCreateAppointmentInAdvanced(default 2 hours) away, turn to available
+        //             if (slot.Date.Add(slot.SlotOfDay.StartTime).AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) > DateTime.Now)
+        //             {
+        //                 slot.Status = GlobalVariables.AvailableWorkSlotStatus;
+        //                 
+        //             }
+        //             //If lot is still less than TimeToCreateAppointmentInAdvanced(default 2 hours) away, turn to not available available
+        //             else
+        //             {
+        //                 slot.Status = GlobalVariables.NotAvailableWorkSlotStatus;
+        //             }
+        //             slot.AppointmentId = null;
+        //             await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
+        //         }
+        //         
+        //         try
+        //         {
+        //             //Save all changes above to database 
+        //             await _repositoryWrapper.SaveAllAsync();
+        //             
+        //             //TODO: Send cancel notification
+        //         }
+        //         catch (Exception e)
+        //         {
+        //             //clear pending changes if fail
+        //             _repositoryWrapper.DeleteChanges();
+        //             //TODO: Log failure to update appointment status
+        //         }
+        //     }
+        // }
 
         /// <summary>
         /// BACKGROUND JOB: Check if there are approved appointments that passed start time and need to be set to ongoing appointment
@@ -253,7 +253,7 @@ namespace HairCutAppAPI.Services
                     {
                         foreach (var device in user.Devices)
                         {
-                            _pushNotification.Push(device.DeviceToken, notification.Title, notification.Detail);
+                            _pushNotification.Push(device.DeviceToken, notification.Title, notification.Detail,"AppointmentDetail",new {appointmentID = notification.AppointmentId});
                             notification.Status = GlobalVariables.DeliveredNotificationStatus;
                         }
                     }

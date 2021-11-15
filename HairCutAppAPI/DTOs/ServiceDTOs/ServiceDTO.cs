@@ -11,5 +11,7 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
         public string CreatedDate { get; set; }
         public string LastUpdated { get; set; }
         public decimal Price { get; set; }
+        
+        public int Duration { get; set; }
     }
 }

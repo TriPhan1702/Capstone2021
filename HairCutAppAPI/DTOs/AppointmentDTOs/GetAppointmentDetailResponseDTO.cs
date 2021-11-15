@@ -33,6 +33,8 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public string ComboName { get; set; }
         public string ComboDescription { get; set; }
         
+        public GetAppointmentDetailResponseChosenStylistDTO ChosenStylist { get; set; }
+        
         public ICollection<GetAppointmentDetailResponseDetailDTO> AppointmentDetails { get; set; }
 
         public decimal TotalPrice { get; set; }
@@ -46,6 +48,17 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public string ServiceDescription { get; set; }
         public decimal ServicePrice { get; set; }
         public int? StaffId { get; set; }
+        public int? StaffUserId { get; set; }
+        public string StaffName { get; set; }
+        public string StaffType { get; set; }
+        
+        public string AvatarUrl { get; set; }
+    }
+
+    public class GetAppointmentDetailResponseChosenStylistDTO
+    {
+        public int? StaffId { get; set; }
+        public int? StaffUserId { get; set; }
         public string StaffName { get; set; }
         public string StaffType { get; set; }
         

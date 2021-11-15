@@ -111,21 +111,21 @@ namespace HairCutAppAPI.Controllers
         /// For Customer to create appointment
         /// </summary>
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>
-        [Authorize(Roles = GlobalVariables.CustomerRole)]
-        [HttpPost("create_appointment")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
-        {
-            //Trim All Strings in object
-            createAppointmentDTO = ObjectTrimmer.TrimObject(createAppointmentDTO) as CreateAppointmentDTO;
-            
-            //Check input server side
-            if (!ModelState.IsValid)
-            {
-                return new CustomHttpCodeResponse(400,"",ModelState);
-            }
-
-            return await _appointmentService.CreateAppointment(createAppointmentDTO);
-        }
+        // [Authorize(Roles = GlobalVariables.CustomerRole)]
+        // [HttpPost("create_appointment")]
+        // public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
+        // {
+        //     //Trim All Strings in object
+        //     createAppointmentDTO = ObjectTrimmer.TrimObject(createAppointmentDTO) as CreateAppointmentDTO;
+        //     
+        //     //Check input server side
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return new CustomHttpCodeResponse(400,"",ModelState);
+        //     }
+        //
+        //     return await _appointmentService.CreateAppointment(createAppointmentDTO);
+        // }
         
         // /// <summary>
         // /// For manager to assign staff to appointment
@@ -151,21 +151,21 @@ namespace HairCutAppAPI.Controllers
         /// For manager to assign staff to appointment
         /// </summary>
         /// <param name="assignStaffDTO">Stylist Id can be null, StylistId<0 => null</param>
-        [Authorize(Roles = GlobalVariables.ManagerRole)]
-        [HttpPost("assign_appointment_staff")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> AssignStaffToAppointment([FromBody] AssignStaffDTO assignStaffDTO)
-        {
-            //Trim All Strings in object
-            assignStaffDTO = ObjectTrimmer.TrimObject(assignStaffDTO) as AssignStaffDTO;
-            
-            //Check input server side
-            if (!ModelState.IsValid)
-            {
-                return new CustomHttpCodeResponse(400,"",ModelState);
-            }
-
-            return await _appointmentService.AssignStaff2(assignStaffDTO);
-        }
+        // [Authorize(Roles = GlobalVariables.ManagerRole)]
+        // [HttpPost("assign_appointment_staff")]
+        // public async Task<ActionResult<CustomHttpCodeResponse>> AssignStaffToAppointment([FromBody] AssignStaffDTO assignStaffDTO)
+        // {
+        //     //Trim All Strings in object
+        //     assignStaffDTO = ObjectTrimmer.TrimObject(assignStaffDTO) as AssignStaffDTO;
+        //     
+        //     //Check input server side
+        //     if (!ModelState.IsValid)
+        //     {
+        //         return new CustomHttpCodeResponse(400,"",ModelState);
+        //     }
+        //
+        //     return await _appointmentService.AssignStaff2(assignStaffDTO);
+        // }
         
         /// <summary>
         /// For Manager, Admin, Staff to finish an appointment
@@ -186,15 +186,15 @@ namespace HairCutAppAPI.Controllers
             return await _appointmentService.FinishAppointment(dto);
         }
 
-        /// <summary>
-        /// Cancel an Appointment
-        /// </summary>
-        /// <param name="id">Appointment Id</param>
-        [Authorize(Roles = GlobalVariables.ManagerRole + ", " + GlobalVariables.AdministratorRole + ", " + GlobalVariables.CustomerRole)]
-        [HttpPut("cancel_appointment/{id}")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int id)
-        {
-            return await _appointmentService.CancelAppointment(id);
-        }
+        // /// <summary>
+        // /// Cancel an Appointment
+        // /// </summary>
+        // /// <param name="id">Appointment Id</param>
+        // [Authorize(Roles = GlobalVariables.ManagerRole + ", " + GlobalVariables.AdministratorRole + ", " + GlobalVariables.CustomerRole)]
+        // [HttpPut("cancel_appointment/{id}")]
+        // public async Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int id)
+        // {
+        //     return await _appointmentService.CancelAppointment(id);
+        // }
     }
 }

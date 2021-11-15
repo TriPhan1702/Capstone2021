@@ -58,7 +58,7 @@ namespace HairCutAppAPI.Services
 
             var result = await _repositoryWrapper.Article.CreateAsync(newArticle);
             
-            return new CustomHttpCodeResponse(200, "ArticleCreated", result.Id);
+            return new CustomHttpCodeResponse(200, "Article đã được tạo", result.Id);
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> GetArticleDetail(int id)
@@ -66,7 +66,7 @@ namespace HairCutAppAPI.Services
             var article = await _repositoryWrapper.Article.FindSingleByConditionWithIncludeAsync(art => art.Id == id, article1 => article1.Author);
             if (article is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Article with Id {id} not found");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy Article với Id {id}");
             }
             return new CustomHttpCodeResponse(200,"", article.ToArticleDetailDTO());
         }

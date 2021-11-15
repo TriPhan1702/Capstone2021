@@ -23,19 +23,13 @@ namespace HairCutAppAPI.Services
 
         public async Task<CustomHttpCodeResponse> UpdateService(UpdateServiceDto updateServiceDto)
         {
-            //Validate request
-            if (updateServiceDto.Status != null)
-            {
-                ValidateServiceStatus(updateServiceDto.Status);
-            }
-
             //Get service from database
             var service = await _repositoryWrapper.Service.FindSingleByConditionAsync(s => s.Id == updateServiceDto.Id);
             //Check if service is found
             if (service is null) 
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    $"Service with the id {updateServiceDto.Id} doesn't exist");
+                    $"không tìm thấy được Service với id {updateServiceDto.Id}");
             }
             //Map the different fields to service entity
             service = updateServiceDto.CompareUpdateService(service);
@@ -66,39 +60,26 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateService(CreateServiceDTO createServiceDTO)
         {
             //Validate request
-            ValidateServiceStatus(createServiceDTO.Status);
             ValidateServicePrice(createServiceDTO.Price);
+            ValidateServiceDuration(createServiceDTO.Duration);
 
             var newService = createServiceDTO.ToNewService();
 
             //Create new Service in database
             var result = await _repositoryWrapper.Service.CreateAsync(newService);
             
-            return new CustomHttpCodeResponse(200, "Service Created",result.Id);
+            return new CustomHttpCodeResponse(200, "Service đã được tạo",result.Id);
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetServices(AdvancedGetServiceDTO advancedGetServiceDTO)
         {
             if (!string.IsNullOrWhiteSpace(advancedGetServiceDTO.SortBy) && !AdvancedGetServiceDTO.OrderingParams.Contains(advancedGetServiceDTO.SortBy.ToLower()))
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetServiceDTO.OrderingParams));
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy Phải là: " + string.Join(", ", AdvancedGetServiceDTO.OrderingParams));
             }
             
             var result = await _repositoryWrapper.Service.AdvancedGetServices(advancedGetServiceDTO);
             return new CustomHttpCodeResponse(200, "" , result);
-        }
-
-        /// <summary>
-        /// Check if status is valid
-        /// </summary>
-        private void ValidateServiceStatus(string status)
-        {
-            //Check if status is valid
-            if (!GlobalVariables.ServiceStatuses.Contains(status.ToLower()))
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    "Service Status invalid, must be: " + string.Join(", ", GlobalVariables.ServiceStatuses));
-            }
         }
         
         /// <summary>
@@ -109,7 +90,15 @@ namespace HairCutAppAPI.Services
             //Check Price
             if (price <= 0)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Price is invalid");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Giá Phải > 0");
+            }
+        }
+        
+        private void ValidateServiceDuration(int duration)
+        {
+            if (duration <= 0)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Chiều dài Service phải > 0");
             }
         }
     }

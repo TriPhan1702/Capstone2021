@@ -24,10 +24,9 @@ namespace HairCutAppAPI.Entities
         public string Status { get; set; }
         
         [Required]
-        public int Duration { get; set; }
+        public decimal Price { get; set; }
         
-        // [Required]
-        // public decimal Price { get; set; }
+        public string AvatarUrl { get; set; }
         
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -47,7 +46,8 @@ namespace HairCutAppAPI.Entities
                 Description = Description,
                 Name = Name,
                 Status = Status,
-                Price = ComboDetails.Sum(detail => detail.Service.Price)
+                Price = Price,
+                AvatarUrl = AvatarUrl
             };
         }
 
@@ -58,8 +58,8 @@ namespace HairCutAppAPI.Entities
                 Id = Id,
                 Name = Name,
                 Description = Description,
-                Duration = Duration,
                 Status = Status,
+                Price = Price
             };
         }
 
@@ -70,11 +70,11 @@ namespace HairCutAppAPI.Entities
                 Id = Id,
                 Name = Name,
                 Description = Description,
-                Duration = Duration,
                 Status = Status,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
                 LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat),
-                Price = ComboDetails.Sum(detail => detail.Service.Price)
+                Price = Price,
+                AvatarUrl = AvatarUrl
             };
         }
 
@@ -85,15 +85,15 @@ namespace HairCutAppAPI.Entities
                 Id = Id,
                 Description = Description,
                 Name = Name,
-                Price = ComboDetails.Sum(detail => detail.Service.Price),
+                Price = Price,
+                AvatarUrl = AvatarUrl,
                 Status = Status,
-                Duration = Duration,
                 Services = ComboDetails.Select(detail => new ComboDetailServiceDTO()
                 {
                     Id = detail.ServiceId,
                     Name = detail.Service.Name,
                     Description = detail.Service.Description,
-                    Price = detail.Service.Price
+                    Price = detail.Service.Price,
                 }).ToList(),
             };
         }

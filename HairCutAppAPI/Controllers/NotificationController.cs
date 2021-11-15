@@ -56,5 +56,16 @@ namespace HairCutAppAPI.Controllers
             var notification = await _notificationService.UserAdvancedGetNotification(dto);
             return notification;
         }
+
+        /// <summary>
+        /// Id is appointment ID
+        /// </summary>
+        /// <param name="id">AppointmentID</param>
+        /// <returns></returns>
+        [HttpGet("debug_send_notification")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> DEBUGSendNotification(int id)
+        {
+            return await _notificationService.SendNotification(id);
+        }
     }
 }

@@ -7,6 +7,10 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface INotificationService
     {
+        /// <summary>
+        /// DEBUG
+        /// </summary>
+        Task<ActionResult<CustomHttpCodeResponse>> SendNotification(int id);
         Task<ActionResult<CustomHttpCodeResponse>> UpdateToSeen(int id);
         Task<ActionResult<CustomHttpCodeResponse>> UserAdvancedGetNotification(UserAdvancedGetNotificationDTO dto);
     }

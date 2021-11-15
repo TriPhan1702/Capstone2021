@@ -17,9 +17,10 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         [MaxLength(20)]
         public string Status { get; set; }
         
-        public int Duration { get; set; }
+        [Required]
+        public decimal Price { get; set; }
         
-        public ICollection<int> Services { get; set; }
+        public ICollection<CreateUpdateComboDetailDTO> Details { get; set; }
 
         /// <summary>
         /// Find out the difference and update the different field to entity  
@@ -39,9 +40,9 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
                 combo.Status = Status.ToLower();
             }
 
-            if (Duration >=0 && Duration != combo.Duration)
+            if (Price >=0 && Price != combo.Price)
             {
-                combo.Duration = Duration;
+                combo.Price = Price;
             }
 
             return combo;

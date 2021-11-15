@@ -31,12 +31,6 @@ namespace HairCutAppAPI.Repositories
         public async Task<PagedList<ServiceDTO>> AdvancedGetServices(AdvancedGetServiceDTO advancedGetServiceDTO)
         {
             var query = _hdbContext.Services.AsQueryable();
-            //If there's status filtering
-            if (advancedGetServiceDTO.Statuses != null && advancedGetServiceDTO.Statuses.Any())
-            {
-                query = query.Where(service =>
-                    advancedGetServiceDTO.Statuses.Select(status => status.ToLower()).Contains(service.Status.ToLower()));
-            }
 
             //If There's Name Filtering
             if (!string.IsNullOrWhiteSpace(advancedGetServiceDTO.Name))
@@ -54,6 +48,18 @@ namespace HairCutAppAPI.Repositories
             if (advancedGetServiceDTO.MaxPrice >= 0)
             {
                 query = query.Where(service => service.Price <= advancedGetServiceDTO.MaxPrice);
+            }
+            
+            //If there's min duration filtering
+            if (advancedGetServiceDTO.MinDuration >= 0)
+            {
+                query = query.Where(service => service.Duration >= advancedGetServiceDTO.MinDuration);
+            }
+            
+            //If there's min duration filtering
+            if (advancedGetServiceDTO.MaxDuration >= 0)
+            {
+                query = query.Where(service => service.Duration <= advancedGetServiceDTO.MaxDuration);
             }
 
             try
@@ -107,8 +113,6 @@ namespace HairCutAppAPI.Repositories
                     "id_desc" => query.OrderByDescending(service => service.Id),
                     "name_asc" => query.OrderBy(service => service.Name),
                     "name_desc" => query.OrderByDescending(service => service.Name),
-                    "status_asc" => query.OrderBy(service => service.Status),
-                    "status_desc" => query.OrderByDescending(service => service.Status),
                     "price_asc" => query.OrderBy(service => service.Price),
                     "price_desc" => query.OrderByDescending(service => service.Price),
                     "createddate_asc" => query.OrderBy(service => service.CreatedDate),

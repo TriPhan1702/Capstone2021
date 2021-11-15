@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using HairCutAppAPI.Entities;
+using HairCutAppAPI.Utilities.Errors;
 
 namespace HairCutAppAPI.DTOs.ServiceDTOs
 {
@@ -14,41 +16,46 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
         [MaxLength(255)]
         public string Description { get; set; }
         
-        [MaxLength(20)]
-        public string Status { get; set; }
+        [Required]
+        public int Duration { get; set; }
         
+        [Required]
         public decimal Price { get; set; }
 
         public Service CompareUpdateService(Service service)
         {
-            var changes = 0;
+            var hasChanged = false;
             if (!string.IsNullOrWhiteSpace(Name) && Name != service.Name)
             {
                 service.Name = Name;
-                changes++;
+                hasChanged = true;
             }
 
             if (!string.IsNullOrWhiteSpace(Description) && Description != service.Description)
             {
                 service.Description = Description;
-                changes++;
-            }
-
-            if (!string.IsNullOrWhiteSpace(Status) && Status != service.Status)
-            {
-                service.Status = Status.ToLower();
-                changes++;
+                hasChanged = true;
             }
             
             if ( Price >= 0 && Price != service.Price)
             {
                 service.Price = Price;
-                changes++;
+                hasChanged = true;
+            }
+            
+            if ( Duration >= 0 && Duration != service.Duration)
+            {
+                service.Duration = Duration;
+                hasChanged = true;
             }
 
-            if (changes>0)
+            if (hasChanged)
             {
                 service.LastUpdated = DateTime.Now;
+            }
+            else
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không có thông tin nào thay đổi được dựa trên thông tin từ dto");
             }
 
             return service;

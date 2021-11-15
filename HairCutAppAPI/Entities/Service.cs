@@ -20,8 +20,7 @@ namespace HairCutAppAPI.Entities
         public string Description { get; set; }
         
         [Required]
-        [MaxLength(20)]
-        public string Status { get; set; }
+        public int Duration { get; set; }
         
         [Required]
         public DateTime CreatedDate { get; set; }
@@ -42,7 +41,7 @@ namespace HairCutAppAPI.Entities
                 Description = Description,
                 Name = Name,
                 Price = Price,
-                Status = Status,
+                Duration = Duration,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
                 LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat)
             };
@@ -56,7 +55,7 @@ namespace HairCutAppAPI.Entities
                 Description = Description,
                 Name = Description,
                 Price = Price,
-                Status = Status
+                Duration = Duration,
             };
         }
 

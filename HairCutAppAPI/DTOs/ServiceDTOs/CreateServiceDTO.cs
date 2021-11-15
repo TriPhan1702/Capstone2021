@@ -14,11 +14,10 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
         public string Description { get; set; }
         
         [Required]
-        [MaxLength(20)]
-        public string Status { get; set; }
+        public decimal Price { get; set; }
         
         [Required]
-        public decimal Price { get; set; }
+        public int Duration { get; set; }
 
         public Service ToNewService()
         {
@@ -26,10 +25,10 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
             {
                 Name = Name,
                 Description = Description,
-                Status = Status.ToLower(),
                 Price = Price,
                 CreatedDate = DateTime.Now,
-                LastUpdated = DateTime.Now
+                LastUpdated = DateTime.Now,
+                Duration = Duration
             };
         }
     }

@@ -9,7 +9,7 @@ namespace HairCutAppAPI.Utilities.Notification
 {
     public class PushNotification : IPushNotification
     {
-        public async void Push(string deviceToken, string title, string body)
+        public async void Push(string deviceToken, string title, string body, string screen, object data)
         {
             try
             {    
@@ -23,7 +23,7 @@ namespace HairCutAppAPI.Utilities.Notification
 
                 tRequest.ContentType = "application/json";
 
-                var data = new
+                var notiData = new
 
                 {
 
@@ -32,12 +32,17 @@ namespace HairCutAppAPI.Utilities.Notification
                     notification = new
 
                     {
-                        body, title,
+                        body, title
                         // icon = ""
-                    }    
+                    }    ,
+                    data = new
+                    {
+                        screen,
+                        data
+                    }
                 };       
 
-                var json = JsonConvert.SerializeObject(data);
+                var json = JsonConvert.SerializeObject(notiData);
 
                 var byteArray = Encoding.UTF8.GetBytes(json);
 

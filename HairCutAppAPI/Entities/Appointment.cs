@@ -34,8 +34,6 @@ namespace HairCutAppAPI.Entities
         public virtual AppointmentRating Rating { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; }
         
-        public virtual ICollection<WorkSlot> WorkSlots { get; set; }
-        
         public virtual ICollection<Notification> Notifications { get; set; }
         
         [Required]
@@ -120,13 +118,22 @@ namespace HairCutAppAPI.Entities
             result.ComboId = ComboId;
             result.ComboName = Combo?.Name;
             result.ComboDescription = Combo?.Description;
+            result.ChosenStylist = new GetAppointmentDetailResponseChosenStylistDTO()
+            {
+                StaffId = ChosenStaff?.Id,
+                StaffUserId = ChosenStaff?.UserId,
+                AvatarUrl = ChosenStaff?.User?.AvatarUrl,
+                StaffName = ChosenStaff?.FullName,
+                StaffType = ChosenStaff?.StaffType
+            };
             result.AppointmentDetails = AppointmentDetails.Select(detail => new GetAppointmentDetailResponseDetailDTO()
             {
                 ServiceId = detail.ServiceId,
                 ServiceDescription = detail.Service.Description,
-                ServiceName = detail.Service.Name,
+                ServiceName = detail.Service?.Name,
                 ServicePrice = detail.Service.Price,
                 StaffId = detail.StaffId,
+                StaffUserId = detail.Staff?.UserId,
                 StaffName = detail.Staff?.FullName,
                 StaffType = detail.Staff?.StaffType,
                 AvatarUrl = detail.Staff?.User?.AvatarUrl
@@ -152,8 +159,8 @@ namespace HairCutAppAPI.Entities
                 StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
                 EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat),
                 ComboId = ComboId,
-                ComboName = Combo?.Name,
-                // TotalPrice = Combo.Price,
+                ComboName = Combo.Name,
+                TotalPrice = Combo.Price,
             };
             return result;
         }

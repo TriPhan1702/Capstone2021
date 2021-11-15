@@ -14,6 +14,13 @@ namespace HairCutAppAPI.Entities
         
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
+        
+        [Required]
+        public bool IsDoneByStylist { get; set; }
+        
+        [Required]
+        public int ServiceOrder { get; set; }
+        
         public virtual Service Service { get; set; }
     }
 }

@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.NotificationDTOs;
 using HairCutAppAPI.DTOs.PromotionalCodeDTOs;
+using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
@@ -22,6 +23,35 @@ namespace HairCutAppAPI.Services
         {
             _repositoryWrapper = repositoryWrapper;
             _httpContextAccessor = httpContextAccessor;
+        }
+
+        /// <summary>
+        /// DEBUG
+        /// </summary>
+        public async Task<ActionResult<CustomHttpCodeResponse>> SendNotification(int id)
+        {
+
+            var appointment = await 
+                _repositoryWrapper.Appointment.FindSingleByConditionWithIncludeAsync(appointment1 => appointment1.Id == id, appointment1 => appointment1.Customer);
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Appointment not found");
+            }
+            
+            
+            await _repositoryWrapper.Notification.CreateAsync(new Notification()
+            {
+                Status = GlobalVariables.PendingNotificationStatus,
+                Title = "Buổi hẹn đã được tạo",
+                Detail = "Buổi hẹn đã được tạo",
+                CreatedDate = DateTime.Now,
+                LastUpdate = DateTime.Now,
+                Type = GlobalVariables.AppointmentCreatedNotification,
+                AppointmentId = id,
+                UserId = appointment.Customer.UserId
+            });
+            
+            return new CustomHttpCodeResponse(200,"Notification sent, please wait");
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateToSeen(int id)
