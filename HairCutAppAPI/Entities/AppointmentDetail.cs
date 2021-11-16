@@ -24,6 +24,9 @@ namespace HairCutAppAPI.Entities
         [Required]
         public bool IsDoneByStylist { get; set; }
         
+        [Required]
+        public int ServiceOrder { get; set; }
+        
         public virtual ICollection<WorkSlot> WorkSlots { get; set; }
         
         [Required]

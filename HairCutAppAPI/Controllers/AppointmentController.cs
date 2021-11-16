@@ -164,7 +164,7 @@ namespace HairCutAppAPI.Controllers
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
-            return await _appointmentService.AssignStaff2(assignStaffDTO);
+            return await _appointmentService.AssignStaff(assignStaffDTO);
         }
         
         /// <summary>
