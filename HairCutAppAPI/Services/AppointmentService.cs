@@ -214,7 +214,11 @@ namespace HairCutAppAPI.Services
                         chosenSlotsOfDayIds.GetRange(startSlotsOfDayOfDetailIndex, comboDetail.Service.Duration);
                     
                     newAppointmentDetail.WorkSlots = chosenWorkSlots.Where(slot => slotsOfDayOfDetailIds.Contains(slot.SlotOfDayId)).ToList();
-                    newAppointmentDetail.StaffId = chosenStylist.Id;
+
+                    if (comboDetail.IsDoneByStylist)
+                    {
+                        newAppointmentDetail.StaffId = chosenStylist.Id;
+                    }
                 }
                 
                 //Thêm detail vào newAppointment ở trên
@@ -295,7 +299,7 @@ namespace HairCutAppAPI.Services
                 }
             }
             
-            //Get list of work slots associated with the staff and slot Of day list
+            //Get list of work slots associated with the staff and slot of day list
             var workSlots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws => ws.AppointmentId == appointmentId);
 
             var now = DateTime.Now;
@@ -309,10 +313,7 @@ namespace HairCutAppAPI.Services
                 //Set appointment Id về null
                 slot.AppointmentId = null;
                 //Nếu Work slot có gắn với 1 appointment detail, set về null
-                if (slot.AppointmentDetailId != null)
-                {
-                    slot.AppointmentDetailId = null;
-                }
+                slot.AppointmentDetailId = null;
                 //Pend change
                 await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
             }
@@ -390,7 +391,7 @@ namespace HairCutAppAPI.Services
                 !CustomerAdvancedGetAppointmentDTO.OrderingParams.Contains(dto.SortBy.ToLower()))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    "OrderBy must be: " + string.Join(", ", CustomerAdvancedGetAppointmentDTO.OrderingParams));
+                    "OrderBy phải là: " + string.Join(", ", CustomerAdvancedGetAppointmentDTO.OrderingParams));
             }
 
             var result =
@@ -418,13 +419,13 @@ namespace HairCutAppAPI.Services
             //Check if the current manager is from the salon
             if (manager.SalonId is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "This manager is mot from a salon");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Tài khoản hiện tại ko có salon");
             }
 
             if (manager.SalonId != appointment.SalonId)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    "This manager is mot from the same salon as the appointment");
+                    "Tài khoản không phải là manager của Salon của Appointment");
             }
 
             //If Combo of appoint only has 1 service and staff is already assigned, just change to approved and save
