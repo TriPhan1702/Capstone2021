@@ -19,6 +19,10 @@ namespace HairCutAppAPI.Entities
         public int? AppointmentDetailId { get; set; }
         public virtual AppointmentDetail AppointmentDetail { get; set; }
         
+        [ForeignKey("Appointment")]
+        public int? AppointmentId { get; set; }
+        public virtual Appointment Appointment { get; set; }
+        
         [ForeignKey("SlotOfDay")]
         public int SlotOfDayId { get; set; }
         public virtual SlotOfDay SlotOfDay { get; set; }
@@ -39,7 +43,8 @@ namespace HairCutAppAPI.Entities
                 StaffId = StaffId,
                 SlotOfDayId = SlotOfDayId,
                 Date = Date.ToString(GlobalVariables.DayFormat),
-                AppointmentDetailId = AppointmentDetailId
+                AppointmentDetailId = AppointmentDetailId,
+                AppointmentId = AppointmentId
             };
         }
 
@@ -64,7 +69,8 @@ namespace HairCutAppAPI.Entities
                 StaffName = Staff.FullName,
                 StartTime = SlotOfDay.StartTime.ToString(GlobalVariables.TimeFormat),
                 EndTime = SlotOfDay.EndTime.ToString(GlobalVariables.TimeFormat),
-                AppointmentDetailId = AppointmentDetailId
+                AppointmentDetailId = AppointmentDetailId,
+                AppointmentId = AppointmentId
             };
         }
     }

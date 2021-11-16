@@ -36,6 +36,8 @@ namespace HairCutAppAPI.Entities
         
         public virtual ICollection<Notification> Notifications { get; set; }
         
+        public virtual ICollection<WorkSlot> WorkSlots { get; set; }
+        
         [Required]
         [MaxLength(20)]
         public string Status { get; set; }

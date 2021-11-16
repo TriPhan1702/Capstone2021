@@ -4,7 +4,7 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IBackgroundJobService
     {
-        // Task CheckAndUpdatePendingAppointmentJob();
+        Task CheckAndUpdatePendingAppointmentJob();
         Task CheckAndUpdateActiveWorkSlotJob();
 
         /// <summary>

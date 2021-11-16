@@ -75,7 +75,7 @@ namespace HairCutAppAPI
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             
             //Queue background tasks
-            // recurringJobManager.AddOrUpdate("Check and Update Pending Appointments",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdatePendingAppointmentJob(), Cron.Minutely());
+            recurringJobManager.AddOrUpdate("Check and Update Pending Appointments",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdatePendingAppointmentJob(), Cron.Minutely());
             recurringJobManager.AddOrUpdate("Check and Update Available Work Slot",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdateActiveWorkSlotJob(), Cron.Minutely());
             recurringJobManager.AddOrUpdate("Check and Update Approved Appointments",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdateApprovedAppointments(), Cron.Minutely());
             recurringJobManager.AddOrUpdate("Check and Update Ongoing Appointments",() => serviceProvider.GetService<IBackgroundJobService>().CheckAndUpdateOngoingAppointments(), Cron.Minutely());

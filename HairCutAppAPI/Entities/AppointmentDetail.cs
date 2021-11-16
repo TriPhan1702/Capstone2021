@@ -22,9 +22,6 @@ namespace HairCutAppAPI.Entities
         public virtual Staff Staff { get; set; }
         
         [Required]
-        public int Duration { get; set; }
-        
-        [Required]
         public bool IsDoneByStylist { get; set; }
         
         public virtual ICollection<WorkSlot> WorkSlots { get; set; }

@@ -8,6 +8,8 @@
         public string Status { get; set; }
         public string Date { get; set; }
         
+        public int? AppointmentId { get; set; }
+        
         public int? AppointmentDetailId { get; set; }
     }
 }
