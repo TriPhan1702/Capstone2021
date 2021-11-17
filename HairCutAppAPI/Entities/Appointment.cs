@@ -22,7 +22,7 @@ namespace HairCutAppAPI.Entities
         public virtual Salon Salon { get; set; }
         
         [ForeignKey("ChosenStaff")]
-        public int? ChosenStaffId { get; set; }
+        public int ChosenStaffId { get; set; }
         public virtual Staff ChosenStaff { get; set; }
         
         [ForeignKey("Combo")]

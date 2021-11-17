@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,6 +21,12 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Staff")]
         public int? StaffId { get; set; }
         public virtual Staff Staff { get; set; }
+        
+        [Required]
+        public DateTime StartTime { get; set; }
+        
+        [Required]
+        public DateTime EndTime { get; set; }
         
         [Required]
         public bool IsDoneByStylist { get; set; }

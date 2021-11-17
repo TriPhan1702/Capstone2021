@@ -18,7 +18,6 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         
         public int ComboId { get; set; }
         
-        //Id < 0 is null
         public int StylistStaffId { get; set; } 
     }
 }

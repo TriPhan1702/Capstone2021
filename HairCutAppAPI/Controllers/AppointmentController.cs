@@ -111,41 +111,21 @@ namespace HairCutAppAPI.Controllers
         /// For Customer to create appointment
         /// </summary>
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>
-        // [Authorize(Roles = GlobalVariables.CustomerRole)]
-        // [HttpPost("create_appointment")]
-        // public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
-        // {
-        //     //Trim All Strings in object
-        //     createAppointmentDTO = ObjectTrimmer.TrimObject(createAppointmentDTO) as CreateAppointmentDTO;
-        //     
-        //     //Check input server side
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return new CustomHttpCodeResponse(400,"",ModelState);
-        //     }
-        //
-        //     return await _appointmentService.CreateAppointment(createAppointmentDTO);
-        // }
+        [Authorize(Roles = GlobalVariables.CustomerRole)]
+        [HttpPost("create_appointment")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment([FromBody] CreateAppointmentDTO createAppointmentDTO)
+        {
+            //Trim All Strings in object
+            createAppointmentDTO = ObjectTrimmer.TrimObject(createAppointmentDTO) as CreateAppointmentDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
         
-        // /// <summary>
-        // /// For manager to assign staff to appointment
-        // /// </summary>
-        // /// <param name="assignStaffDTO">Stylist Id can be null, StylistId<0 => null</param>
-        // [Authorize(Roles = GlobalVariables.ManagerRole)]
-        // [HttpPost("assign_appointment_staff")]
-        // public async Task<ActionResult<CustomHttpCodeResponse>> AssignStaffToAppointment([FromBody] AssignStaffDTO assignStaffDTO)
-        // {
-        //     //Trim All Strings in object
-        //     assignStaffDTO = ObjectTrimmer.TrimObject(assignStaffDTO) as AssignStaffDTO;
-        //     
-        //     //Check input server side
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return new CustomHttpCodeResponse(400,"",ModelState);
-        //     }
-        //
-        //     return await _appointmentService.AssignStaff(assignStaffDTO);
-        // }
+            return await _appointmentService.CreateAppointment(createAppointmentDTO);
+        }
         
         /// <summary>
         /// For manager to assign staff to appointment

@@ -14,7 +14,6 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public int SalonId { get; set; }
         public string SalonName { get; set; }
         public string Status { get; set; }
-        
         public int? RatingId { get; set; }
         public int? Rating { get; set; }
         public string RatingComment { get; set; }
