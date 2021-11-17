@@ -506,6 +506,7 @@ namespace HairCutAppAPI.Services
                         var newWorkSlot =
                             (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
                                 slot.StaffId == dtoDetail.StaffId &&
+                                slot.Date.DayOfYear == detail.StartTime.DayOfYear &&
                                 slot.Status == GlobalVariables.AvailableWorkSlotStatus &&
                                 slot.SlotOfDay.StartTime >= detail.StartTime.TimeOfDay &&
                                 slot.SlotOfDay.EndTime <= detail.EndTime.TimeOfDay)).OrderBy(slot => slot.SlotOfDayId).ToList();
