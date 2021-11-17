@@ -80,7 +80,7 @@ namespace HairCutAppAPI.Entities
                 CustomerId = CustomerId,
                 CustomerName = Customer.FullName,
                 StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
-                EndDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
+                EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat),
                 SalonId = SalonId,
                 SalonName = Salon.Name,
                 StylistStaffId = stylistId,
