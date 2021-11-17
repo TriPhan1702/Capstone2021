@@ -138,7 +138,10 @@ namespace HairCutAppAPI.Entities
                 StaffUserId = detail.Staff?.UserId,
                 StaffName = detail.Staff?.FullName,
                 StaffType = detail.Staff?.StaffType,
-                AvatarUrl = detail.Staff?.User?.AvatarUrl
+                AvatarUrl = detail.Staff?.User?.AvatarUrl,
+                IsDoneByStylist = detail.IsDoneByStylist,
+                StartTime = detail.StartTime.ToString(GlobalVariables.DateTimeFormat),
+                EndTime = detail.EndTime.ToString(GlobalVariables.DateTimeFormat)
             }).ToList();
             result.PaidAmount = PaidAmount;
             result.TotalPrice = AppointmentDetails.Sum(detail => detail.Price);

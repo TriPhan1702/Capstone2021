@@ -50,7 +50,9 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public int? StaffUserId { get; set; }
         public string StaffName { get; set; }
         public string StaffType { get; set; }
-        
+        public bool IsDoneByStylist { get; set; }
+        public string StartTime { get; set; }
+        public string EndTime { get; set; }
         public string AvatarUrl { get; set; }
     }
 

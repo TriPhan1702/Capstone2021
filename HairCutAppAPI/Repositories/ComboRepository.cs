@@ -24,6 +24,12 @@ namespace HairCutAppAPI.Repositories
             _hdbContext = hdbContext;
         }
 
+        public async Task<int> CalculateComboDuration(int id)
+        {
+            return await _hdbContext.ComboDetails.Where(detail => detail.ComboId == id)
+                .SumAsync(detail => detail.Service.Duration);
+        }
+
         public async Task<Combo> GetAComboComboDetails(int id)
         {
             return (await _hdbContext.Combos.Where(c => c.Id == id).Include(c => c.ComboDetails).ToListAsync()).First();

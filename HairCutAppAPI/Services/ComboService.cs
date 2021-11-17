@@ -153,6 +153,16 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"", await CalculateComboPrice(id));
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboDuration(int id)
+        {
+            if (!await CheckComboExists(id))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Combo not found");
+            }
+            
+            return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Combo.CalculateComboDuration(id));
+        }
+
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAllActiveCombos()
         {
             //Get Active Combo

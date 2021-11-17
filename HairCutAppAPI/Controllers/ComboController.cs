@@ -39,6 +39,18 @@ namespace HairCutAppAPI.Controllers
         {
             return await _comboService.GetComboPrice(id);
         }
+        
+        /// <summary>
+        /// Get Combo duration from combo id
+        /// </summary>
+        /// <param name="id">Combo Id</param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("combo_duration/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetComboDuration(int id)
+        {
+            return await _comboService.GetComboDuration(id);
+        }
 
         /// <summary>
         /// Get a combo's detail, for staff, admin, manager

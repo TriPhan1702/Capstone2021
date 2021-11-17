@@ -636,35 +636,6 @@ namespace HairCutAppAPI.Services
                 appointment.Status == GlobalVariables.CompleteAppointmentStatus));
         }
 
-        private async Task<IEnumerable<WorkSlot>> GetWorkSlotsRelatedToStaff(Appointment appointment,
-            ICollection<int> staffIds, ICollection<int> slotsOfDayIds, string status)
-        {
-            //Get the work slot of the staffs in dto
-            var workSlots = (await _repositoryWrapper.WorkSlot.FindByConditionAsyncWithInclude(slot =>
-                //Slots that has staff id in the staffId list
-                staffIds.Contains(slot.StaffId) &&
-                //Get available work slots
-                slot.Status == status &&
-                //That has the right slot of day
-                slotsOfDayIds.Contains(slot.SlotOfDayId) &&
-                //That is one the same day as the appointment
-                slot.Date.DayOfYear == appointment.StartDate.DayOfYear, slot => slot.SlotOfDay)).ToList();
-            if (!workSlots.Any())
-            {
-                switch (status)
-                {
-                    case GlobalVariables.TakenWorkSlotStatus:
-                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                            "No Work Slots found for deleted Staffs");
-                    case GlobalVariables.AvailableWorkSlotStatus:
-                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                            "No Work Slots found for Added Staffs");
-                }
-            }
-
-            return workSlots;
-        }
-
         #region private functions
 
         private int GetCurrentUserId()
