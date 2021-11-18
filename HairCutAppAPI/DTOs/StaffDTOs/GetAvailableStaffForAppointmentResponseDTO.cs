@@ -1,6 +1,14 @@
-﻿namespace HairCutAppAPI.DTOs.StaffDTOs
+﻿using System.Collections.Generic;
+
+namespace HairCutAppAPI.DTOs.StaffDTOs
 {
     public class GetAvailableStaffForAppointmentResponseDTO
+    {
+        public int AppointmentDetailId { get; set; }
+        public List<GetAvailableStaffForAppointmentResponseStaffDTO> Staffs { get; set; }
+    }
+    
+    public class GetAvailableStaffForAppointmentResponseStaffDTO
     {
         public int StaffId { get; set; }
         public int UserId { get; set; }

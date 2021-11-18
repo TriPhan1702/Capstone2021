@@ -86,17 +86,17 @@ namespace HairCutAppAPI.Entities
             };
         }
         
-        public GetAvailableStaffForAppointmentResponseDTO ToGetAvailableStaffForAppointmentResponseDTO(int numberOfAppointment)
-        {
-            return new GetAvailableStaffForAppointmentResponseDTO()
-            {
-                StaffId = Id, 
-                UserId = UserId, 
-                Name = FullName,
-                AvatarUrl = User.AvatarUrl,
-                StaffType = StaffType,
-                NumberOfAppointmentsOnDate = numberOfAppointment
-            };
-        }
+        // public GetAvailableStaffForAppointmentResponseDTO ToGetAvailableStaffForAppointmentResponseDTO(int numberOfAppointment)
+        // {
+        //     return new GetAvailableStaffForAppointmentResponseDTO()
+        //     {
+        //         StaffId = Id, 
+        //         UserId = UserId, 
+        //         Name = FullName,
+        //         AvatarUrl = User.AvatarUrl,
+        //         StaffType = StaffType,
+        //         NumberOfAppointmentsOnDate = numberOfAppointment
+        //     };
+        // }
     }
 }

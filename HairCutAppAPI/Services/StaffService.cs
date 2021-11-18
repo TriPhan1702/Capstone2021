@@ -225,53 +225,90 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with Id {appointmentId} not found");
             }
             
-            //Get Ids of Slots of day that the appointment goes through
-            var slotsOfDayIds = (await _repositoryWrapper.SlotOfDay.FindByConditionAsync(slot => 
-                slot.StartTime >= appointment.StartDate.TimeOfDay && 
-                slot.EndTime <= appointment.EndDate.TimeOfDay)).Select(slot => slot.Id).ToList();
+            //Tìm các detail ko đc làm bởi stylist chính
+            var appointmentDetails = appointment.AppointmentDetails.Where(detail => !detail.IsDoneByStylist);
 
-            //Find staffs that has all the available workslots that the appointment goes through
-            var workSLots = (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
-                slot.Status == GlobalVariables.AvailableWorkSlotStatus &&
-                slotsOfDayIds.Contains(slot.SlotOfDayId) &&
-                slot.Date.DayOfYear == appointment.StartDate.DayOfYear)).ToList();
-            var staffIdsFromWorkSlot = workSLots.Select(slot => slot.StaffId).ToHashSet();
-            var availableStaffIds = new List<int>();
-            var test = 0;
-            foreach (var staffId in staffIdsFromWorkSlot)
-            {
-                if (workSLots.Count(slot => slot.StaffId == staffId && slotsOfDayIds.Contains(slot.SlotOfDayId)) == slotsOfDayIds.Count)
-                {
-                    availableStaffIds.Add(staffId);
-                }
-            }
-
-            var availableStaffs =
-                (await _repositoryWrapper.Staff.FindByConditionAsyncWithInclude(
-                    staff => availableStaffIds.Contains(staff.Id), staff => staff.User)).ToList();
-            
-            //If there's already staff chosen, add to the list
-            if (appointment.ChosenStaffId != null && availableStaffs.Any())
-            {
-                var chosenStaff =
-                    await _repositoryWrapper.Staff.FindSingleByConditionWithIncludeAsync(
-                        staff => staff.Id == appointment.ChosenStaffId, staff => staff.User);
-                if (chosenStaff is null)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Staff with Id {appointment.ChosenStaffId} not found");
-                }
-                availableStaffs.Add(chosenStaff);
-            }
-            
             var result = new List<GetAvailableStaffForAppointmentResponseDTO>();
-
-            //Get 
-            foreach (var staff in availableStaffs)
+            //Tìm các slot of day appointment đã đi qua
+            var slotsOfDay = (await _repositoryWrapper.SlotOfDay.FindByConditionAsync(slot =>
+                slot.StartTime >= appointment.StartDate.TimeOfDay && slot.EndTime <= appointment.EndDate.TimeOfDay)).ToList();
+            var slotofDayIds = slotsOfDay.Select(slot => slot.Id);
+            
+            var availableStaffIds = new HashSet<int>();
+            
+            //Đi qua từng detail của appointment và kiếm available staff
+            foreach (var detail in appointmentDetails)
             {
-                var appointmentCount = await _repositoryWrapper.Appointment.CountAsync(app =>
-                    (app.AppointmentDetails.Select(detail => detail.StaffId).Contains(staff.Id) || app.ChosenStaffId == staff.Id) &&
-                    app.StartDate.DayOfYear == appointment.StartDate.DayOfYear && app.Status != GlobalVariables.CanceledAppointmentStatus);
-                result.Add(staff.ToGetAvailableStaffForAppointmentResponseDTO(appointmentCount));
+                var responseObject = new GetAvailableStaffForAppointmentResponseDTO()
+                {
+                    AppointmentDetailId = detail.Id,
+                    Staffs = new List<GetAvailableStaffForAppointmentResponseStaffDTO>()
+                };
+
+                //Tìm các slot of day service sẽ đi qua
+                var detailSlotsOfDay = slotsOfDay.Where(slot =>
+                    slot.StartTime >= detail.StartTime.TimeOfDay && slot.EndTime <= detail.EndTime.TimeOfDay).ToList();
+                var detailSlotsOfDayIds = detailSlotsOfDay.Select(slot => slot.Id);
+                
+                //Kiếm các work slot available 
+                var availableWorkSlots= (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                    //Có availalbe status
+                    slot.Status == GlobalVariables.AvailableWorkSlotStatus &&
+                    //Có slot of day appointment sẽ đi qua
+                    detailSlotsOfDayIds.Contains(slot.SlotOfDayId) &&
+                    //Cùng ngày với appointment
+                    slot.Date.DayOfYear == appointment.StartDate.DayOfYear && 
+                    //Cùng salon với appointment
+                    slot.Staff.SalonId == appointment.SalonId)).ToList();
+
+                //Kiếm các unique staff Id
+                var availableWorkSlotsStaffIds = availableWorkSlots.Select(slot => slot.StaffId).ToHashSet();
+
+                foreach (var staffId in availableWorkSlotsStaffIds)
+                {
+                    if (availableWorkSlots.Where(slot => slot.StaffId == staffId).ToList().Count == detailSlotsOfDay.Count)
+                    {
+                        //Thêm 1 staff ID vào response obbect, phần còn lại sẽ đc fill sau
+                        responseObject.Staffs.Add(new GetAvailableStaffForAppointmentResponseStaffDTO()
+                        {
+                            StaffId = staffId
+                        });
+                        availableStaffIds.Add(staffId);
+                    }
+                }
+                
+                result.Add(responseObject);
+            }
+            
+            
+
+            //Nếu tìm đc ID của một số staff available, tìm thông tin của các staff đó
+            if (availableStaffIds.Any())
+            {
+                var staffs =
+                    (await _repositoryWrapper.Staff.FindByConditionAsyncWithInclude(staff =>
+                        availableStaffIds.Contains(staff.Id), staff => staff.User)).ToList();
+                //Map thông tin staff vào response
+                foreach (var responseDTO in result)
+                {
+                    foreach (var staff in responseDTO.Staffs)
+                    {
+                        var tempStaff = staffs.FirstOrDefault(s => s.Id == staff.StaffId);
+                        if (tempStaff == null) continue;
+                        staff.Name = tempStaff.FullName;
+                        staff.AvatarUrl = tempStaff.User.AvatarUrl;
+                        staff.StaffType = tempStaff.StaffType;
+                        staff.UserId = tempStaff.UserId;
+                        //Tìm số appointment staff đó có ngày hốm đó
+                        staff.NumberOfAppointmentsOnDate = await _repositoryWrapper.Appointment.CountAsync(app =>
+                            //Appointment có detail có staff id giống
+                            app.AppointmentDetails.Select(detail => detail.StaffId).Contains(tempStaff.Id) &&
+                            //Appointment có cùng ngày với appointment hiện tại
+                            app.StartDate.DayOfYear == appointment.StartDate.DayOfYear &&
+                            //Không tính appointment đã cancel
+                            app.Status != GlobalVariables.CanceledAppointmentStatus);
+                    }
+                }
             }
             
             return new CustomHttpCodeResponse(200,"",result);
