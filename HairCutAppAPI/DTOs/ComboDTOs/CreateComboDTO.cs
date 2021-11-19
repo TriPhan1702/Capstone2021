@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.InteropServices;
 using HairCutAppAPI.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace HairCutAppAPI.DTOs.ComboDTOs
 {
@@ -20,12 +21,14 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         [MaxLength(20)]
         public string Status { get; set; }
         
+        public IFormFile AvatarFile { get; set; }
+        
         public List<CreateUpdateComboDetailDTO> Details { get; set;}
         
         [Required]
         public decimal Price { get; set; }
 
-        public Combo ToNewCombo()
+        public Combo ToNewCombo(string avatarUrl)
         {
             
             return new Combo()
@@ -33,7 +36,8 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
                 Name = Name,
                 Description = Description,
                 Status = Status.ToLower(),
-                Price = Price
+                Price = Price,
+                AvatarUrl = avatarUrl
             };
         }
     }

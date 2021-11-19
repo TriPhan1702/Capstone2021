@@ -9,6 +9,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services
@@ -16,10 +17,12 @@ namespace HairCutAppAPI.Services
     public class ComboService : IComboService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly IPhotoService _photoService;
 
-        public ComboService(IRepositoryWrapper repositoryWrapper)
+        public ComboService(IRepositoryWrapper repositoryWrapper, IPhotoService photoService)
         {
             _repositoryWrapper = repositoryWrapper;
+            _photoService = photoService;
         }
 
         /// <summary>
@@ -39,109 +42,130 @@ namespace HairCutAppAPI.Services
         }
         
         //TODO: Fix This
-        // public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO)
-        // {
-        //     //If Status is not null of empty
-        //     if (!string.IsNullOrWhiteSpace(updateComboDTO.Status))
-        //     {
-        //         //Validate status
-        //         ValidateComboStatus(updateComboDTO.Status.ToLower());
-        //     }
-        //     
-        //     // Get Combo from database
-        //     var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(c => c.Id == updateComboDTO.Id);
-        //     if (combo == null)
-        //     {
-        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy được Com với Id {updateComboDTO.Id}");
-        //     }
-        //     
-        //     // If services in DTO is not empty, check and update ComboDetail List
-        //     if (updateComboDTO.Details != null)
-        //     {
-        //         var serviceIds = updateComboDTO.Details.Select(detail => detail.ServiceId).ToList();
-        //         //Get list of ServiceId of Combo from Database
-        //         var comboDetails = await _repositoryWrapper.ComboDetail.FindByConditionAsync(cd => cd.ComboId == updateComboDTO.Id) as List<ComboDetail>;
-        //         //Covert ComboDetails to a list of ComboDetail id
-        //         var comboDetailsIds = new List<int>();
-        //         if (comboDetails != null)
-        //         {
-        //              comboDetailsIds = comboDetails.Select(cd => cd.Id).ToList();
-        //         }
-        //         //If the combo already has services
-        //         if (comboDetails != null && comboDetails.Count>0)
-        //         {
-        //             //If combo's service's Id is not in the new service list, delete
-        //             foreach (var cd in comboDetails.Where(cd => !serviceIds.Contains(cd.Id)))
-        //             {
-        //                 _repositoryWrapper.ComboDetail.DeleteWithoutSave(cd);
-        //             }
-        //         }
-        //
-        //         var addServicesIds = new List<int>();
-        //         //Add new services
-        //         foreach (var serviceId in serviceIds)
-        //         {
-        //             //If ids from the new list is not from the old 
-        //             if (!comboDetailsIds.Contains(serviceId))
-        //             {
-        //                 addServicesIds.Add(serviceId);
-        //             }
-        //         }
-        //         //If addServicesIds is not null, add the ComboDetails with the corresponding services
-        //         if (addServicesIds.Any())
-        //         {
-        //             //Check if the add Services are valid
-        //             await CheckValidServices(addServicesIds);
-        //
-        //             //Add combo detail to database for each
-        //             foreach (var serviceId in addServicesIds)
-        //             {
-        //                 var addServicesId = _repositoryWrapper.ComboDetail.CreateWithoutSaveAsync(new ComboDetail()
-        //                 {
-        //                     ComboId = updateComboDTO.Id,
-        //                     ServiceId = serviceId,
-        //                     IsDoneByStylist = 
-        //                 });
-        //             }
-        //         }
-        //     }
-        //
-        //     //Map the differences from dto to entity
-        //     combo = updateComboDTO.CompareUpdateCombo(combo);
-        //     
-        //     await _repositoryWrapper.Combo.UpdateAsyncWithoutSave(combo, combo.Id);
-        //     
-        //     try
-        //     {
-        //         //Save all changes above to database 
-        //         await _repositoryWrapper.SaveAllAsync();
-        //     }
-        //     catch (Exception )
-        //     {
-        //         //clear pending changes if fail
-        //         _repositoryWrapper.DeleteChanges();
-        //         throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
-        //             "Some thing went wrong went updating ComboDetail for Combo");
-        //     }
-        //
-        //     combo = await _repositoryWrapper.Combo.GetAComboComboDetails(updateComboDTO.Id);
-        //     
-        //     var result = combo.ToUpdateComboResponseDTO();
-        //     //If the updated combo has ComboDetail, Add to the response DTO
-        //     if (combo.ComboDetails.Any())
-        //     {
-        //         var services = await _repositoryWrapper.Service.FindByConditionAsync(s =>
-        //             combo.ComboDetails.Select(cd => cd.ServiceId).ToList().Contains(s.Id));
-        //         result.Services = services.Select(s => new UpdateComboResponseServiceDTO()
-        //         {
-        //             Id = s.Id,
-        //             Name = s.Name
-        //         }).ToList();
-        //     }
-        //     
-        //     
-        //     return new CustomHttpCodeResponse(200,"",result);
-        // }
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO)
+        {
+            //If Status is not null of empty
+            if (!string.IsNullOrWhiteSpace(updateComboDTO.Status))
+            {
+                //Validate status
+                ValidateComboStatus(updateComboDTO.Status.ToLower());
+            }
+            
+            // Get Combo from database
+            var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(c => c.Id == updateComboDTO.Id);
+            if (combo == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy được Com với Id {updateComboDTO.Id}");
+            }
+            
+            // If services in DTO is not empty, check and update ComboDetail List
+            if (updateComboDTO.Details != null)
+            {
+                //Check xem có service nào làm bởi stylist chính
+                if (!updateComboDTO.Details.Any(detail => detail.IsDoneByStylist))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Request phải có ít nhất 1 service làm bởi Stylist");
+                }
+                
+                //Check xem order của các service trong dto là đúng
+                var currentOrder = 0;
+                var orderedDetails = updateComboDTO.Details.OrderBy(detail => detail.ServiceOrder);
+                foreach (var detail in orderedDetails)
+                {
+                    if (detail.ServiceOrder != currentOrder + 1)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Service với id {detail.ServiceId} không đúng, thứ tự các service phải là liện tục, bắt đầu từ 1");
+                    }
+                    currentOrder++;
+                }
+                
+                //Lấy list id các service từ dto
+                var serviceIds = updateComboDTO.Details.Select(detail => detail.ServiceId).ToList();
+                //Lấy list các service hiện tại của combo
+                var comboDetails = await _repositoryWrapper.ComboDetail.FindByConditionAsync(cd => cd.ComboId == updateComboDTO.Id) as List<ComboDetail>;
+                //Covert ComboDetails to a list of ComboDetail id
+                var comboDetailsIds = new List<int>();
+                if (comboDetails != null)
+                {
+                     comboDetailsIds = comboDetails.Select(cd => cd.Id).ToList();
+                }
+                //If the combo already has services
+                if (comboDetails != null && comboDetails.Count>0)
+                {
+                    //If combo's service's Id is not in the new service list, delete
+                    foreach (var cd in comboDetails.Where(cd => !serviceIds.Contains(cd.Id)))
+                    {
+                        _repositoryWrapper.ComboDetail.DeleteWithoutSave(cd);
+                    }
+                }
+        
+                var addServicesIds = new List<int>();
+                //Add new services
+                foreach (var serviceId in serviceIds)
+                {
+                    //If ids from the new list is not from the old 
+                    if (!comboDetailsIds.Contains(serviceId))
+                    {
+                        addServicesIds.Add(serviceId);
+                    }
+                }
+                //If addServicesIds is not null, add the ComboDetails with the corresponding services
+                if (addServicesIds.Any())
+                {
+                    //Check if the add Services are valid
+                    await CheckValidServices(addServicesIds);
+        
+                    //Add combo detail to database for each
+                    foreach (var serviceId in addServicesIds)
+                    {
+                        var tempDetailDTO = updateComboDTO.Details.First(detail => detail.ServiceId == serviceId);
+                        await _repositoryWrapper.ComboDetail.CreateWithoutSaveAsync(new ComboDetail()
+                        {
+                            ComboId = updateComboDTO.Id,
+                            ServiceId = serviceId,
+                            IsDoneByStylist = tempDetailDTO.IsDoneByStylist,
+                            ServiceOrder = tempDetailDTO.ServiceOrder
+                        });
+                    }
+                }
+            }
+        
+            //Map the differences from dto to entity
+            combo = updateComboDTO.CompareUpdateCombo(combo);
+            
+            await _repositoryWrapper.Combo.UpdateAsyncWithoutSave(combo, combo.Id);
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception )
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Some thing went wrong went updating ComboDetail for Combo");
+            }
+        
+            combo = await _repositoryWrapper.Combo.GetAComboComboDetails(updateComboDTO.Id);
+            
+            var result = combo.ToUpdateComboResponseDTO();
+            //If the updated combo has ComboDetail, Add to the response DTO
+            if (combo.ComboDetails.Any())
+            {
+                var services = await _repositoryWrapper.Service.FindByConditionAsync(s =>
+                    combo.ComboDetails.Select(cd => cd.ServiceId).ToList().Contains(s.Id));
+                result.Services = services.Select(s => new UpdateComboResponseServiceDTO()
+                {
+                    Id = s.Id,
+                    Name = s.Name
+                }).ToList();
+            }
+            
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
         {
@@ -171,22 +195,42 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "" , comboDetails.Select(c=>c.ToComboDetailDTO()).ToList());
         }
 
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo(CreateComboDTO createComboDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo(CreateComboDTO dto)
         {
-            ValidateComboStatus(createComboDTO.Status.ToLower());
-            ValidateComboPrice(createComboDTO.Price);
+            ValidateComboStatus(dto.Status.ToLower());
+            ValidateComboPrice(dto.Price);
+
+            //Upload hình
+            string avatarUrl = null;
+            if (dto.AvatarFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(dto.AvatarFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+                }
+
+                avatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
             
             //Prepare new combo
-            var newCombo = createComboDTO.ToNewCombo();
+            var newCombo = dto.ToNewCombo(avatarUrl);
 
             // If services in DTo is not empty, check and prepare ComboDetail List
-            if (createComboDTO.Details != null && createComboDTO.Details.Count != 0)
+            if (dto.Details != null && dto.Details.Count != 0)
             {
-                var comboDetails = await PrepareComboDetail(createComboDTO.Details, newCombo);
+                //Check xem trong list có service là bới stylist chính chưa
+                if (!dto.Details.Any(detail => detail.IsDoneByStylist))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Trong các service phải có ít nhất 1 service làm bởi stylisr chính");
+                }
+                
+                var comboDetails = await PrepareComboDetail(dto.Details, newCombo);
                 newCombo.ComboDetails = comboDetails;
             }
 
-            Combo result = null;
+            Combo result;
             try
             {
                 result = await _repositoryWrapper.Combo.CreateAsync(newCombo);
@@ -238,6 +282,17 @@ namespace HairCutAppAPI.Services
         /// </summary>
         private async Task<List<ComboDetail>> PrepareComboDetail(List<CreateUpdateComboDetailDTO> details, Combo combo)
         {
+            var currentOrder = 0;
+            var orderedDetails = details.OrderBy(detail => detail.ServiceOrder);
+            foreach (var detail in orderedDetails)
+            {
+                if (detail.ServiceOrder != currentOrder + 1)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Service với id {detail.ServiceId} không đúng, thứ tự các service phải là liện tục, bắt đầu từ 1");
+                }
+                currentOrder++;
+            }
+            
             var serviceIds = details.Select(detail => detail.ServiceId).ToList();
             //Get Services in dto's service list from Database
             var services =
@@ -250,8 +305,13 @@ namespace HairCutAppAPI.Services
             }
             
             //Create list of Combo Detail
-
-            return details.Select(detail => new ComboDetail() {ComboId = combo.Id, ServiceId = detail.ServiceId, IsDoneByStylist = detail.IsDoneByStylist}).ToList();
+            return details.Select(detail => new ComboDetail()
+            {
+                ComboId = combo.Id, 
+                ServiceId = detail.ServiceId, 
+                IsDoneByStylist = detail.IsDoneByStylist,
+                ServiceOrder = detail.ServiceOrder
+            }).ToList();
         }
 
         /// <summary>
