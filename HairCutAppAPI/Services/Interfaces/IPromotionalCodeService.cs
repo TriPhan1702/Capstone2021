@@ -10,5 +10,6 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> CreatePromotionalCode(CreatePromotionalCodeDTO createPromotionalCodeDTO);
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetPromotionalCodes(AdvancedGetPromotionalCodesDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> UpdatePromotionalCode(UpdatePromotionalCodeDTO dto);
+        Task<ActionResult<CustomHttpCodeResponse>> ValidateCodeForAppointment(ValidateCodeForAppointmentDTO dto);
     }
 }

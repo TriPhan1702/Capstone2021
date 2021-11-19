@@ -20,7 +20,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For admin to Create New Promotion Code
         /// </summary>
-        // [Authorize(Policy = GlobalVariables.AdministratorRole)]
+        [Authorize(Policy = GlobalVariables.AdministratorRole)]
         [HttpPost("create_promotional_code")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreatePromotionalCode([FromBody]CreatePromotionalCodeDTO dto)
         {
@@ -33,7 +33,26 @@ namespace HairCutAppAPI.Controllers
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
             
-            return new CustomHttpCodeResponse(200,"", await _promotionalCodeService.CreatePromotionalCode(dto));
+            return await _promotionalCodeService.CreatePromotionalCode(dto);
+        }
+        
+        /// <summary>
+        /// Dùng để check trước nếu code sử cho appointment được không
+        /// </summary>
+        [Authorize(Policy = GlobalVariables.CustomerRole)]
+        [HttpPost("validate_promotional_code")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> ValidatePromotionalCode([FromBody]ValidateCodeForAppointmentDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as ValidateCodeForAppointmentDTO;
+            
+            //Validate form
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            
+            return await _promotionalCodeService.ValidateCodeForAppointment(dto);
         }
         
         /// <summary>

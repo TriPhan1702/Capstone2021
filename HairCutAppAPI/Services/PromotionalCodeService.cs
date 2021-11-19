@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.PromotionalCodeDTOs;
 using HairCutAppAPI.Entities;
@@ -9,6 +10,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services
@@ -16,10 +18,12 @@ namespace HairCutAppAPI.Services
     public class PromotionalCodeService : IPromotionalCodeService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public PromotionalCodeService(IRepositoryWrapper repositoryWrapper)
+        public PromotionalCodeService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor)
         {
             _repositoryWrapper = repositoryWrapper;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CreatePromotionalCode(
@@ -152,5 +156,92 @@ namespace HairCutAppAPI.Services
             
             return new CustomHttpCodeResponse(200, "", code.ToUpdatePromotionalCodeResponseDTO());
         }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> ValidateCodeForAppointment(ValidateCodeForAppointmentDTO dto)
+        {
+            var currentUserId = GetCurrentUserId();
+            var customer = await GetCustomer(currentUserId);
+            
+            //Tìm code trong database
+            var promotionalCode = await GetPromotionalCode(dto.Code);
+
+            //Check status code, nếu đang ko active thì ko đc
+            if (promotionalCode.Status != GlobalVariables.ActivePromotionalCodeStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
+            }
+
+            //Nếu code này không để dùng chung trong tất cả Salon
+            //Check xem salon hợp lệ ko
+            if (!promotionalCode.IsUniversal && !await _repositoryWrapper.SalonsCodes.AnyAsync(code => code.SalonId == dto.SalonId))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
+            }
+
+            //Nếu có set số lần dùng
+            if (promotionalCode.UsesPerCustomer > 0)
+            {
+                var customerCode =
+                    await _repositoryWrapper.CustomersCodes.FindSingleByConditionAsync(code =>
+                        code.CustomerId == customer.Id);
+                //Nếu Customer đã có cùng code và số lần dùng lớn hơn bằng giới hạn
+                if (customerCode != null && customerCode.TimesUsed >= promotionalCode.UsesPerCustomer)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
+                }
+            }
+            
+            return new CustomHttpCodeResponse(200,"Code có thể sủ dụng được", true);
+        }
+
+        #region private functions
+
+        private int GetCurrentUserId()
+        {
+            int customerId;
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
+            }
+
+            try
+            {
+                //Get Current customer Id
+                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Current User Id not Found");
+            }
+
+            return customerId;
+        }
+
+        private async Task<Customer> GetCustomer(int userId)
+        {
+            var customer =
+                await _repositoryWrapper.Customer.FindSingleByConditionAsync(cus => cus.UserId == userId);
+            if (customer is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy Customer với User Id {userId}");
+            }
+
+            return customer;
+        }
+
+        private async Task<PromotionalCode> GetPromotionalCode(string code)
+        {
+            var promotionalCode =
+                await _repositoryWrapper.PromotionalCode.FindSingleByConditionAsync(proCode =>
+                    proCode.Code.ToLower() == code.ToLower());
+            if (promotionalCode is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy Promotional Code {code}");
+            }
+
+            return promotionalCode;
+        }
+        
+        #endregion private functions
     }
 }
