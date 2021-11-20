@@ -64,7 +64,6 @@ namespace HairCutAppAPI.DTOs.StaffDTOs
                 Description = Description,
                 FullName = FullName,
                 StaffType = staffType,
-                HasAutoSchedule = false,
             };
 
             if (salonId >= 0)

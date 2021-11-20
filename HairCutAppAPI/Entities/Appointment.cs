@@ -28,10 +28,12 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("Combo")]
         public int ComboId { get; set; }
         public virtual Combo Combo { get; set; }
-
-        [ForeignKey("Rating")]
-        public int? RatingId { get; set; }
-        public virtual AppointmentRating Rating { get; set; }
+        
+        [ForeignKey("PromotionalCode")]
+        public int? PromotionalCodeId { get; set; }
+        public virtual PromotionalCode PromotionalCode { get; set; }
+        
+        public virtual ICollection<AppointmentRating> AppointmentRatings { get; set; }
         public virtual ICollection<AppointmentDetail> AppointmentDetails { get; set; }
         
         public virtual ICollection<Notification> Notifications { get; set; }
@@ -58,9 +60,6 @@ namespace HairCutAppAPI.Entities
         [MaxLength(20)]
         public string PaymentType { get; set; }
         
-        [MinLength(3), MaxLength(255)]
-        public string PromotionalCode { get; set; }
-        
         [Required]
         public decimal PaidAmount { get; set; }
         
@@ -75,7 +74,8 @@ namespace HairCutAppAPI.Entities
                 Price = price,
                 Status = Status,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DayFormat),
-                PromotionalCode = PromotionalCode,
+                //TODO Fix this
+                // PromotionalCode = PromotionalCode,
                 ComboId = ComboId,
                 CustomerId = CustomerId,
                 CustomerName = Customer.FullName,
@@ -97,12 +97,11 @@ namespace HairCutAppAPI.Entities
             };
         }
 
-        public GetAppointmentDetailResponseDTO ToGetAppointmentDetailResponseDTO()
+        public GetAppointmentDetailResponseDTO ToGetAppointmentDetailResponseDTO(AppointmentRating rating = null)
         {
             var result = new GetAppointmentDetailResponseDTO();
             result.Id = Id;
             result.Note = Note;
-            result.Rating = RatingId;
             result.Status = Status;
             result.CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat);
             result.LastUpdated = LastUpdated.ToString(GlobalVariables.DateTimeFormat);
@@ -114,9 +113,11 @@ namespace HairCutAppAPI.Entities
             result.EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat);
             result.ImageUrl = ImageUrl;
             result.PaymentType = PaymentType;
-            result.PromotionalCode = PromotionalCode;
-            result.RatingId = RatingId;
-            result.RatingComment = Rating?.RatingComment;
+            //TODO Fix This
+            //result.PromotionalCode = PromotionalCode;
+            result.RatingId = rating?.Id;
+            result.Rating = rating?.Rating;
+            result.RatingComment = rating?.RatingComment;
             result.ComboId = ComboId;
             result.ComboName = Combo?.Name;
             result.ComboDescription = Combo?.Description;

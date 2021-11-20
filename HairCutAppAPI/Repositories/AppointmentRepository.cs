@@ -39,7 +39,7 @@ namespace HairCutAppAPI.Repositories
         public async Task<Appointment> GetAllAppointmentDetail(int appointmentId)
         {
             return await _hdbContext.Appointments.Include(appointment => appointment.Customer)
-                .Include(appointment => appointment.Rating)
+                .Include(appointment => appointment.AppointmentRatings)
                 .Include(appointment => appointment.Salon)
                 .Include(appointment => appointment.AppointmentDetails)
                 .ThenInclude(detail => detail.Staff)
@@ -51,7 +51,7 @@ namespace HairCutAppAPI.Repositories
         {
             return await _hdbContext.Appointments.Include(appointment => appointment.Customer)
                 .ThenInclude(customer => customer.User)
-                .Include(appointment => appointment.Rating)
+                .Include(appointment => appointment.AppointmentRatings)
                 .Include(appointment => appointment.Salon)
                 .Include(appointment => appointment.Combo)
                 .Include(appointment => appointment.ChosenStaff)
