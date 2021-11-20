@@ -37,6 +37,7 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public ICollection<GetAppointmentDetailResponseDetailDTO> AppointmentDetails { get; set; }
 
         public decimal TotalPrice { get; set; }
+        public decimal ComboPrice { get; set; }
         public decimal PaidAmount { get; set; }
     }
 

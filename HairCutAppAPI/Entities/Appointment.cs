@@ -57,8 +57,12 @@ namespace HairCutAppAPI.Entities
         [Required]
         public DateTime LastUpdated { get; set; }
         
+        [Required]
         [MaxLength(20)]
         public string PaymentType { get; set; }
+        
+        [Required]
+        public decimal ComboPrice { get; set; }
         
         [Required]
         public decimal PaidAmount { get; set; }
@@ -66,7 +70,7 @@ namespace HairCutAppAPI.Entities
         [Url]
         public string ImageUrl { get; set; }
 
-        public CreateAppointmentResponseDTO ToCreateAppointmentResponseDTO(decimal price, int? stylistId = null, string stylistName = null)
+        public CreateAppointmentResponseDTO ToCreateAppointmentResponseDTO(decimal comboPrice, decimal price, int? stylistId = null, string stylistName = null)
         {
             return new CreateAppointmentResponseDTO()
             {
@@ -121,6 +125,7 @@ namespace HairCutAppAPI.Entities
             result.ComboId = ComboId;
             result.ComboName = Combo?.Name;
             result.ComboDescription = Combo?.Description;
+            result.ComboPrice = ComboPrice;
             result.ChosenStylist = new GetAppointmentDetailResponseChosenStylistDTO()
             {
                 StaffId = ChosenStaff?.Id,
@@ -168,6 +173,8 @@ namespace HairCutAppAPI.Entities
                 ComboId = ComboId,
                 ComboName = Combo.Name,
                 TotalPrice = Combo.Price,
+                ComboPrice = ComboPrice,
+                PaymentType = PaymentType
             };
             return result;
         }

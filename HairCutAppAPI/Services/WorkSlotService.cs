@@ -159,8 +159,15 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
         {
+            //Check status is a valid status
+            if (!GlobalVariables.WorkSlotStatuses.Contains(updateWorkSlotDTO.Status.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                    "Work SLot Status invalid, must be: available, not available");
+            }
+            
             //Get Work slot from Id
-            var workSlot = await _repositoryWrapper.WorkSlot.FindSingleByConditionAsync(ws => ws.Id == updateWorkSlotDTO.Id);
+            var workSlot = await _repositoryWrapper.WorkSlot.FindSingleByConditionWithIncludeAsync(ws => ws.Id == updateWorkSlotDTO.Id, slot => slot.SlotOfDay);
             //Check if work slot exists
             if (workSlot == null)
             {
@@ -185,13 +192,6 @@ namespace HairCutAppAPI.Services
             }
             
             CheckDate(workSlot.Date);
-
-            //Check status is a valid status
-            if (!GlobalVariables.WorkSlotStatuses.Contains(updateWorkSlotDTO.Status.ToLower()))
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    "Work SLot Status invalid, must be: available, not available");
-            }
 
             workSlot.Status = updateWorkSlotDTO.Status.ToLower();
             return new CustomHttpCodeResponse(200,"", (await _repositoryWrapper.WorkSlot.UpdateAsync(workSlot, workSlot.Id)).ToUpdateWorkSlotDTO());
@@ -266,27 +266,12 @@ namespace HairCutAppAPI.Services
         /// </summary>
         private void CheckDate(DateTime date)
         {
-            var cultureInfo = new CultureInfo("vi_VN");
-            var calendar = cultureInfo.Calendar;
-
             //Get Now time
-            var now = DateTime.Today;
+            var now = DateTime.Now;
             
-            //Get the Week of now
-            var nowWeekOfYear = calendar.GetWeekOfYear(now, cultureInfo.DateTimeFormat.CalendarWeekRule,
-                cultureInfo.DateTimeFormat.FirstDayOfWeek);
-            //Get the Week of inputted date
-            var dateWeekOfYear = calendar.GetWeekOfYear(date, cultureInfo.DateTimeFormat.CalendarWeekRule,
-                cultureInfo.DateTimeFormat.FirstDayOfWeek);
-            
-            //If Date is before or is current date or more than 2 weeks in the future
-            if (date.DayOfYear <= now.DayOfYear)
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Date is before current date"); 
-            
-            if (DateTime.Compare(date, now) <= 0)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, @"Date is too far in the future(More than 2 weeks)"); 
-            }
+            //If Date is before or is current date
+            if (now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) >= date)
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Chỉ có thể update Work Slot đang cách hiện tại hơn {GlobalVariables.TimeToCreateAppointmentInAdvanced} phút");
         }
 
         private async Task CheckWorkSlot(int id)

@@ -49,6 +49,12 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment(
             CreateAppointmentDTO createAppointmentDTO)
         {
+            //Check Payment Type có đúng ko
+            if (GlobalVariables.PaymentTypes.Contains(createAppointmentDTO.PaymentType.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"PaymentType phải là: " + string.Join(", ", GlobalVariables.PaymentTypes));
+            }
+            
             //Get Current User's Id
             var customerId = GetCurrentUserId();
 
@@ -187,7 +193,9 @@ namespace HairCutAppAPI.Services
                 PaidAmount = 0,
                 ChosenStaffId = chosenStylist.Id,
                 AppointmentDetails = new List<AppointmentDetail>(),
-                WorkSlots = chosenWorkSlots
+                WorkSlots = chosenWorkSlots,
+                ComboPrice = combo.Price,
+                PaymentType = createAppointmentDTO.PaymentType.ToLower()
             };
             foreach (var comboDetail in combo.ComboDetails)
             {
@@ -250,7 +258,7 @@ namespace HairCutAppAPI.Services
             await SendAppointmentCreatedNotifications(createdAppointment, GetCurrentUserId(), chosenStylist?.UserId);
 
             return new CustomHttpCodeResponse(200, "Appointment Created",
-                createdAppointment.ToCreateAppointmentResponseDTO(price, chosenStylist?.Id, chosenStylist?.FullName));
+                createdAppointment.ToCreateAppointmentResponseDTO(combo.Price, price, chosenStylist?.Id, chosenStylist?.FullName));
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CancelAppointment(int appointmentId)
@@ -457,6 +465,7 @@ namespace HairCutAppAPI.Services
             var appointmentDetails = appointment.AppointmentDetails
                 .Where(detail => servicesNotDoneByChosenStylistIds.Contains(detail.ServiceId)).ToList();
 
+            //Nếu appoint có các service ko làm bởi stylist chính, nếu ko approve luôn
             if (appointmentDetails.Any())
             {
                 var hasChanged = false;
@@ -543,7 +552,6 @@ namespace HairCutAppAPI.Services
             appointment.LastUpdated = DateTime.Now;
             appointment.Status = GlobalVariables.ApprovedAppointmentStatus;
             await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
-
 
             try
             {

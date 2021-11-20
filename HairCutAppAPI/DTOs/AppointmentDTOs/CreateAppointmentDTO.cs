@@ -19,5 +19,8 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public int ComboId { get; set; }
         
         public int StylistStaffId { get; set; } 
+        
+        [Required]
+        public string PaymentType { get; set; }
     }
 }

@@ -14,6 +14,9 @@
         public string LastUpdated { get; set; }
         public int ComboId { get; set; }
         public string ComboName { get; set; }
+        public string PaymentType { get; set; }
+        
+        public decimal ComboPrice { get; set; }
         public decimal TotalPrice { get; set; }
     }
 }

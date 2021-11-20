@@ -27,6 +27,8 @@
         
         public string PromotionalCode { get; set; }
         
+        public decimal ComboPrice { get; set; }
+        
         public decimal Price { get; set; }
     }
 }
