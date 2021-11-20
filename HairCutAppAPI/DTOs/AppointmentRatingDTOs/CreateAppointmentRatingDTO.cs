@@ -18,7 +18,8 @@ namespace HairCutAppAPI.DTOs.AppointmentRatingDTOs
             return new AppointmentRating()
             {
                 Rating = Rating,
-                RatingComment = RatingComment
+                RatingComment = RatingComment,
+                AppointmentId = AppointmentId
             };
         }
     }
