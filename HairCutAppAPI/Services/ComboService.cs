@@ -41,7 +41,6 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"", combo.ToComboDetailDTO());
         }
         
-        //TODO: Fix This
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO)
         {
             //If Status is not null of empty

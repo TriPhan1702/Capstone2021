@@ -208,7 +208,8 @@ namespace HairCutAppAPI.Services
                 var slotsOfDayOfDetailIds =
                     chosenSlotsOfDayIds.GetRange(startSlotsOfDayOfDetailIndex, comboDetail.Service.Duration);
                 newAppointmentDetail.WorkSlots = chosenWorkSlots
-                    .Where(slot => slotsOfDayOfDetailIds.Contains(slot.SlotOfDayId)).OrderBy(slot => slot.SlotOfDayId).ToList();
+                    .Where(slot => slotsOfDayOfDetailIds.Contains(slot.SlotOfDayId)).OrderBy(slot => slot.SlotOfDayId)
+                    .ToList();
                 //Map giờ bắt đầu và giờ kết thúc của service
                 newAppointmentDetail.StartTime =
                     chosenDate.Add(newAppointmentDetail.WorkSlots.First().SlotOfDay.StartTime);
@@ -432,10 +433,6 @@ namespace HairCutAppAPI.Services
                     "Tài khoản không phải là manager của Salon của Appointment");
             }
 
-            //Tìm list Id của các staff của appointment
-            //Nếu appointment mới tạo, count = 1
-            var staffIdsFromAppointmentDetail =
-                appointment.AppointmentDetails.Select(detail => detail.StaffId).ToList();
             //Tìm list Id của các staff từ dto
             var staffIdsFromDTO = dto.StaffDetailDTOs.Select(detail => detail.StaffId).ToList();
 
@@ -450,7 +447,8 @@ namespace HairCutAppAPI.Services
 
             //Tìm các slot of day appointment đi qua
             var slotsOfDay = (await _repositoryWrapper.SlotOfDay.FindByConditionAsync(slot =>
-                slot.StartTime >= appointment.StartDate.TimeOfDay && slot.EndTime <= appointment.EndDate.TimeOfDay)).ToList();
+                    slot.StartTime >= appointment.StartDate.TimeOfDay && slot.EndTime <= appointment.EndDate.TimeOfDay))
+                .ToList();
 
             var servicesNotDoneByChosenStylistIds =
                 appointment.AppointmentDetails.Where(detail => !detail.IsDoneByStylist)
@@ -458,83 +456,88 @@ namespace HairCutAppAPI.Services
             //Tìm list các service không phải do stylist đã chọn làm
             var appointmentDetails = appointment.AppointmentDetails
                 .Where(detail => servicesNotDoneByChosenStylistIds.Contains(detail.ServiceId)).ToList();
-            //Tìm list các service trong dto không phải do stylist đã chọn làm
-            var appointmentDetailsFromDTO = dto.StaffDetailDTOs
-                .Where(detail => servicesNotDoneByChosenStylistIds.Contains(detail.ServiceId)).ToList();
 
-            var hasChanged = false;
-            foreach (var detail in appointmentDetails)
+            if (appointmentDetails.Any())
             {
-                //Find dto with the same Service Id as detail
-                var dtoDetail =
-                    dto.StaffDetailDTOs.FirstOrDefault(detailDTO => detailDTO.ServiceId == detail.ServiceId);
+                var hasChanged = false;
+                foreach (var detail in appointmentDetails)
+                {
+                    //Find dto with the same Service Id as detail
+                    var dtoDetail =
+                        dto.StaffDetailDTOs.FirstOrDefault(detailDTO => detailDTO.ServiceId == detail.ServiceId);
 
-                if (dtoDetail is null)
+                    if (dtoDetail is null)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                            $"Request có thiếu service với Id {detail.ServiceId}");
+                    }
+
+                    //Nếu staff có thay đổi
+                    if (detail.StaffId != dtoDetail.StaffId)
+                    {
+                        hasChanged = true;
+                        if (detail.StaffId != null)
+                        {
+                            var oldWorkSlots = (await
+                                _repositoryWrapper.WorkSlot.FindByConditionAsyncWithInclude(
+                                    slot => slot.AppointmentDetailId == detail.Id && slot.StaffId == detail.StaffId,
+                                    slot => slot.SlotOfDay)).ToList();
+                            //Deleted Old Work slot of old staff
+                            foreach (var slot in oldWorkSlots)
+                            {
+                                slot.Status =
+                                    DateTime.Now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) >=
+                                    slot.Date.Add(slot.SlotOfDay.StartTime)
+                                        ? GlobalVariables.NotAvailableWorkSlotStatus
+                                        : GlobalVariables.AvailableWorkSlotStatus;
+                                slot.AppointmentId = null;
+                                slot.AppointmentDetailId = null;
+
+                                await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
+                            }
+                        }
+
+                        //Nếu staff mới không phải là chosen staff
+                        if (dtoDetail.StaffId != appointment.ChosenStaffId)
+                        {
+                            //Tìm các slot sẽ add, xếp theo thứ tự tăng Slot Of Day ID
+                            var newWorkSlot =
+                                (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                                    slot.StaffId == dtoDetail.StaffId &&
+                                    slot.Date.DayOfYear == detail.StartTime.DayOfYear &&
+                                    slot.Status == GlobalVariables.AvailableWorkSlotStatus &&
+                                    slot.SlotOfDay.StartTime >= detail.StartTime.TimeOfDay &&
+                                    slot.SlotOfDay.EndTime <= detail.EndTime.TimeOfDay))
+                                .OrderBy(slot => slot.SlotOfDayId).ToList();
+
+                            if (slotsOfDay.Count(slot =>
+                                slot.StartTime >= detail.StartTime.TimeOfDay &&
+                                slot.EndTime <= detail.EndTime.TimeOfDay) != newWorkSlot.Count)
+                            {
+                                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                                    $"Staff với Id {dtoDetail.StaffId} không available từ {detail.StartTime.ToString(GlobalVariables.DateTimeFormat)} đến {detail.EndTime.ToString(GlobalVariables.DateTimeFormat)}");
+                            }
+
+                            foreach (var slot in newWorkSlot)
+                            {
+                                slot.Status = GlobalVariables.TakenWorkSlotStatus;
+                                slot.AppointmentId = appointment.Id;
+                                slot.AppointmentDetailId = detail.Id;
+                                await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
+                            }
+                        }
+
+                        //Replace the old staff Id with new one
+                        detail.StaffId = dtoDetail.StaffId;
+                    }
+                }
+
+                //If there's no changes, abort
+                if (!hasChanged)
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                        $"Request có thiếu service với Id {detail.ServiceId}");
+                        "No changes can be made from the provided information");
                 }
-
-                //Nếu staff có thay đổi
-                if (detail.StaffId != dtoDetail.StaffId)
-                {
-                    hasChanged = true;
-                    if (detail.StaffId != null)
-                    {
-                        var oldWorkSlots = (await
-                            _repositoryWrapper.WorkSlot.FindByConditionAsyncWithInclude(
-                                slot => slot.AppointmentDetailId == detail.Id && slot.StaffId == detail.StaffId, slot => slot.SlotOfDay)).ToList();
-                        //Deleted Old Work slot of old staff
-                        foreach (var slot in oldWorkSlots)
-                        {
-                            slot.Status =
-                                DateTime.Now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) >=
-                                slot.Date.Add(slot.SlotOfDay.StartTime)
-                                    ? GlobalVariables.NotAvailableWorkSlotStatus
-                                    : GlobalVariables.AvailableWorkSlotStatus;
-                            slot.AppointmentId = null;
-                            slot.AppointmentDetailId = null;
-
-                            await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
-                        }
-                    }
-
-                    //Nếu staff mới không phải là chosen staff
-                    if (dtoDetail.StaffId != appointment.ChosenStaffId)
-                    {
-                        //Tìm các slot sẽ add, xếp theo thứ tự tăng Slot Of Day ID
-                        var newWorkSlot =
-                            (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
-                                slot.StaffId == dtoDetail.StaffId &&
-                                slot.Date.DayOfYear == detail.StartTime.DayOfYear &&
-                                slot.Status == GlobalVariables.AvailableWorkSlotStatus &&
-                                slot.SlotOfDay.StartTime >= detail.StartTime.TimeOfDay &&
-                                slot.SlotOfDay.EndTime <= detail.EndTime.TimeOfDay)).OrderBy(slot => slot.SlotOfDayId).ToList();
-
-                        if (slotsOfDay.Count(slot => slot.StartTime >= detail.StartTime.TimeOfDay && slot.EndTime <= detail.EndTime.TimeOfDay) != newWorkSlot.Count)
-                        {
-                            throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Staff với Id {dtoDetail.StaffId} không available từ {detail.StartTime.ToString(GlobalVariables.DateTimeFormat)} đến {detail.EndTime.ToString(GlobalVariables.DateTimeFormat)}");
-                        }
-
-                        foreach (var slot in newWorkSlot)
-                        {
-                            slot.Status = GlobalVariables.TakenWorkSlotStatus;
-                            slot.AppointmentId = appointment.Id;
-                            slot.AppointmentDetailId = detail.Id;
-                            await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
-                        }
-                    }
-
-                    //Replace the old staff Id with new one
-                    detail.StaffId = dtoDetail.StaffId;
-                }
-            }
-
-            //If there's no changes, abort
-            if (!hasChanged)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    "No changes can be made from the provided information");
             }
 
             appointment.LastUpdated = DateTime.Now;
