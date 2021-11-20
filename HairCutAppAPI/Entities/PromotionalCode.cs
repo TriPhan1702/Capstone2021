@@ -34,6 +34,8 @@ namespace HairCutAppAPI.Entities
         //Many-Many
         public virtual ICollection<CustomersCodes> CustomersCodes { get; set; }
         
+        public virtual ICollection<Appointment> Appointments { get; set; }
+        
         //Many-Many
         public virtual ICollection<SalonsCodes> SalonsCodes { get; set; }
 

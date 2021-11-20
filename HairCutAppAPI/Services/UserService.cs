@@ -68,6 +68,19 @@ namespace HairCutAppAPI.Services
         
             // from Dto to AppUser
             var newUser = createUserDTO.ToNewUser(role);
+            
+            //If there's image
+            if (createUserDTO.AvatarFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(createUserDTO.AvatarFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+                }
+
+                newUser.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
         
             //Save New User to Database
             var result = await _repositoryWrapper.User.CreateAsync(newUser);
