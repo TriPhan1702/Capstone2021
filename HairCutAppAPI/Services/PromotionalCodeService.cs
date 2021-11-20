@@ -171,6 +171,12 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
             }
 
+            var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(com => com.Id == dto.SalonId);
+            if (combo is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy Combo với Id {dto.ComboId}");
+            }
+
             //Nếu code này không để dùng chung trong tất cả Salon
             //Check xem salon hợp lệ ko
             if (!promotionalCode.IsUniversal && !await _repositoryWrapper.SalonsCodes.AnyAsync(code => code.SalonId == dto.SalonId))
@@ -190,8 +196,13 @@ namespace HairCutAppAPI.Services
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
                 }
             }
-            
-            return new CustomHttpCodeResponse(200,"Code có thể sủ dụng được", true);
+
+            var payingPrice = decimal.Floor(combo.Price - (combo.Price / 100 * promotionalCode.Percentage));
+
+            return new CustomHttpCodeResponse(200,"Code có thể sủ dụng được", new ValidateCodeForAppointmentResponseDTO()
+            {
+                PayingPrice = RoundingTo(payingPrice,500)
+            });
         }
 
         #region private functions
@@ -240,6 +251,13 @@ namespace HairCutAppAPI.Services
             }
 
             return promotionalCode;
+        }
+        
+        private decimal RoundingTo(decimal myNum, int roundTo)
+        {
+            myNum = decimal.Floor(myNum);
+            if (roundTo <= 0) return myNum;
+            return (myNum + roundTo / 2) / roundTo * roundTo;
         }
         
         #endregion private functions

@@ -8,5 +8,8 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
         public string Code { get; set; }
         [Required]
         public int SalonId { get; set; }
+        
+        [Required]
+        public int ComboId { get; set; }
     }
 }
