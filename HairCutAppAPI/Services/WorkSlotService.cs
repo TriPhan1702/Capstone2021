@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.WorkSlotDTOs;
 using HairCutAppAPI.Entities;
@@ -11,6 +12,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services
@@ -18,10 +20,12 @@ namespace HairCutAppAPI.Services
     public class WorkSlotService : IWorkSlotService
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public WorkSlotService(IRepositoryWrapper repositoryWrapper)
+        public WorkSlotService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor)
         {
             _repositoryWrapper = repositoryWrapper;
+            _httpContextAccessor = httpContextAccessor;
         }
         
         /// <summary>
@@ -63,6 +67,32 @@ namespace HairCutAppAPI.Services
                 CultureInfo.InvariantCulture);
             var slots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>
                 ws.StaffId == findWorkSlotsOfDayDTO.StaffId && ws.Date.DayOfYear == date.DayOfYear);
+            if (slots is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "WorkSlots not found");
+            }
+
+            return new CustomHttpCodeResponse(200,"",slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList());
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindOwnWorkSlotsOfDay(FindOwnWorkSlotsOfDayDTO dto)
+        {
+            //Tìm staff
+            var currentUserId = GetCurrentUserId();
+            var staff = _repositoryWrapper.Staff.FindSingleByConditionAsync(sta =>
+                //Có User Id giống
+                sta.UserId == currentUserId && 
+                //Không phải là manager
+                sta.StaffType != GlobalVariables.ManagerRole);
+            if (staff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy staff với User Id {currentUserId}");
+            }
+            
+            var date = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat,
+                CultureInfo.InvariantCulture);
+            var slots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>
+                ws.StaffId == staff.Id && ws.Date.DayOfYear == date.DayOfYear);
             if (slots is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "WorkSlots not found");
@@ -261,6 +291,28 @@ namespace HairCutAppAPI.Services
         }
 
         #region private functions
+        
+        private int GetCurrentUserId()
+        {
+            int customerId;
+            if (_httpContextAccessor.HttpContext == null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"No current user is active");
+            }
+
+            try
+            {
+                //Get Current customer Id
+                customerId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
+            catch (ArgumentNullException e)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Current User Id not Found");
+            }
+
+            return customerId;
+        }
+        
         /// <summary>
         /// Check if inputted date is valid, can be a day before and can be more than 2 weeks in the future
         /// </summary>

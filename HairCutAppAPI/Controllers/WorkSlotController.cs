@@ -79,6 +79,24 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Tìm các Work SLot trong một ngày của User Hiện Tại
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("own_work_slot_of_day")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindOwnWorkSlotsOfDay([FromBody]FindOwnWorkSlotsOfDayDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as FindOwnWorkSlotsOfDayDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.FindOwnWorkSlotsOfDay(dto);
+        }
+        
+        /// <summary>
         /// Find All WorkSlots in a span of days of a staff, if end date is before start date then the dates will be swapped
         /// </summary>
         [Authorize]
