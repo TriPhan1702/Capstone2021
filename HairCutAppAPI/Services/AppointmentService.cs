@@ -596,11 +596,24 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment(FinishAppointmentDTO dto)
         {
+            var currentUserId = GetCurrentUserId();
+            var staff = _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.UserId == currentUserId);
+            if (staff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Không tìm thấy staff vựa trên người dùng hiện tại");
+            }
+            
             //Get appointment from database
             var appointment = await _repositoryWrapper.Appointment.FindSingleByConditionAsync(app => app.Id == dto.Id);
             if (appointment is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Appointment with Id {dto.Id} not found");
+            }
+
+            //Nếu người hiện tại không phải là stylist chính của Appointment
+            if (staff.Id != appointment.ChosenStaffId)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Người dùng hiện tại không phải là Stylist Chính của Appointment");
             }
 
             //Check if appointment is ongoing, if not, abort
