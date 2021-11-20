@@ -131,7 +131,7 @@ namespace HairCutAppAPI.Entities
             };
             result.AppointmentDetails = AppointmentDetails.Select(detail => new GetAppointmentDetailResponseDetailDTO()
             {
-                AppointmentDetailId = detail.AppointmentId,
+                AppointmentDetailId = detail.Id,
                 ServiceId = detail.ServiceId,
                 ServiceDescription = detail.Service.Description,
                 ServiceName = detail.Service?.Name,
