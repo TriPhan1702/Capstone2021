@@ -118,7 +118,8 @@ namespace HairCutAppAPI.Services
                     }
                 }
 
-                payingPrice = decimal.Floor(combo.Price - (combo.Price / 100 * promotionalCode.Percentage));
+                //Round tới 500 VND
+                payingPrice = RoundingTo(decimal.Floor(combo.Price - (combo.Price / 100 * promotionalCode.Percentage)), 500);
             }
 
             //Check if this customer already have an active appointment
