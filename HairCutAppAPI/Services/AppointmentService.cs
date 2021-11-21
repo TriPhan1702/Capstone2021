@@ -80,13 +80,17 @@ namespace HairCutAppAPI.Services
                     $"Khồng tìm thấy Combo với Id {createAppointmentDTO.ComboId}");
             }
 
+            //Đặt trước số tiền sẽ trả sẽ bằng giá combo
+            //Nếu có Promotional Code, số này sẽ giảm
             var payingPrice = combo.Price;
+            int? promotionalCodeId = null;
 
             //Nếu có promotional Code, check code
             if (string.IsNullOrWhiteSpace(createAppointmentDTO.PromotionalCode))
             {
                 //Tìm code trong database
                 var promotionalCode = await GetPromotionalCode(createAppointmentDTO.PromotionalCode);
+                promotionalCodeId = promotionalCode.Id;
 
                 //Check status code, nếu đang ko active thì ko đc
                 if (promotionalCode.Status != GlobalVariables.ActivePromotionalCodeStatus)
@@ -231,6 +235,7 @@ namespace HairCutAppAPI.Services
                 WorkSlots = chosenWorkSlots,
                 ComboPrice = combo.Price,
                 PaymentType = createAppointmentDTO.PaymentType.ToLower(),
+                PromotionalCodeId = promotionalCodeId,
             };
             foreach (var comboDetail in combo.ComboDetails)
             {
@@ -393,7 +398,7 @@ namespace HairCutAppAPI.Services
             var currentUserId = GetCurrentUserId();
 
             var appointment =
-                await _repositoryWrapper.Appointment.GetOneAppointmentWithCustomerAndSalonAndComboAndRating(
+                await _repositoryWrapper.Appointment.GetOneAppointmentWithCustomerAndSalonAndComboAndRatingAndCode(
                     appointmentId);
             if (appointment is null)
             {

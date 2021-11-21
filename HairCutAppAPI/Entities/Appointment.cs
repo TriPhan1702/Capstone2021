@@ -117,8 +117,7 @@ namespace HairCutAppAPI.Entities
             result.EndDate = EndDate.ToString(GlobalVariables.DateTimeFormat);
             result.ImageUrl = ImageUrl;
             result.PaymentType = PaymentType;
-            //TODO Fix This
-            //result.PromotionalCode = PromotionalCode;
+            result.PromotionalCode = PromotionalCode?.Code;
             result.RatingId = rating?.Id;
             result.Rating = rating?.Rating;
             result.RatingComment = rating?.RatingComment;
