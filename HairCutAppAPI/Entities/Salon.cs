@@ -43,9 +43,9 @@ namespace HairCutAppAPI.Entities
         //Many-Many
         public virtual ICollection<SalonsCodes> SalonsCodes { get; set; }
         
-        public CustomerGetSalonListDTO ToCustomerGetSalonListDTO()
+        public CustomerGetSalonListResponseDTO ToCustomerGetSalonListDTO(double? longitude = null, double? latitude = null)
         {
-            return new CustomerGetSalonListDTO()
+            var result = new CustomerGetSalonListResponseDTO()
             {
                 Id = Id,
                 Description = Description,
@@ -53,8 +53,16 @@ namespace HairCutAppAPI.Entities
                 Latitude = Latitude?.ToString(),
                 Longitude = Longitude?.ToString(),
                 AvatarUrl = AvatarUrl,
-                Address = Address
+                Address = Address,
+                Distance = null
             };
+
+            if (longitude != null && latitude != null && Latitude != null && Longitude != null)
+            {
+                result.Distance = GetDistanceFromLatLonInKm(latitude.Value, longitude.Value, Latitude.Value, Longitude.Value);
+            }
+
+            return result;
         } 
         
         public CreateSalonResponseDTO ToCreateSalonResponseDTO()
@@ -127,6 +135,26 @@ namespace HairCutAppAPI.Entities
                 Longitude = Longitude,
                 AvatarUrl = AvatarUrl
             };
+        }
+        
+        private double GetDistanceFromLatLonInKm(double lat1,
+            double lon1,
+            double lat2,
+            double lon2) {
+            var R = 6371d; // Radius of the earth in km
+            var dLat = Deg2Rad(lat2 - lat1);  // deg2rad below
+            var dLon = Deg2Rad(lon2 - lon1); 
+            var a = 
+                Math.Sin(dLat / 2d) * Math.Sin(dLat / 2d) +
+                Math.Cos(Deg2Rad(lat1)) * Math.Cos(Deg2Rad(lat2)) * 
+                Math.Sin(dLon / 2d) * Math.Sin(dLon / 2d); 
+            var c = 2d * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1d - a)); 
+            var d = R * c; // Distance in km
+            return d;
+        }
+
+        private double Deg2Rad(double deg) {
+            return deg * (Math.PI / 180d);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList()
         {
-            var salons = await _repositoryWrapper.Salon.FindByConditionAsync(s=>s.Status == GlobalVariables.SalonStatuses[0]);
+            var salons = await _repositoryWrapper.Salon.FindByConditionAsync(s=>s.Status == GlobalVariables.ActiveSalonStatus);
             return  new CustomHttpCodeResponse(200, "",salons?.Select(salon => salon.ToCustomerGetSalonListDTO()).ToList());
         }
 
