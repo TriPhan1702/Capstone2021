@@ -25,9 +25,12 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpGet("active_salons")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList()
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList(CustomerGetSalonListDTO dto)
         {
-            return await _salonService.CustomerGetSalonList();
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as CustomerGetSalonListDTO;
+            
+            return await _salonService.CustomerGetSalonList(dto);
         }
         
         /// <summary>

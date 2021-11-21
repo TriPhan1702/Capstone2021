@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.Errors;
 using Microsoft.AspNetCore.Http;
 
 namespace HairCutAppAPI.DTOs.SalonDTOs
@@ -39,8 +41,15 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
 
             if (!string.IsNullOrWhiteSpace(Longitude) && !string.IsNullOrWhiteSpace(Latitude))
             {
-                result.Longitude = double.Parse(Longitude);
-                result.Latitude = double.Parse(Latitude);
+                try
+                {
+                    result.Longitude = double.Parse(Longitude);
+                    result.Latitude = double.Parse(Latitude);
+                }
+                catch (FormatException)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Format của tọa độ là không đúng");
+                }
             }
 
             return result;
