@@ -56,19 +56,71 @@ namespace HairCutAppAPI.Services
             }
             
             //Get Current User's Id
-            var customerId = GetCurrentUserId();
+            var currentUserId = GetCurrentUserId();
 
-            //Check if Customer exists, check role
-            if (!await CheckUserOfRoleExists(customerId, GlobalVariables.CustomerRole))
+            var customer = await GetCustomer(currentUserId);
+
+            var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(sal =>
+                sal.Id == createAppointmentDTO.SalonId);
+
+            //Check if Salon exists
+            if (salon is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    $"Không tìm thấy Customer với Id {customerId}");
+                    $"Không tìm thấy Salon với Id {createAppointmentDTO.SalonId}");
+            }
+            
+            //Get Combo (with list of ComboDetail and ServiceDetail to use for adding Appointment Detail later) from database
+            var combo =
+                await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(createAppointmentDTO.ComboId);
+            //Check if Combo exists
+            if (combo is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                    $"Khồng tìm thấy Combo với Id {createAppointmentDTO.ComboId}");
+            }
+
+            var payingPrice = combo.Price;
+
+            //Nếu có promotional Code, check code
+            if (string.IsNullOrWhiteSpace(createAppointmentDTO.PromotionalCode))
+            {
+                //Tìm code trong database
+                var promotionalCode = await GetPromotionalCode(createAppointmentDTO.PromotionalCode);
+
+                //Check status code, nếu đang ko active thì ko đc
+                if (promotionalCode.Status != GlobalVariables.ActivePromotionalCodeStatus)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
+                }
+                
+                //Nếu code này không để dùng chung trong tất cả Salon
+                //Check xem salon hợp lệ ko
+                if (!promotionalCode.IsUniversal && !await _repositoryWrapper.SalonsCodes.AnyAsync(code => code.SalonId == createAppointmentDTO.SalonId))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
+                }
+
+                //Nếu có set số lần dùng
+                if (promotionalCode.UsesPerCustomer > 0)
+                {
+                    var customerCode =
+                        await _repositoryWrapper.CustomersCodes.FindSingleByConditionAsync(code =>
+                            code.CustomerId == customer.Id);
+                    //Nếu Customer đã có cùng code và số lần dùng lớn hơn bằng giới hạn
+                    if (customerCode != null && customerCode.TimesUsed >= promotionalCode.UsesPerCustomer)
+                    {
+                        throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
+                    }
+                }
+
+                payingPrice = decimal.Floor(combo.Price - (combo.Price / 100 * promotionalCode.Percentage));
             }
 
             //Check if this customer already have an active appointment
             var existedAppointment =
                 await _repositoryWrapper.Appointment.FindByConditionAsync(a =>
-                    a.CustomerId == customerId && GlobalVariables.ActiveAppointmentStatuses.Contains(a.Status));
+                    a.CustomerId == currentUserId && GlobalVariables.ActiveAppointmentStatuses.Contains(a.Status));
             //If there's such an appointment, abort
             if (existedAppointment != null && existedAppointment.Any())
             {
@@ -81,16 +133,6 @@ namespace HairCutAppAPI.Services
                 CultureInfo.InvariantCulture);
             //Get Now Time
             var now = DateTime.Now;
-
-            //Get Combo (with list of ComboDetail and ServiceDetail to use for adding Appointment Detail later) from database
-            var combo =
-                await _repositoryWrapper.Combo.GetOneComboWithDetailsAndServiceDetails(createAppointmentDTO.ComboId);
-            //Check if Combo exists
-            if (combo is null)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    $"Khồng tìm thấy Combo với Id {createAppointmentDTO.ComboId}");
-            }
 
             //Check if Combo is Empty
             if (!combo.ComboDetails.Any())
@@ -125,13 +167,6 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     $"Thời gian được đặt phải cách hiện tại {GlobalVariables.TimeToCreateAppointmentInAdvanced} phút");
-            }
-
-            //Check if Salon exists
-            if (!await SalonExists(createAppointmentDTO.SalonId))
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                    $"Không tìm thấy Salon với Id {createAppointmentDTO.SalonId}");
             }
 
             //Check if stylist exists
@@ -183,19 +218,19 @@ namespace HairCutAppAPI.Services
             var newAppointment = new Appointment()
             {
                 SalonId = createAppointmentDTO.SalonId,
-                CustomerId = customerId,
+                CustomerId = currentUserId,
                 Status = GlobalVariables.NewAppointmentStatus,
                 StartDate = chosenDate.Add(startSlotOfDay.StartTime),
                 EndDate = chosenDate.Add(endSlotOfDay.EndTime),
                 CreatedDate = now,
                 LastUpdated = now,
                 ComboId = combo.Id,
-                PaidAmount = 0,
+                PaidAmount = payingPrice,
                 ChosenStaffId = chosenStylist.Id,
                 AppointmentDetails = new List<AppointmentDetail>(),
                 WorkSlots = chosenWorkSlots,
                 ComboPrice = combo.Price,
-                PaymentType = createAppointmentDTO.PaymentType.ToLower()
+                PaymentType = createAppointmentDTO.PaymentType.ToLower(),
             };
             foreach (var comboDetail in combo.ComboDetails)
             {
@@ -251,7 +286,7 @@ namespace HairCutAppAPI.Services
             }
 
             //Get Latest Appointment of customer
-            var createdAppointment = await _repositoryWrapper.Appointment.GetLatestAppointmentOfCustomer(customerId);
+            var createdAppointment = await _repositoryWrapper.Appointment.GetLatestAppointmentOfCustomer(currentUserId);
             var price = await CalculateComboPrice(createAppointmentDTO.ComboId);
 
             //Send Appointment Created Notifications
@@ -682,6 +717,18 @@ namespace HairCutAppAPI.Services
 
             return customerId;
         }
+        
+        private async Task<Customer> GetCustomer(int userId)
+        {
+            var customer =
+                await _repositoryWrapper.Customer.FindSingleByConditionAsync(cus => cus.UserId == userId);
+            if (customer is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy Customer với User Id {userId}");
+            }
+
+            return customer;
+        }
 
         /// <summary>
         /// Get Appointment from database, with detail and staff information
@@ -884,6 +931,26 @@ namespace HairCutAppAPI.Services
                 CreatedDate = DateTime.Now,
                 LastUpdate = DateTime.Now,
             };
+        }
+        
+        private async Task<PromotionalCode> GetPromotionalCode(string code)
+        {
+            var promotionalCode =
+                await _repositoryWrapper.PromotionalCode.FindSingleByConditionAsync(proCode =>
+                    proCode.Code.ToLower() == code.ToLower());
+            if (promotionalCode is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy Promotional Code {code}");
+            }
+
+            return promotionalCode;
+        }
+        
+        private decimal RoundingTo(decimal myNum, int roundTo)
+        {
+            myNum = decimal.Floor(myNum);
+            if (roundTo <= 0) return myNum;
+            return (myNum + roundTo / 2) / roundTo * roundTo;
         }
 
         #endregion private functions
