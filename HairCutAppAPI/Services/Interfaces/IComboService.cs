@@ -14,7 +14,7 @@ namespace HairCutAppAPI.Services.Interfaces
         /// </summary>
         Task<ActionResult<CustomHttpCodeResponse>> GetAllCombos();
         Task<ActionResult<CustomHttpCodeResponse>> GetComboDetail(int id);
-        // Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO);
         Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id);
         Task<ActionResult<CustomHttpCodeResponse>> GetComboDuration(int id);
         Task<ActionResult<CustomHttpCodeResponse>> GetAllActiveCombos();

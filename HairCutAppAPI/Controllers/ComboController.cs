@@ -87,21 +87,21 @@ namespace HairCutAppAPI.Controllers
         /// For Admin to update Combo Info
         /// </summary>
         /// <param name="updateComboDTO"> Empty ot null fields will not be changed, negative duration = null. If Services == null => no change, if Services is empty list => combo has no service</param>
-        // [Authorize(Roles = GlobalVariables.AdministratorRole)]
-        // [HttpPut("update_combo")]
-        // public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo([FromBody] UpdateComboDTO updateComboDTO)
-        // {
-        //     //Trim All Strings in object
-        //     updateComboDTO = ObjectTrimmer.TrimObject(updateComboDTO) as UpdateComboDTO;
-        //     
-        //     //Check input server side
-        //     if (!ModelState.IsValid)
-        //     {
-        //         return new CustomHttpCodeResponse(400,"",ModelState);
-        //     }
-        //
-        //     return await _comboService.UpdateCombo(updateComboDTO);
-        // }
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPut("update_combo")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo([FromForm] UpdateComboDTO updateComboDTO)
+        {
+            //Trim All Strings in object
+            updateComboDTO = ObjectTrimmer.TrimObject(updateComboDTO) as UpdateComboDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+        
+            return await _comboService.UpdateCombo(updateComboDTO);
+        }
         
         [Authorize]
         [HttpGet("combo_statuses")]

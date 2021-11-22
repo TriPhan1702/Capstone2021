@@ -56,6 +56,20 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy được Com với Id {updateComboDTO.Id}");
             }
+
+            //Upload hình
+            string avatarUrl = null;
+            if (updateComboDTO.AvatarFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(updateComboDTO.AvatarFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+                }
+
+                avatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
             
             // If services in DTO is not empty, check and update ComboDetail List
             if (updateComboDTO.Details != null)
@@ -130,7 +144,7 @@ namespace HairCutAppAPI.Services
             }
         
             //Map the differences from dto to entity
-            combo = updateComboDTO.CompareUpdateCombo(combo);
+            combo = updateComboDTO.CompareUpdateCombo(combo, avatarUrl);
             
             await _repositoryWrapper.Combo.UpdateAsyncWithoutSave(combo, combo.Id);
             
