@@ -235,5 +235,82 @@ namespace HairCutAppAPI.Repositories
             return await _hdbContext.Appointments.Include(appointment => appointment.Combo).ThenInclude(combo => combo.ComboDetails).ThenInclude(detail => detail.Service)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
         }
+
+        public async Task<decimal> GetTotalEarningInMonth(int month, int year)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus)
+                .SumAsync(appointment => appointment.PaidAmount);
+        }
+        
+        public async Task<decimal> GetTotalEarningInDay(DateTime date)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.DayOfYear == date.DayOfYear &&
+                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus)
+                .SumAsync(appointment => appointment.PaidAmount);
+        }
+        
+        public async Task<decimal> GetEarningInMonthBySalon(int month, int year, int salonId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus && appointment.SalonId == salonId)
+                .SumAsync(appointment => appointment.PaidAmount);
+        }
+        
+        public async Task<decimal> GetTotalEarningInDay(DateTime date, int salonId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.DayOfYear == date.DayOfYear &&
+                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus && appointment.SalonId == salonId)
+                .SumAsync(appointment => appointment.PaidAmount);
+        }
+        
+        public async Task<int> GetTotalAppointmentByStatusInMonth(int month, int year, string status)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == status)
+                .CountAsync();
+        }
+        
+        public async Task<int> GetAppointmentByStatusInMonthBySalon(int month, int year, string status, int salonId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == status && appointment.SalonId == salonId)
+                .CountAsync();
+        }
+        
+        public async Task<int> GetAppointmentByStatusInMonthByStaff(int month, int year, string status, int staffUserId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == status && appointment.AppointmentDetails.Any(detail => detail.Staff.UserId == staffUserId))
+                .CountAsync();
+        }
+        
+        public async Task<int> GetTotalAppointmentInMonth(int month, int year)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year)
+                .CountAsync();;
+        }
+        
+        public async Task<int> GetAppointmentInMonthBySalon(int month, int year, int salonId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year && appointment.SalonId == salonId)
+                .CountAsync();;
+        }
+        
+        public async Task<int> GetAppointmentInMonthByStaff(int month, int year, int staffUserId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year && appointment.AppointmentDetails.Any(detail => detail.Staff.UserId == staffUserId))
+                .CountAsync();;
+        }
     }
 }
