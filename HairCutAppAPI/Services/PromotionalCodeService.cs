@@ -205,6 +205,17 @@ namespace HairCutAppAPI.Services
             });
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetPromotionalCodeDetail(int id)
+        {
+            var code = await _repositoryWrapper.PromotionalCode.GetOnePromotionalWithSalon(id);
+            if (code is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy code với Id {id}");
+            }
+            
+            return new CustomHttpCodeResponse(200,"", code.ToGetPromotionalCodeDetailResponseDTO());
+        }
+
         #region private functions
 
         private int GetCurrentUserId()

@@ -83,5 +83,33 @@ namespace HairCutAppAPI.Entities
 
             return result;
         }
+
+        public GetPromotionalCodeDetailResponseDTO ToGetPromotionalCodeDetailResponseDTO()
+        {
+            var result = new GetPromotionalCodeDetailResponseDTO()
+            {
+                Id = Id,
+                Code = Code,
+                Status = Status,
+                Percentage = Percentage,
+                IsUniversal = IsUniversal,
+                StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
+                ExpirationDate = ExpirationDate.ToString(GlobalVariables.DateTimeFormat),
+                UsesPerCustomer = UsesPerCustomer,
+                CreatedDate = CreatedDate.ToString(GlobalVariables.DateTimeFormat),
+                LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat)
+            };
+
+            if (SalonsCodes.Any())
+            {
+                result.Salons = SalonsCodes.Select(salon => new GetPromotionalCodeDetailResponseSalonDTO()
+                {
+                    SalonId = salon.SalonId,
+                    SalonName = salon.Salon.Name
+                });
+            }
+
+            return result;
+        }
     }
 }

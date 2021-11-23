@@ -18,6 +18,18 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Get a code's detail, for staff, admin, manager
+        /// </summary>
+        /// <param name="id">Code Id</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("{id}")] 
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetPromotionalCodeDetail(int id)
+        {
+            return await _promotionalCodeService.GetPromotionalCodeDetail(id);
+        }
+        
+        /// <summary>
         /// For admin to Create New Promotion Code
         /// </summary>
         [Authorize(Policy = GlobalVariables.AdministratorRole)]
