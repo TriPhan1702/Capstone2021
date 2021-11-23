@@ -210,7 +210,36 @@ namespace HairCutAppAPI.Services
 
             staff = dto.CompareAndUpdateStaff(staff);
 
-            var result = _repositoryWrapper.Staff.UpdateAsync(staff, staff.Id);
+            await _repositoryWrapper.Staff.UpdateAsync(staff, staff.Id);
+            
+            return new CustomHttpCodeResponse(200,"Staff profile updated", true);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdministratorUpdateStaff(
+            AdministratorUpdateStaffDTO dto)
+        {
+            var staff = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.Id == dto.StaffId);
+            if (staff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy staff với Id {dto.StaffId}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.StaffType) && !GlobalVariables.StaffTypes.Contains(dto.StaffType.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Staff Type phải là: stylist, beautician" );
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.Status) && !GlobalVariables.UserStatuses.Contains(dto.Status.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Staff Type phải là: " + string.Join(", ", GlobalVariables.UserStatuses));
+            }
+
+            if (dto.SalonId > 0 && !await _repositoryWrapper.Salon.AnyAsync(salon => salon.Id == dto.SalonId))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không tìm thấy salon với Id {dto.SalonId}");
+            }
+
+            await _repositoryWrapper.Staff.UpdateAsync(staff, staff.Id);
             
             return new CustomHttpCodeResponse(200,"Staff profile updated", true);
         }

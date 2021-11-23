@@ -21,6 +21,8 @@ namespace HairCutAppAPI.Services.Interfaces
 
         Task<ActionResult<CustomHttpCodeResponse>> GetStylistListOfSalon(int salonId);
         Task<ActionResult<CustomHttpCodeResponse>> UpdateStaff(UpdateStaffDTO dto);
+        Task<ActionResult<CustomHttpCodeResponse>> AdministratorUpdateStaff(
+            AdministratorUpdateStaffDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> GetAvailableStaffsForAppointment(int appointmentId);
 
     }

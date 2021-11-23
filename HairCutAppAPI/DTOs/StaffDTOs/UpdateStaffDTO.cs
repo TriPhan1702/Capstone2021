@@ -43,7 +43,7 @@ namespace HairCutAppAPI.DTOs.StaffDTOs
 
             if (!hasChanged)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Nothing can be changed with the provided information");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không có gì thay đổi dựa trên thông tin từ request");
             }
 
             return staff;

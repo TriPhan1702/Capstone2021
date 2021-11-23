@@ -154,5 +154,24 @@ namespace HairCutAppAPI.Controllers
             
             return await _staffService.UpdateStaff(dto);
         }
+        
+        /// <summary>
+        /// For admin to update a staff or manager
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPut("admin_update_staff")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdministratorUpdateStaff([FromBody] AdministratorUpdateStaffDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as AdministratorUpdateStaffDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            
+            return await _staffService.AdministratorUpdateStaff(dto);
+        }
     }
 }
