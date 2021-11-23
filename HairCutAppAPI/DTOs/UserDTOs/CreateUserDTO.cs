@@ -20,7 +20,7 @@ namespace HairCutAppAPI.DTOs.UserDTOs
         public string FullName { get; set; }
         
         [Required]
-        [MinLength(3), MaxLength(50)]
+        [MinLength(3), MaxLength(18)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
         
