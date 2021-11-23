@@ -25,7 +25,7 @@ namespace HairCutAppAPI.DTOs.UserDTOs
         public string Password { get; set; }
         
         [Required]
-        [MinLength(3), MaxLength(50)]
+        [MinLength(3), MaxLength(18)]
         [DataType(DataType.Password)]
         [Compare("Password")]
         public string ConfirmPassword { get; set; }
