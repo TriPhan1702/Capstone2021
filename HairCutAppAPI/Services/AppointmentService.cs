@@ -340,14 +340,21 @@ namespace HairCutAppAPI.Services
                 if (customer is null)
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                        $"Customer with User Id {userId} not found");
+                        $"Không tìm thấy khách hàng với User Id {userId}");
                 }
 
                 //If Customer Id is not the same as appointment's user id, abort
                 if (customer.Id != appointment.CustomerId)
                 {
                     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
-                        $"Customer doesn't have appointment with Id {appointmentId}");
+                        $"Khách hàng hiện tại không phải là chủ của appointment");
+                }
+
+                //Không thể cancel ongoing appointment
+                if (appointment.Status == GlobalVariables.OnGoingAppointmentStatus)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                        $"Khách hàng không thể cancel appointment đang diễn ra");
                 }
             }
 
