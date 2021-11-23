@@ -16,6 +16,19 @@ namespace HairCutAppAPI.Controllers
         {
             _appointmentRatingService = appointmentRatingService;
         }
+        /// <summary>
+        /// For admin, manager and staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("advanced_get_ratings")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetRatings(
+            AdvancedGetAppointmentRatingDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as AdvancedGetAppointmentRatingDTO;
+            var ratings = await _appointmentRatingService.AdvancedGetRatings(dto);
+            return ratings;
+        }
         
         /// <summary>
         /// Cho Khách Hàng đánh giá appointment đã qua

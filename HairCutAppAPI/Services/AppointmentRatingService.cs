@@ -53,6 +53,17 @@ namespace HairCutAppAPI.Services
             
             return new CustomHttpCodeResponse(200,"Appointment rating đã tạo", result.Id);
         }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetRatings(AdvancedGetAppointmentRatingDTO dto)
+        {
+            if (!string.IsNullOrWhiteSpace(dto.SortBy) && !AdvancedGetAppointmentRatingDTO.OrderingParams.Contains(dto.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"OrderBy must be: " + string.Join(", ", AdvancedGetAppointmentRatingDTO.OrderingParams));
+            }
+            
+            var result = await _repositoryWrapper.AppointmentRating.AdvancedGetRatings(dto);
+            return new CustomHttpCodeResponse(200, "" , result);
+        }
         
         private int GetCurrentUserId()
         {

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HairCutAppAPI.DTOs.AppointmentRatingDTOs;
 
 namespace HairCutAppAPI.Entities
 {
@@ -17,7 +18,16 @@ namespace HairCutAppAPI.Entities
         
         [MaxLength(500)]
         public string RatingComment { get; set; }
-        
-        
+
+        public AdvancedGetAppointmentRatingResponseDTO ToAdvancedGetAppointmentRatingResponseDTO()
+        {
+            return new AdvancedGetAppointmentRatingResponseDTO()
+            {
+                Id = Id,
+                Rating = Rating,
+                AppointmentId = AppointmentId,
+                RatingComment = RatingComment
+            };
+        }
     }
 }

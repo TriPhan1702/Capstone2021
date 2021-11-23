@@ -7,6 +7,7 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IAppointmentRatingService
     {
+        Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetRatings(AdvancedGetAppointmentRatingDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> CreateAppointmentRating(CreateAppointmentRatingDTO dto);
     }
 }
