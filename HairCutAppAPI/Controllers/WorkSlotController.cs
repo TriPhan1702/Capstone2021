@@ -148,6 +148,24 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Tạo nhiều available slot từ khoản thời gian, phải cùng ngày, các not availalbe slot sẽ bị update
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.ManagerRole)]
+        [HttpPost("add_available_work_slot_bulk_from_time_span")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> AddAvailableWorkSlot(AddAvailableWorkSlotBulkDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as AddAvailableWorkSlotBulkDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.AddAvailableWorkSlotBulk(dto);
+        }
+        
+        /// <summary>
         /// remove multiple available slots
         /// </summary>
         [Authorize(Roles = GlobalVariables.ManagerRole)]

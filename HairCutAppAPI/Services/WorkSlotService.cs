@@ -187,31 +187,84 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"",true);
         }
 
-        public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateWorkSlotsBulk(RemoveWorkSlotBulkDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> AddAvailableWorkSlotBulk(AddAvailableWorkSlotBulkDTO dto)
         {
-            var currentUserId = GetCurrentUserId();
-            var manager = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta =>
-                sta.UserId == currentUserId && sta.StaffType == GlobalVariables.ManagerRole);
-            if (manager is null)
+            await CheckManagerAndTargetStaff(dto.StaffId);
+            
+            //Parse ngày giờ từ request
+            var startDate = ParseDateTime(dto.StartDate);
+            var endDate = ParseDateTime(dto.EndDate);
+
+            if (startDate.DayOfYear != endDate.DayOfYear)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy tài khoản manager dựa trên Account hiện tại");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Star date and End date is not of the same day");
             }
             
-            var staff = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.Id == dto.StaffId);
-            if (staff is null)
+            //Check if Date is valid
+            CheckDate(startDate);
+            
+            var slotOfDayIds = (await _repositoryWrapper.SlotOfDay.FindByConditionAsync(slot =>
+                slot.StartTime >= startDate.TimeOfDay && slot.EndTime <= endDate.TimeOfDay)).Select(slot => slot.Id).ToList();
+
+            var notTakenWorkSlots = (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                slot.Date.DayOfYear == startDate.DayOfYear &&
+                slotOfDayIds.Contains(slot.SlotOfDayId) &&
+                slot.Status != GlobalVariables.TakenWorkSlotStatus)).ToList();
+            
+            //List các slot of day Id đã có work slot từ trước
+            var workSlotSlotOfDayIds = notTakenWorkSlots.Select(slot => slot.SlotOfDayId).ToHashSet();
+
+            //Lấy list các slot đang không available để update
+            var notAvailableWorkslots =
+                (notTakenWorkSlots.Where(slot => slot.Status == GlobalVariables.NotAvailableWorkSlotStatus)).ToList();
+            
+            //Những slot of day cần tạo mới Work slot
+            var addNewSlotSlotsOfDayIds = (slotOfDayIds.Except(workSlotSlotOfDayIds)).ToList();
+            
+            //Update các work slot ko available
+            if (notAvailableWorkslots.Any())
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy staff");
+                foreach (var workSlot in notAvailableWorkslots)
+                {
+                    workSlot.Status = GlobalVariables.AvailableWorkSlotStatus;
+                    await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(workSlot, workSlot.Id);
+                }
             }
+            
+            //Tạo thêm các Work slot mới
+            if (addNewSlotSlotsOfDayIds.Any())
+            {
+                foreach (var slotOfDayId in addNewSlotSlotsOfDayIds)
+                {
+                    await _repositoryWrapper.WorkSlot.CreateWithoutSaveAsync(new WorkSlot()
+                    {
+                        StaffId = dto.StaffId,
+                        Date = startDate.Date,
+                        Status = GlobalVariables.AvailableWorkSlotStatus,
+                        SlotOfDayId = slotOfDayId,
+                    });
+                }
+            }
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Có lỗi server khi tạo nhiều available work slot: " + e.Message);
+            }
+            
+            return new CustomHttpCodeResponse(200,"Các work slot đã được tạo");
+        }
         
-            if (staff.StaffType == GlobalVariables.ManagerRole)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không thể xóa lịch của một manager");
-            }
-        
-            if (staff.SalonId != manager.SalonId)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Staff không phải từ salon của manager");
-            }
+        public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateWorkSlotsBulk(RemoveWorkSlotBulkDTO dto)
+        {
+            await CheckManagerAndTargetStaff(dto.StaffId);
             
             //Parse ngày giờ từ request
             var startDate = ParseDateTime(dto.StartDate);
@@ -391,7 +444,7 @@ namespace HairCutAppAPI.Services
             //Get Now time
             var now = DateTime.Now;
             
-            //If Date is before or is current date
+            //If Date is (default 2 hours)
             if (now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) >= date)
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Chỉ có thể update Work Slot đang cách hiện tại hơn {GlobalVariables.TimeToCreateAppointmentInAdvanced} phút");
         }
@@ -462,6 +515,33 @@ namespace HairCutAppAPI.Services
             }
 
             return result;
+        }
+
+        private async Task CheckManagerAndTargetStaff(int staffId)
+        {
+            var currentUserId = GetCurrentUserId();
+            var manager = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta =>
+                sta.UserId == currentUserId && sta.StaffType == GlobalVariables.ManagerRole);
+            if (manager is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy tài khoản manager dựa trên Account hiện tại");
+            }
+            
+            var staff = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.Id == staffId);
+            if (staff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy staff");
+            }
+        
+            if (staff.StaffType == GlobalVariables.ManagerRole)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không thể xóa lịch của một manager");
+            }
+        
+            if (staff.SalonId != manager.SalonId)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Staff không phải từ salon của manager");
+            }
         }
 
         #endregion 
