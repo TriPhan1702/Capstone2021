@@ -207,6 +207,7 @@ namespace HairCutAppAPI.Services
                 slot.StartTime >= startDate.TimeOfDay && slot.EndTime <= endDate.TimeOfDay)).Select(slot => slot.Id).ToList();
 
             var notTakenWorkSlots = (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                slot.StaffId == dto.StaffId &&
                 slot.Date.DayOfYear == startDate.DayOfYear &&
                 slotOfDayIds.Contains(slot.SlotOfDayId) &&
                 slot.Status != GlobalVariables.TakenWorkSlotStatus)).ToList();
@@ -274,6 +275,7 @@ namespace HairCutAppAPI.Services
                 slot.StartTime >= startDate.TimeOfDay && slot.EndTime <= endDate.TimeOfDay)).Select(slot => slot.Id).ToList();
 
             if (await _repositoryWrapper.WorkSlot.AnyAsync(slot => 
+                slot.StaffId == dto.StaffId &&
                 slotOfDayIds.Contains(slot.SlotOfDayId) && 
                 slot.Date.DayOfYear >= startDate.DayOfYear && 
                 slot.Date.DayOfYear >= endDate.DayOfYear &&
@@ -283,6 +285,7 @@ namespace HairCutAppAPI.Services
             }
 
             var availableWorkSlots = (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                slot.StaffId == dto.StaffId &&
                 slotOfDayIds.Contains(slot.SlotOfDayId) &&
                 slot.Date.DayOfYear >= startDate.DayOfYear &&
                 slot.Date.DayOfYear >= endDate.DayOfYear &&
