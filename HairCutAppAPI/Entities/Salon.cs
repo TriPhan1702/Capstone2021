@@ -104,24 +104,18 @@ namespace HairCutAppAPI.Entities
             };
         }
 
-        // public CustomerGetSalonDetailDTO ToCustomerGetSalonDetailDTO(ICollection<Combo> combos)
-        // {
-        //     var result = new CustomerGetSalonDetailDTO()
-        //     {
-        //         Id = Id,
-        //         Description = Description,
-        //         Name = Name,
-        //         Latitude = Latitude,
-        //         Longitude = Longitude,
-        //         AvatarUrl = AvatarUrl,
-        //         ComboDetailDTOs = new List<ComboDetailDTO>()
-        //     };
-        //
-        //     foreach (var combo in combos)
-        //     {
-        //         
-        //     }
-        // }
+        public GetSalonDetailDTO ToGetSalonDetailDTO()
+        {
+            return new GetSalonDetailDTO()
+            {
+                Id = Id,
+                Description = Description,
+                Name = Name,
+                Latitude = Latitude,
+                Longitude = Longitude,
+                AvatarUrl = AvatarUrl,
+            };
+        }
 
         public UpdateSalonResponseDTO ToUpdateSalonResponseDTO()
         {

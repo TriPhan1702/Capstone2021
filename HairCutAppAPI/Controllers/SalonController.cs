@@ -34,6 +34,28 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Để nhân viên view salon detail
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetSalonDetail(int id)
+        {
+            return await _salonService.GetSalonDetail(id);
+        }
+        
+        /// <summary>
+        /// Để customer view salon detail
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("customer_get_salon_detail/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonDetail(int id)
+        {
+            return await _salonService.CustomerGetSalonDetail(id);
+        }
+        
+        /// <summary>
         /// For admin, manager and staff
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]

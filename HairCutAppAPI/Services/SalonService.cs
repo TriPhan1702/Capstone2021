@@ -158,5 +158,15 @@ namespace HairCutAppAPI.Services
             var result = await _repositoryWrapper.Salon.UpdateAsync(salon, salon.Id);
             return new CustomHttpCodeResponse(200,"Salon deactivated", result.Status);
         }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetSalonDetail(int salonId)
+        {
+            return new CustomHttpCodeResponse(200,"",(await _repositoryWrapper.Salon.FindSingleByConditionAsync(salon => salon.Id == salonId)).ToGetSalonDetailDTO()); ;
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonDetail(int salonId)
+        {
+            return new CustomHttpCodeResponse(200,"",(await _repositoryWrapper.Salon.FindSingleByConditionAsync(salon => salon.Id == salonId && salon.Status == GlobalVariables.ActiveSalonStatus)).ToGetSalonDetailDTO()); ;
+        }
     }
 }
