@@ -21,7 +21,6 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
         
         public string Address { get; set; }
         
-        //TODO: Validate coordinate
         public string Longitude { get; set; }
         public string Latitude { get; set; }
 
