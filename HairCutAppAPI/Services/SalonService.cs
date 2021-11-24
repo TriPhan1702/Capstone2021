@@ -92,6 +92,19 @@ namespace HairCutAppAPI.Services
             }
 
             salon = updateSalonDTO.CompareAndMapToSalon(salon);
+            
+            //If there's image
+            if (updateSalonDTO.AvatarFile != null)
+            {
+                var imageUploadResult = await _photoService.AppPhotoAsync(updateSalonDTO.AvatarFile);
+                //If there's error
+                if (imageUploadResult.Error != null)
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,imageUploadResult.Error.Message);
+                }
+
+                salon.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            }
 
             salon = await _repositoryWrapper.Salon.UpdateAsync(salon, salon.Id);
             

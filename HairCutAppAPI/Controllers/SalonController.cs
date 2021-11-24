@@ -87,7 +87,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPut("update_salon")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateSalon([FromBody] UpdateSalonDTO updateSalonDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UpdateSalon([FromForm] UpdateSalonDTO updateSalonDTO)
         {
             //Trim All Strings in object
             updateSalonDTO = ObjectTrimmer.TrimObject(updateSalonDTO) as UpdateSalonDTO;

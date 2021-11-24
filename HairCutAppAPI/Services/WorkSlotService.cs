@@ -486,7 +486,7 @@ namespace HairCutAppAPI.Services
 
             if (staff is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Staff doesn't exist"); 
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Không tìm thấy Staff"); 
             }
         }
         
@@ -499,7 +499,7 @@ namespace HairCutAppAPI.Services
 
             if (slot is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Staff doesn't exist"); 
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Slot of Day không tồn tại"); 
             }
         }
 

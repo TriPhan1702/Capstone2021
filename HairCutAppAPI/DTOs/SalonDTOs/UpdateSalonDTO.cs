@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Net;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities.Errors;
+using Microsoft.AspNetCore.Http;
 
 namespace HairCutAppAPI.DTOs.SalonDTOs
 {
@@ -17,6 +18,8 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
         
         public string Description { get; set; }
         public string Address { get; set; }
+        
+        public IFormFile AvatarFile { get; set; }
         
         [Required]
         [MaxLength(20)]
@@ -44,6 +47,12 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
             if (!string.IsNullOrWhiteSpace(Status) && Status.ToLower() != salon.Status.ToLower())
             {
                 salon.Status = Status;
+                hasChanged = true;
+            }
+            
+            if (!string.IsNullOrWhiteSpace(Address) && Address.ToLower() != salon.Address.ToLower())
+            {
+                salon.Address = Address;
                 hasChanged = true;
             }
 
