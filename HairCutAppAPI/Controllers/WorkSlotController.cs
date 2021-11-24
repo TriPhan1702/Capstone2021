@@ -146,6 +146,24 @@ namespace HairCutAppAPI.Controllers
 
             return await _workSlotService.AddAvailableWorkSlotBulk(addWorkSlotsDTO.Select(slot => ObjectTrimmer.TrimObject(slot) as AddWorkSlotDTO).ToList());
         }
+        
+        /// <summary>
+        /// remove multiple available slots
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.ManagerRole)]
+        [HttpPost("remove_work_slot_bulk")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> RemoveWorkSlotBulk([FromBody] RemoveWorkSlotBulkDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as RemoveWorkSlotBulkDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.DeactivateWorkSlotsBulk(dto);
+        }
 
         /// <summary>
         /// Update status of a WorkSlot

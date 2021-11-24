@@ -187,6 +187,76 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"",true);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateWorkSlotsBulk(RemoveWorkSlotBulkDTO dto)
+        {
+            var currentUserId = GetCurrentUserId();
+            var manager = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta =>
+                sta.UserId == currentUserId && sta.StaffType == GlobalVariables.ManagerRole);
+            if (manager is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy tài khoản manager dựa trên Account hiện tại");
+            }
+            
+            var staff = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.Id == dto.StaffId);
+            if (staff is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy staff");
+            }
+        
+            if (staff.StaffType == GlobalVariables.ManagerRole)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không thể xóa lịch của một manager");
+            }
+        
+            if (staff.SalonId != manager.SalonId)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Staff không phải từ salon của manager");
+            }
+            
+            //Parse ngày giờ từ request
+            var startDate = ParseDateTime(dto.StartDate);
+            var endDate = ParseDateTime(dto.EndDate);
+
+            var slotOfDayIds = (await _repositoryWrapper.SlotOfDay.FindByConditionAsync(slot =>
+                slot.StartTime >= startDate.TimeOfDay && slot.EndTime <= endDate.TimeOfDay)).Select(slot => slot.Id).ToList();
+
+            if (await _repositoryWrapper.WorkSlot.AnyAsync(slot => 
+                slotOfDayIds.Contains(slot.SlotOfDayId) && 
+                slot.Date.DayOfYear >= startDate.DayOfYear && 
+                slot.Date.DayOfYear >= endDate.DayOfYear &&
+                slot.Status == GlobalVariables.TakenWorkSlotStatus))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Có work slot đang có Appointment diễn ra trong khoảng thời gian đã cho");
+            }
+
+            var availableWorkSlots = (await _repositoryWrapper.WorkSlot.FindByConditionAsync(slot =>
+                slotOfDayIds.Contains(slot.SlotOfDayId) &&
+                slot.Date.DayOfYear >= startDate.DayOfYear &&
+                slot.Date.DayOfYear >= endDate.DayOfYear &&
+                slot.Status == GlobalVariables.AvailableWorkSlotStatus)).ToList();
+
+            foreach (var workSlot in availableWorkSlots)
+            {
+                workSlot.Status = GlobalVariables.NotAvailableWorkSlotStatus;
+                await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(workSlot, workSlot.Id);
+            }
+            
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+                throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
+                    "Có lỗi server khi remove nhiều work slot: " + e.Message);
+            }
+            
+            return new CustomHttpCodeResponse(200,"Các work slot đã được xóa");
+        }
+
         public async Task<ActionResult<CustomHttpCodeResponse>> UpdateWorkSlot(UpdateWorkSlotDTO updateWorkSlotDTO)
         {
             //Check status is a valid status
@@ -375,6 +445,23 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Staff doesn't exist"); 
             }
+        }
+
+        private DateTime ParseDateTime(string date)
+        {
+            DateTime result;
+            //Parse ngày giờ từ request
+            try
+            {
+                result = DateTime.ParseExact(date, GlobalVariables.DateTimeFormat,
+                    CultureInfo.InvariantCulture);
+            }
+            catch (FormatException )
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Ngày giờ từ request không đúng format, phải là: {GlobalVariables.DateTimeFormat}");
+            }
+
+            return result;
         }
 
         #endregion 
