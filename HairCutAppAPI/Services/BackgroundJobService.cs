@@ -126,7 +126,9 @@ namespace HairCutAppAPI.Services
             {
                 foreach (var appointment in ongoingAppointments)
                 {
-                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(new Notification()
+                    if (!await _repositoryWrapper.Notification.AnyAsync(notification => notification.AppointmentId == appointment.Id && notification.Type == GlobalVariables.AppointmentCompleteReminderNotification))
+                    {
+                        await _repositoryWrapper.Notification.CreateWithoutSaveAsync(new Notification()
                     {
                         Detail = $"Đã quá hạn xác nhận kết thúc buổi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {appointment.Customer.FullName}.",
                         Status = GlobalVariables.PendingNotificationStatus,
@@ -156,6 +158,18 @@ namespace HairCutAppAPI.Services
                             LastUpdate = DateTime.Now,
                         });
                     }
+                    }
+                }
+                
+                try
+                {
+                    //Save all changes above to database 
+                    await _repositoryWrapper.SaveAllAsync();
+                }
+                catch (Exception e)
+                {
+                    //clear pending changes if fail
+                    _repositoryWrapper.DeleteChanges();
                 }
             }
         }
