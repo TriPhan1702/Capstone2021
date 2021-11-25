@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.AppointmentDTOs;
 using HairCutAppAPI.Entities;
@@ -26,5 +27,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<int> GetAppointmentInMonthBySalon(int month, int year, int salonId);
         Task<int> GetAppointmentByStatusInMonthByStaff(int month, int year, string status, int staffUserId);
         Task<int> GetAppointmentInMonthByStaff(int month, int year, int staffUserId);
+        Task<List<Appointment>> GetOngoingAppointmentsWithChosenStaffAndCustomer();
     }
 }

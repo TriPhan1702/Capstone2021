@@ -296,7 +296,7 @@ namespace HairCutAppAPI.Services
             var price = await CalculateComboPrice(createAppointmentDTO.ComboId);
 
             //Send Appointment Created Notifications
-            await SendAppointmentCreatedNotifications(createdAppointment, GetCurrentUserId(), chosenStylist?.UserId);
+            await SendAppointmentCreatedNotifications(createdAppointment, customer.FullName);
 
             return new CustomHttpCodeResponse(200, "Appointment Created",
                 createdAppointment.ToCreateAppointmentResponseDTO(combo.Price, price, chosenStylist?.Id, chosenStylist?.FullName));
@@ -396,6 +396,8 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.InternalServerError,
                     "Some thing went wrong went canceling Appointment " + e.Message);
             }
+
+            await SendAppointmentCanceledNotifications(appointment);
 
             return new CustomHttpCodeResponse(200, "", result.ToChangeAppointmentStatusResponseDTO());
         }
@@ -614,6 +616,9 @@ namespace HairCutAppAPI.Services
                     "Some thing went wrong went assigning staff " + e.Message);
             }
 
+            //Gửi các notification
+            await SendAppointmentApprovedNotifications(appointment);
+
             return new CustomHttpCodeResponse(200, "Staffs assigned", true);
         }
 
@@ -687,7 +692,7 @@ namespace HairCutAppAPI.Services
 
             var result = await _repositoryWrapper.Appointment.UpdateAsync(appointment, appointment.Id);
 
-            //TODO:Send notifications
+            await SendAppointmentFinishNotifications(appointment);
 
             return new CustomHttpCodeResponse(200, "Appointment is completed", true);
         }
@@ -880,16 +885,8 @@ namespace HairCutAppAPI.Services
             return slotsOfDayIds;
         }
 
-        private async Task SendAppointmentCreatedNotifications(Appointment appointment, int customerUserId,
-            int? chosenStaffUserId = null)
+        private async Task SendAppointmentCreatedNotifications(Appointment appointment, string customerName)
         {
-            //Prepare Customer's Notifications
-            await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(
-                appointment,
-                "Appointment Created Notification",
-                "Appointment Created Notification",
-                customerUserId));
-
             //Prepare Manager's Notifications
             var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
                     staff.StaffType == GlobalVariables.ManagerRole &&
@@ -899,22 +896,13 @@ namespace HairCutAppAPI.Services
             {
                 foreach (var manager in managers)
                 {
-                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
                         appointment,
-                        "Appointment Created Notification",
-                        "Appointment Created Notification",
-                        manager.UserId));
+                        "Buổi hẹn mới đã được đặt",
+                        $"Khách hàng {customerName} vửa đặt một buổi hẹn vào lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)}, " +
+                        $"bạn có đến {appointment.StartDate.AddMinutes(-GlobalVariables.TimeToConfirmAppointmentInAdvanced).ToString(GlobalVariables.DateTimeFormat)} để chấp nhận",
+                        manager.UserId , GlobalVariables.AppointmentCreatedNotification));
                 }
-            }
-
-            //Prepare Stylist's Notifications if one was chosen
-            if (chosenStaffUserId != null)
-            {
-                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewAppointmentCreatedNotification(
-                    appointment,
-                    "Appointment Created Notification",
-                    "Appointment Created Notification",
-                    chosenStaffUserId.Value));
             }
 
             try
@@ -926,23 +914,187 @@ namespace HairCutAppAPI.Services
             {
                 //clear pending changes if fail
                 _repositoryWrapper.DeleteChanges();
-                //TODO: Log Failure
+            }
+        }
+        
+        private async Task SendAppointmentApprovedNotifications(Appointment appointment)
+        {
+            //Prepare Customer's Notifications
+            var customer =
+                (await _repositoryWrapper.Customer.FindSingleByConditionAsync(cus => cus.Id == appointment.CustomerId));
+            if (customer != null)
+            {
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Buỗi hẹn của bạn đã được chấp nhận",
+                        $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của bạn đã được chấp nhận, click vào đây để xem chi tiết...",
+                        customer.UserId, GlobalVariables.AppointmentApprovedNotification));
+                    
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Đã sắp giờ buổi hẹn chăm sóc tóc của bạn",
+                        $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của bạn sắp diễn ra",
+                        customer.UserId, GlobalVariables.AppointmentReminderNotification, appointment.StartDate.AddMinutes(-GlobalVariables.TimeToRemindAppointment)));
+            }
+
+            var appointmentStaffUserIds =
+                (await _repositoryWrapper.AppointmentDetail.FindByConditionAsyncWithInclude(
+                    detail => detail.AppointmentId == appointment.Id, detail => detail.Staff))
+                .Select(detail => detail.Staff.UserId).ToHashSet();
+
+            foreach (var staffUserId in appointmentStaffUserIds)
+            {
+                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                    appointment,
+                    "Bạn đã được xếp vào một buổi hẹn",
+                    $"Bạn đã được xếp vào buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName}, click vào để xem chi tiết",
+                    staffUserId, GlobalVariables.AppointmentApprovedNotification));
+            }
+
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+            }
+        }
+        
+        private async Task SendAppointmentCanceledNotifications(Appointment appointment)
+        {
+            //Prepare Customer's Notifications
+            var customer =
+                (await _repositoryWrapper.Customer.FindSingleByConditionAsync(cus => cus.Id == appointment.CustomerId));
+            if (customer != null)
+            {
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Buỗi hẹn của bạn đã bị hủy",
+                        $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của bạn đã bị hủy, click vào đây để xem chi tiết...",
+                        customer.UserId, GlobalVariables.AppointmentCanceledNotification));
+            }
+
+            var appointmentStaffUserIds =
+                (await _repositoryWrapper.AppointmentDetail.FindByConditionAsyncWithInclude(
+                    detail => detail.AppointmentId == appointment.Id, detail => detail.Staff))
+                .Select(detail => detail.Staff.UserId).ToHashSet();
+
+            foreach (var staffUserId in appointmentStaffUserIds)
+            {
+                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                    appointment,
+                    "Buỗi hẹn của bạn đã bị hủy",
+                    $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã bị hủy",
+                    staffUserId, GlobalVariables.AppointmentCanceledNotification));
+            }
+            
+            var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+                    staff.StaffType == GlobalVariables.ManagerRole &&
+                    staff.User.Status == GlobalVariables.ActiveUserStatus && staff.SalonId == appointment.SalonId))
+                .ToList();
+            foreach (var manager in managers)
+            {
+                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                    appointment,
+                    $"Buổi hẹn của {customer.FullName} đã bị hủy",
+                    $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã bị hủy ",
+                    manager.UserId , GlobalVariables.AppointmentCanceledNotification));
+            }
+
+            var reminderNotifications = await _repositoryWrapper.Notification.FindByConditionAsync(notification =>
+                notification.Type == GlobalVariables.AppointmentReminderNotification &&
+                notification.AppointmentId == appointment.Id &&
+                notification.Status == GlobalVariables.PendingNotificationStatus);
+            foreach (var notification in reminderNotifications)
+            {
+                notification.Status = GlobalVariables.CanceledNotificationStatus;
+                await _repositoryWrapper.Notification.UpdateAsyncWithoutSave(notification, notification.Id);
+            }
+
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+            }
+        }
+        
+        private async Task SendAppointmentFinishNotifications(Appointment appointment)
+        {
+            //Prepare Customer's Notifications
+            var customer =
+                (await _repositoryWrapper.Customer.FindSingleByConditionAsync(cus => cus.Id == appointment.CustomerId));
+            if (customer != null)
+            {
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Buỗi hẹn của bạn đã kết thúc",
+                        $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của bạn đã được xác nhận kết thúc, chúc bạn một ngày vui vẻ",
+                        customer.UserId, GlobalVariables.AppointmentCanceledNotification));
+            }
+            
+            var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+                    staff.StaffType == GlobalVariables.ManagerRole &&
+                    staff.User.Status == GlobalVariables.ActiveUserStatus && staff.SalonId == appointment.SalonId))
+                .ToList();
+            foreach (var manager in managers)
+            {
+                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                    appointment,
+                    $"Buổi hẹn của {customer.FullName} đã kết thúc",
+                    $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã được xác nhận kết thúc",
+                    manager.UserId , GlobalVariables.AppointmentCanceledNotification));
+            }
+
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
             }
         }
 
-        private Notification ToNewAppointmentCreatedNotification(Appointment appointment, string title, string detail,
-            int userId)
+        private Notification ToNewNotification(Appointment appointment, string title, string detail,
+            int userId, string type)
         {
             return new Notification()
             {
                 Detail = detail,
                 Status = GlobalVariables.PendingNotificationStatus,
                 Title = title,
-                Type = GlobalVariables.AppointmentCreatedNotification,
+                Type = type,
                 AppointmentId = appointment.Id,
                 UserId = userId,
                 CreatedDate = DateTime.Now,
                 LastUpdate = DateTime.Now,
+            };
+        }
+        
+        private Notification ToNewNotification(Appointment appointment, string title, string detail,
+            int userId, string type,  DateTime time)
+        {
+            return new Notification()
+            {
+                Detail = detail,
+                Status = GlobalVariables.PendingNotificationStatus,
+                Title = title,
+                Type = type,
+                AppointmentId = appointment.Id,
+                UserId = userId,
+                CreatedDate = DateTime.Now,
+                LastUpdate = DateTime.Now,
+                DeliveryDate = time
             };
         }
         

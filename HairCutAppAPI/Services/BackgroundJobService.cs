@@ -87,7 +87,7 @@ namespace HairCutAppAPI.Services
             var approvedAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
                 appointment.Status == GlobalVariables.ApprovedAppointmentStatus && 
                 appointment.StartDate <= DateTime.Now && 
-                DateTime.Now < appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointmentInAdvanced))).ToList();
+                DateTime.Now < appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointment))).ToList();
             //If there are
             if (approvedAppointments.Any())
             {
@@ -118,13 +118,45 @@ namespace HairCutAppAPI.Services
         public async Task CheckAndUpdateOngoingAppointments()
         {
             //Get all appointments with ongoing status
-            var ongoingAppointments = (await _repositoryWrapper.Appointment.FindByConditionAsync(appointment =>
-                appointment.Status == GlobalVariables.OnGoingAppointmentStatus && DateTime.Now >= appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointmentInAdvanced))).ToList();
+            var ongoingAppointments =
+                await _repositoryWrapper.Appointment.GetOngoingAppointmentsWithChosenStaffAndCustomer();
             
             //If there are
             if (ongoingAppointments.Any())
             {
-                //TODO Send notification to staff and manager
+                foreach (var appointment in ongoingAppointments)
+                {
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(new Notification()
+                    {
+                        Detail = $"Đã quá hạn xác nhận kết thúc buổi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {appointment.Customer.FullName}.",
+                        Status = GlobalVariables.PendingNotificationStatus,
+                        Title = "Quá hạn xác nhận kết thúc buổi hẹn",
+                        Type = GlobalVariables.AppointmentCompleteReminderNotification,
+                        AppointmentId = appointment.Id,
+                        UserId = appointment.ChosenStaff.UserId,
+                        CreatedDate = DateTime.Now,
+                        LastUpdate = DateTime.Now,
+                    });
+                    
+                    var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+                            staff.StaffType == GlobalVariables.ManagerRole &&
+                            staff.User.Status == GlobalVariables.ActiveUserStatus && staff.SalonId == appointment.SalonId))
+                        .ToList();
+                    foreach (var manager in managers)
+                    {
+                        await _repositoryWrapper.Notification.CreateWithoutSaveAsync(new Notification()
+                        {
+                            Detail = $"Đã quá hạn xác nhận kết thúc buổi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {appointment.Customer.FullName}, stylist chính là {appointment.ChosenStaff.FullName}.",
+                            Status = GlobalVariables.PendingNotificationStatus,
+                            Title = "Quá hạn xác nhận kết thúc buổi hẹn",
+                            Type = GlobalVariables.AppointmentCompleteReminderNotification,
+                            AppointmentId = appointment.Id,
+                            UserId = manager.UserId,
+                            CreatedDate = DateTime.Now,
+                            LastUpdate = DateTime.Now,
+                        });
+                    }
+                }
             }
         }
 

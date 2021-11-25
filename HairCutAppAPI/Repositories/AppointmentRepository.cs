@@ -312,5 +312,11 @@ namespace HairCutAppAPI.Repositories
                 .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year && appointment.AppointmentDetails.Any(detail => detail.Staff.UserId == staffUserId))
                 .CountAsync();;
         }
+
+        public async Task<List<Appointment>> GetOngoingAppointmentsWithChosenStaffAndCustomer()
+        {
+            return await _hdbContext.Appointments.Where(appointment =>
+                appointment.Status == GlobalVariables.OnGoingAppointmentStatus && DateTime.Now >= appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointment)).Include(appointment => appointment.ChosenStaff).Include(appointment => appointment.Customer).ToListAsync();
+        }
     }
 }

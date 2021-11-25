@@ -39,7 +39,9 @@ namespace HairCutAppAPI.Utilities
         //TG để approve appointment trước
         public const int TimeToConfirmAppointmentInAdvanced = 60;
         //TG để hoàn thành 1 appointment, nếu không, gửi notification đến manager
-        public const int TimeToFinishAppointmentInAdvanced = 300;
+        public const int TimeToFinishAppointment = 300;
+        //TG để nhắc khách hàng sắp tới cuộc hẹn
+        public const int TimeToRemindAppointment = 30;
         
         //Name of roles
         public const string AdministratorRole = "administrator";
@@ -130,6 +132,8 @@ namespace HairCutAppAPI.Utilities
         public const string AppointmentApprovedNotification = "appointment_approved";
         public const string AppointmentCanceledNotification = "appointment_canceled";
         public const string AppointmentCompleteNotification = "appointment_complete";
+        public const string AppointmentReminderNotification = "appointment_reminder";
+        public const string AppointmentCompleteReminderNotification = "appointment_complete_reminder";
 
         public static readonly ViolationType ManagerApproveViolationId = new ViolationType()
             {Id = 1, Name = "Manager Failed to Approve of Disapprove an appointment"};
