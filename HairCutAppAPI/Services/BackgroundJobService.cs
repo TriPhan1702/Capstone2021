@@ -43,6 +43,8 @@ namespace HairCutAppAPI.Services
                     appointment.Status = GlobalVariables.CanceledAppointmentStatus;
                     appointment.LastUpdated = DateTime.Now;
                     await _repositoryWrapper.Appointment.UpdateAsyncWithoutSave(appointment, appointment.Id);
+                    
+                    //Tạo Notifications
                     await SendAppointmentCanceledNotifications(appointment);
                 }
 
@@ -356,16 +358,16 @@ namespace HairCutAppAPI.Services
                 await _repositoryWrapper.Notification.UpdateAsyncWithoutSave(notification, notification.Id);
             }
 
-            try
-            {
-                //Save all changes above to database 
-                await _repositoryWrapper.SaveAllAsync();
-            }
-            catch (Exception e)
-            {
-                //clear pending changes if fail
-                _repositoryWrapper.DeleteChanges();
-            }
+            // try
+            // {
+            //     //Save all changes above to database 
+            //     await _repositoryWrapper.SaveAllAsync();
+            // }
+            // catch (Exception e)
+            // {
+            //     //clear pending changes if fail
+            //     _repositoryWrapper.DeleteChanges();
+            // }
         }
         
         private Notification ToNewNotification(Appointment appointment, string title, string detail,
