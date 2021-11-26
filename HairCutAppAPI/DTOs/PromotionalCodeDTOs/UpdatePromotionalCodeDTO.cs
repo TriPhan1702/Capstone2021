@@ -49,9 +49,9 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
                 hasChanged = true;
             }
 
-            if (!string.IsNullOrWhiteSpace(Status) && Code != promotionalCode.Status)
+            if (!string.IsNullOrWhiteSpace(Status) && Status.ToLower() != promotionalCode.Status)
             {
-                promotionalCode.Status = Status;
+                promotionalCode.Status = Status.ToLower();
                 hasChanged = true;
             }
 
