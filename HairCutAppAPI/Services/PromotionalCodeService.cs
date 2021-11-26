@@ -70,10 +70,15 @@ namespace HairCutAppAPI.Services
             var code = await _repositoryWrapper.PromotionalCode.GetOnePromotionalWithSalon(dto.Id);
             if (code is null)
             {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Promotional Code with Id {dto.Id} not found");
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy mã khuyến mãi với Id {dto.Id}");
             }
             
             code = dto.CompareUpdatePromotionalCode(code);
+
+            if (!GlobalVariables.PromotionalCodeStatuses.Contains(dto.Status.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Status của mã khuyến mãi phải là: " + string.Join(", ",GlobalVariables.PromotionalCodeStatuses));
+            }
             
             //If IsUniversal is set to false
             if (dto.IsUniversal == 0)

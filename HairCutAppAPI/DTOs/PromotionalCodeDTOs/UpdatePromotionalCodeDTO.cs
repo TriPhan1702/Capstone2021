@@ -18,6 +18,7 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
         public string ExpirationDate { get; set; }
         public int IsUniversal { get; set; }
         public int UsesPerCustomer { get; set; }
+        public string Status { get; set; }
         public IEnumerable<int> SalonIds { get; set; }
 
         public PromotionalCode CompareUpdatePromotionalCode(PromotionalCode promotionalCode)
@@ -45,6 +46,12 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
             if (UsesPerCustomer >= 0 && UsesPerCustomer != promotionalCode.UsesPerCustomer)
             {
                 promotionalCode.UsesPerCustomer = UsesPerCustomer;
+                hasChanged = true;
+            }
+
+            if (!string.IsNullOrWhiteSpace(Status) && Code != promotionalCode.Status)
+            {
+                promotionalCode.Status = Status;
                 hasChanged = true;
             }
 
