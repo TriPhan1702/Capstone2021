@@ -66,13 +66,60 @@ namespace HairCutAppAPI.Services
             var date = DateTime.ParseExact(findWorkSlotsOfDayDTO.Date, GlobalVariables.DayFormat,
                 CultureInfo.InvariantCulture);
             var slots = await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>
-                ws.StaffId == findWorkSlotsOfDayDTO.StaffId && ws.Date.DayOfYear == date.DayOfYear);
+                ws.StaffId == findWorkSlotsOfDayDTO.Id && ws.Date.DayOfYear == date.DayOfYear);
             if (slots is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "WorkSlots not found");
             }
 
             return new CustomHttpCodeResponse(200,"",slots.Select(ws => ws.ToGetWorkSlotResponseDTO()).ToList());
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfDayBySalon(FindWorkSlotsOfDayDTO dto)
+        {
+            var date = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat,
+                CultureInfo.InvariantCulture);
+            if (!await _repositoryWrapper.Salon.AnyAsync(salon => salon.Id == dto.Id))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy Salon");
+            }
+
+            var staffs = new List<FindWorkSlotOfDayBySalonStaffDTO>();
+
+            //Tìm các staff của salon
+            var staffList = (await _repositoryWrapper.Staff.FindByConditionAsync(sta =>
+                sta.SalonId == dto.Id && sta.StaffType != GlobalVariables.ManagerRole)).ToList();
+            //List Id của các staff
+            var staffIds = staffList.Select(sta => sta.Id);
+            
+            //Tìm các slot của các staff trong ngày đó
+            var slots = (await _repositoryWrapper.WorkSlot.FindByConditionAsync(ws =>staffIds.Contains(ws.StaffId) && ws.Date.DayOfYear == date.DayOfYear)).ToList();
+
+            foreach (var workSlot in slots)
+            {
+                var staffFromDto = staffs.FirstOrDefault(sta => workSlot.StaffId == sta.StaffId);
+                if (staffFromDto == null)
+                {
+                    var tempStaff = staffList.Find(sta => sta.Id == workSlot.StaffId);
+                    staffFromDto = new FindWorkSlotOfDayBySalonStaffDTO()
+                    {
+                        StaffId = workSlot.StaffId,
+                        Name = tempStaff.FullName,
+                        StaffUserId = tempStaff.UserId,
+                        WorkSlots = new List<FindWorkSlotOfDayBySalonWorkSlotDTO>()
+                    };
+                    
+                    staffs.Add(staffFromDto);
+                }
+                
+                staffFromDto.WorkSlots.Add(new FindWorkSlotOfDayBySalonWorkSlotDTO()
+                {
+                    WorkSlotId = workSlot.Id,
+                    SlotOfDayId = workSlot.SlotOfDayId
+                });
+            }
+
+            return new CustomHttpCodeResponse(200,"", staffs);
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> FindOwnWorkSlotsOfDay(FindOwnWorkSlotsOfDayDTO dto)

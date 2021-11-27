@@ -79,6 +79,24 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Find All WorkSlots in a day of all staff of a salon
+        /// </summary>
+        [Authorize]
+        [HttpPost("work_slot_of_day_by_salon")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfDayBySalon([FromBody]FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
+        {
+            //Trim All Strings in object
+            findWorkSlotsOfDayDTO = ObjectTrimmer.TrimObject(findWorkSlotsOfDayDTO) as FindWorkSlotsOfDayDTO;
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return await _workSlotService.FindWorkSlotsOfDayBySalon(findWorkSlotsOfDayDTO);
+        }
+        
+        /// <summary>
         /// Tìm các Work SLot trong một ngày của User Hiện Tại
         /// </summary>
         [Authorize(Roles = GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
