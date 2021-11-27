@@ -30,7 +30,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         /// <summary>
         /// Find out the difference and update the different field to entity  
         /// </summary>
-        public Combo CompareUpdateCombo(Combo combo, string avatarUrl = null)
+        public Combo CompareUpdateCombo(Combo combo)
         {
             var hasChanged = false;
             if (!string.IsNullOrWhiteSpace(Name) && Name != combo.Name)
@@ -52,12 +52,6 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
             if (Price >=0 && Price != combo.Price)
             {
                 combo.Price = Price;
-                hasChanged = true;
-            }
-
-            if (avatarUrl != null)
-            {
-                combo.AvatarUrl = avatarUrl;
                 hasChanged = true;
             }
 
