@@ -70,7 +70,8 @@ namespace HairCutAppAPI.Entities
                 StartTime = SlotOfDay.StartTime.ToString(GlobalVariables.TimeFormat),
                 EndTime = SlotOfDay.EndTime.ToString(GlobalVariables.TimeFormat),
                 AppointmentDetailId = AppointmentDetailId,
-                AppointmentId = AppointmentId
+                AppointmentId = AppointmentId,
+                SalonId = Staff.SalonId
             };
         }
     }

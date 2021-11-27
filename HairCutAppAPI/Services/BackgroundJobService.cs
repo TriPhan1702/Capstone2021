@@ -258,7 +258,6 @@ namespace HairCutAppAPI.Services
                 {
                     //clear pending changes if fail
                     _repositoryWrapper.DeleteChanges();
-                    //TODO: Log failure to update work slot
                 }
             }
         }
@@ -314,7 +313,6 @@ namespace HairCutAppAPI.Services
             {
                 //clear pending changes if fail
                 _repositoryWrapper.DeleteChanges();
-                //TODO: Log Failure
             }
         }
         

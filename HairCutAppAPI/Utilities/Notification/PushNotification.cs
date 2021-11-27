@@ -3,12 +3,20 @@ using System.IO;
 using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.Html;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace HairCutAppAPI.Utilities.Notification
 {
     public class PushNotification : IPushNotification
     {
+        private readonly ILogger<PushNotification> _logger;
+
+        public PushNotification(ILogger<PushNotification> logger)
+        {
+            _logger = logger;
+        }
+
         public async void Push(string deviceToken, string title, string body, string screen, object data)
         {
             try
@@ -67,8 +75,7 @@ namespace HairCutAppAPI.Utilities.Notification
 
             catch (Exception ex)
             {
-                //TODO:Log
-                var str = ex.Message;
+                _logger.LogError(ex, ex.Message);
             }          
         }
     }
