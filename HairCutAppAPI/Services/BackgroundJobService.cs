@@ -228,7 +228,6 @@ namespace HairCutAppAPI.Services
                 {
                     //clear pending changes if fail
                     _repositoryWrapper.DeleteChanges();
-                    //TODO: Log failure to update code status
                 }
             }
         }

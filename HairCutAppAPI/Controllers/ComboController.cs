@@ -69,7 +69,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="createComboDTO">, if Services is null or empty, then the combo created will have no service</param>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_combo")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo([FromBody] CreateComboDTO createComboDTO)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CreateCombo([FromForm] CreateComboDTO createComboDTO)
         {
             //Trim All Strings in object
             createComboDTO = ObjectTrimmer.TrimObject(createComboDTO) as CreateComboDTO;
