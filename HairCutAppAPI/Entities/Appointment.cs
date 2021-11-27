@@ -78,7 +78,7 @@ namespace HairCutAppAPI.Entities
                 Price = price,
                 Status = Status,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DayFormat),
-                PromotionalCode = PromotionalCode.Code,
+                // PromotionalCode = PromotionalCode.Code,
                 ComboId = ComboId,
                 CustomerId = CustomerId,
                 CustomerName = Customer.FullName,
