@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.ComboDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HairCutAppAPI.Services.Interfaces
@@ -15,6 +16,7 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> GetAllCombos();
         Task<ActionResult<CustomHttpCodeResponse>> GetComboDetail(int id);
         Task<ActionResult<CustomHttpCodeResponse>> UpdateCombo(UpdateComboDTO updateComboDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> UploadComboImage(UploadImageDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id);
         Task<ActionResult<CustomHttpCodeResponse>> GetComboDuration(int id);
         Task<ActionResult<CustomHttpCodeResponse>> GetAllActiveCombos();

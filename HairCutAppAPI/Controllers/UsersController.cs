@@ -168,7 +168,7 @@ namespace HairCutAppAPI.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpPost("upload_avatar")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> Login([FromForm] UploadImageDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar([FromForm] UploadImageDTO dto)
         {
             return await _userService.UploadAvatar(dto);
         }

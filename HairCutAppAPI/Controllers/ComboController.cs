@@ -5,6 +5,7 @@ using HairCutAppAPI.DTOs.ServiceDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
+using HairCutAppAPI.Utilities.ImageUpload;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -101,6 +102,17 @@ namespace HairCutAppAPI.Controllers
             }
         
             return await _comboService.UpdateCombo(updateComboDTO);
+        }
+        
+        /// <summary>
+        /// Cho Admin upload hình của combo
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("upload_avatar")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar([FromForm] UploadImageDTO dto)
+        {
+            return await _comboService.UploadComboImage(dto);
         }
         
         [Authorize]

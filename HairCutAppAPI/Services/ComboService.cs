@@ -180,6 +180,27 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200,"",result);
         }
 
+        public async Task<ActionResult<CustomHttpCodeResponse>> UploadComboImage(UploadImageDTO dto)
+        {
+            var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(comb => comb.Id == dto.Id);
+            if (combo is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Không tìm thấy combo");
+            }
+            
+            var imageUploadResult = await _photoService.AppPhotoAsync(dto.ImageFile);
+            //If there's error
+            if (imageUploadResult.Error != null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+            }
+            
+            combo.AvatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+
+            var result = await _repositoryWrapper.Combo.UpdateAsync(combo, combo.Id);
+            return new CustomHttpCodeResponse(200,"Đã Upload Hình", result.AvatarUrl);
+        }
+
         public async Task<ActionResult<CustomHttpCodeResponse>> GetComboPrice(int id)
         {
             if (!await CheckComboExists(id))
