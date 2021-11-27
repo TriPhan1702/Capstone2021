@@ -78,8 +78,7 @@ namespace HairCutAppAPI.Entities
                 Price = price,
                 Status = Status,
                 CreatedDate = CreatedDate.ToString(GlobalVariables.DayFormat),
-                //TODO Fix this
-                // PromotionalCode = PromotionalCode,
+                PromotionalCode = PromotionalCode.Code,
                 ComboId = ComboId,
                 CustomerId = CustomerId,
                 CustomerName = Customer.FullName,
@@ -89,6 +88,7 @@ namespace HairCutAppAPI.Entities
                 SalonName = Salon.Name,
                 StylistStaffId = stylistId,
                 StylistName = stylistName,
+                ComboPrice = comboPrice
             };
         }
 

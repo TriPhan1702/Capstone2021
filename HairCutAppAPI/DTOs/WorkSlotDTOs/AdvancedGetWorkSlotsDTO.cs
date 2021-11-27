@@ -21,6 +21,8 @@ namespace HairCutAppAPI.DTOs.WorkSlotDTOs
         public ICollection<int> StaffIds { get; set; } 
         public ICollection<int> SlotOfDayIds { get; set; } 
         public ICollection<string> ExactStaffNames { get; set; }
+        
+        public ICollection<int> FilterSalonIds { get; set; }
         public string StaffName { get; set; }
         
         public string MinDate { get; set; }

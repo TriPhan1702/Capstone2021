@@ -24,25 +24,10 @@ namespace HairCutAppAPI.Services
             _photoService = photoService;
         }
 
-        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList(CustomerGetSalonListDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> CustomerGetSalonList()
         {
-            double? longitude = null;
-            double? latitude = null;
-            if (dto.Latitude != null && dto.Longitude != null)
-            {
-                try
-                {
-                    longitude = double.Parse(dto.Longitude);
-                    latitude = double.Parse(dto.Latitude);
-                }
-                catch (FormatException)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Format của tọa đọ của người dùng hiện tại là không đúng");
-                }
-            }
-            
             var salons = await _repositoryWrapper.Salon.FindByConditionAsync(s=>s.Status == GlobalVariables.ActiveSalonStatus);
-            return  new CustomHttpCodeResponse(200, "",salons?.Select(salon => salon.ToCustomerGetSalonListDTO(longitude, latitude)).ToList());
+            return  new CustomHttpCodeResponse(200, "",salons?.Select(salon => salon.ToCustomerGetSalonListDTO()).ToList());
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateSalon(CreateSalonDTO salonDTO)
