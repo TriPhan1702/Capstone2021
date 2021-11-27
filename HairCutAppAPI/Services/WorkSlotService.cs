@@ -119,7 +119,12 @@ namespace HairCutAppAPI.Services
                 });
             }
 
-            return new CustomHttpCodeResponse(200,"", staffs);
+            return new CustomHttpCodeResponse(200,"", new FindWorkSlotOfDayBySalonDTO()
+            {
+                SalonId = dto.Id,
+                Date = dto.Date,
+                Staffs = staffs
+            });
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> FindOwnWorkSlotsOfDay(FindOwnWorkSlotsOfDayDTO dto)
