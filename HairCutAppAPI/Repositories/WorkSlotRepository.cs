@@ -41,7 +41,7 @@ namespace HairCutAppAPI.Repositories
                     advancedGetWorkSlotsDTO.StaffIds.Contains(slot.StaffId));
             }
             
-            //If there's staffId filtering
+            //If there's Salon Id filtering
             if (advancedGetWorkSlotsDTO.FilterSalonIds != null && advancedGetWorkSlotsDTO.FilterSalonIds.Any())
             {
                 query = query.Where(slot =>

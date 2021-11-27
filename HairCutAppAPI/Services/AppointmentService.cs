@@ -50,7 +50,7 @@ namespace HairCutAppAPI.Services
             CreateAppointmentDTO createAppointmentDTO)
         {
             //Check Payment Type có đúng ko
-            if (GlobalVariables.PaymentTypes.Contains(createAppointmentDTO.PaymentType.ToLower()))
+            if (!GlobalVariables.PaymentTypes.Contains(createAppointmentDTO.PaymentType.ToLower()))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"PaymentType phải là: " + string.Join(", ", GlobalVariables.PaymentTypes));
             }
