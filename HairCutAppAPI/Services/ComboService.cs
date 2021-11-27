@@ -58,18 +58,18 @@ namespace HairCutAppAPI.Services
             }
 
             //Upload hình
-            string avatarUrl = null;
-            if (updateComboDTO.AvatarFile != null)
-            {
-                var imageUploadResult = await _photoService.AppPhotoAsync(updateComboDTO.AvatarFile);
-                //If there's error
-                if (imageUploadResult.Error != null)
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
-                }
-
-                avatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
-            }
+            // string avatarUrl = null;
+            // if (updateComboDTO.AvatarFile != null)
+            // {
+            //     var imageUploadResult = await _photoService.AppPhotoAsync(updateComboDTO.AvatarFile);
+            //     //If there's error
+            //     if (imageUploadResult.Error != null)
+            //     {
+            //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,imageUploadResult.Error.Message);
+            //     }
+            //
+            //     avatarUrl = imageUploadResult.SecureUrl.AbsoluteUri;
+            // }
             
             // If services in DTO is not empty, check and update ComboDetail List
             if (updateComboDTO.Details != null)
@@ -144,7 +144,7 @@ namespace HairCutAppAPI.Services
             }
         
             //Map the differences from dto to entity
-            combo = updateComboDTO.CompareUpdateCombo(combo, avatarUrl);
+            combo = updateComboDTO.CompareUpdateCombo(combo);
             
             await _repositoryWrapper.Combo.UpdateAsyncWithoutSave(combo, combo.Id);
             
@@ -231,17 +231,17 @@ namespace HairCutAppAPI.Services
             var newCombo = dto.ToNewCombo(avatarUrl);
 
             // If services in DTo is not empty, check and prepare ComboDetail List
-            if (dto.Details != null && dto.Details.Count != 0)
-            {
-                //Check xem trong list có service là bới stylist chính chưa
-                if (!dto.Details.Any(detail => detail.IsDoneByStylist))
-                {
-                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Trong các service phải có ít nhất 1 service làm bởi stylisr chính");
-                }
-                
-                var comboDetails = await PrepareComboDetail(dto.Details, newCombo);
-                newCombo.ComboDetails = comboDetails;
-            }
+            // if (dto.Details != null && dto.Details.Any())
+            // {
+            //     //Check xem trong list có service là bới stylist chính chưa
+            //     if (!dto.Details.Any(detail => detail.IsDoneByStylist))
+            //     {
+            //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Trong các service phải có ít nhất 1 service làm bởi stylisr chính");
+            //     }
+            //     
+            //     var comboDetails = await PrepareComboDetail(dto.Details, newCombo);
+            //     newCombo.ComboDetails = comboDetails;
+            // }
 
             Combo result;
             try

@@ -23,7 +23,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         
         public IFormFile AvatarFile { get; set; }
         
-        public List<CreateUpdateComboDetailDTO> Details { get; set;}
+        // public CreateUpdateComboDetailDTO[] Details { get; set;}
         
         [Required]
         public decimal Price { get; set; }
@@ -37,7 +37,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
                 Description = Description,
                 Status = Status.ToLower(),
                 Price = Price,
-                AvatarUrl = avatarUrl
+                AvatarUrl = avatarUrl,
             };
         }
     }

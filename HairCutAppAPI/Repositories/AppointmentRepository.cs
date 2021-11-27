@@ -26,7 +26,7 @@ namespace HairCutAppAPI.Repositories
 
         public async Task<Appointment> GetLatestAppointmentOfCustomer(int customerId)
         {
-            return await _hdbContext.Appointments.Include(a=>a.AppointmentDetails).Include(a=>a.Customer).Include(a=>a.Salon).OrderByDescending(a => a.CreatedDate)
+            return await _hdbContext.Appointments.Include(a=>a.AppointmentDetails).Include(a=>a.Customer).Include(a=>a.Salon).Include(appointment => appointment.PromotionalCode).OrderByDescending(a => a.CreatedDate)
                 .FirstOrDefaultAsync(a => a.CustomerId == customerId);
         }
         
