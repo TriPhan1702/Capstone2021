@@ -81,7 +81,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Find All WorkSlots in a day of all staff of a salon
         /// </summary>
-        [Authorize]
+        // [Authorize]
         [HttpPost("work_slot_of_day_by_salon")]
         public async Task<ActionResult<CustomHttpCodeResponse>> FindWorkSlotsOfDayBySalon([FromBody]FindWorkSlotsOfDayDTO findWorkSlotsOfDayDTO)
         {

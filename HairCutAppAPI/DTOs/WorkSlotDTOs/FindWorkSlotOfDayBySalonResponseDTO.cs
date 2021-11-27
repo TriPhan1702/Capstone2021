@@ -20,5 +20,9 @@ namespace HairCutAppAPI.DTOs.WorkSlotDTOs
     {
         public int WorkSlotId { get; set; }
         public int SlotOfDayId { get; set; }
+        
+        public string Status { get; set; }
+        public int? AppointmentId { get; set; }
+        public int? AppointmentDetailId { get; set; }
     }
 }

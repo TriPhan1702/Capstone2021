@@ -115,7 +115,10 @@ namespace HairCutAppAPI.Services
                 staffFromDto.WorkSlots.Add(new FindWorkSlotOfDayBySalonWorkSlotDTO()
                 {
                     WorkSlotId = workSlot.Id,
-                    SlotOfDayId = workSlot.SlotOfDayId
+                    SlotOfDayId = workSlot.SlotOfDayId,
+                    Status = workSlot.Status,
+                    AppointmentId = workSlot.AppointmentId,
+                    AppointmentDetailId = workSlot.AppointmentDetailId
                 });
             }
 
