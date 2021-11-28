@@ -10,11 +10,15 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> GetTotalEarningInMonth(string date);
         Task<ActionResult<CustomHttpCodeResponse>> GetTotalEarningInDay(string date);
         Task<ActionResult<CustomHttpCodeResponse>> GetEarningInMonthBySalon(GetEarningInMonthBySalonDTO dto);
+        Task<ActionResult<CustomHttpCodeResponse>> GetEarningInMonthByCustomer(GetEarningInMonthByCustomerDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> GetEarningInDayBySalon(GetEarningInDayBySalonDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonth(string date);
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthBySalon(
             GetAppointmentStatusStatInMonthBySalonDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByStaff(
             GetAppointmentStatusStatInMonthByStaffDTO dto);
+
+        Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByCustomer(
+            GetAppointmentStatusStatInMonthByCustomerDTO dto);
     }
 }

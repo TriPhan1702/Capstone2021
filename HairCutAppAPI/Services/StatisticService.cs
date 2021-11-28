@@ -40,7 +40,16 @@ namespace HairCutAppAPI.Services
             
             var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
             
-            return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInMonth(dateTime.Month, dateTime.Year));
+            return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetEarningInMonthBySalon(dateTime.Month, dateTime.Year, dto.SalonId));
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetEarningInMonthByCustomer(GetEarningInMonthByCustomerDTO dto)
+        {
+            await CustomerExists(dto.CustomerUserId);
+            
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            
+            return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInMonthByCustomer(dateTime.Month, dateTime.Year, dto.CustomerUserId));
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> GetEarningInDayBySalon(GetEarningInDayBySalonDTO dto)
@@ -137,6 +146,35 @@ namespace HairCutAppAPI.Services
                 TotalAppointments = totalAppointment,
             });
         }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByCustomer(GetAppointmentStatusStatInMonthByCustomerDTO dto)
+        {
+            await StaffExists(dto.CustomerUserId);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var pendingAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInMonthByCustomer(dateTime.Month, dateTime.Year,
+                    GlobalVariables.PendingAppointmentStatus, dto.CustomerUserId);
+            var approvedAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInMonthByCustomer(dateTime.Month, dateTime.Year,
+                    GlobalVariables.ApprovedAppointmentStatus, dto.CustomerUserId);
+            var ongoingAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInMonthByCustomer(dateTime.Month, dateTime.Year,
+                    GlobalVariables.OnGoingAppointmentStatus, dto.CustomerUserId);
+            var canceledAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInMonthByCustomer(dateTime.Month, dateTime.Year,
+                    GlobalVariables.CanceledAppointmentStatus, dto.CustomerUserId);
+            var totalAppointment =
+                await _repositoryWrapper.Appointment.GetAppointmentInMonthByCustomer(dateTime.Month, dateTime.Year, dto.CustomerUserId);
+            
+            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatInMonthResponseDTO()
+            {
+                PendingAppointments = pendingAppointments,
+                ApprovedAppointments = approvedAppointments,
+                OnGoingAppointments = ongoingAppointments,
+                CancelAppointments = canceledAppointments,
+                TotalAppointments = totalAppointment,
+            });
+        }
 
         private async Task SalonExists(int salonId)
         {
@@ -151,6 +189,14 @@ namespace HairCutAppAPI.Services
             if (!await _repositoryWrapper.Staff.AnyAsync(staff => staff.UserId == staffUserId))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Không tìm thấy Staff");
+            }
+        }
+        
+        private async Task CustomerExists(int customerUserId)
+        {
+            if (!await _repositoryWrapper.Customer.AnyAsync(customer => customer.UserId == customerUserId))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Không tìm thấy Customer");
             }
         }
     }

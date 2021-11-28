@@ -256,7 +256,17 @@ namespace HairCutAppAPI.Repositories
         {
             return await _hdbContext.Appointments
                 .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
-                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus && appointment.SalonId == salonId)
+                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus && 
+                                      appointment.SalonId == salonId)
+                .SumAsync(appointment => appointment.PaidAmount);
+        }
+        
+        public async Task<decimal> GetTotalEarningInMonthByCustomer(int month, int year, int customerUserId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus &&
+                                      appointment.Customer.UserId == customerUserId)
                 .SumAsync(appointment => appointment.PaidAmount);
         }
         
@@ -291,6 +301,13 @@ namespace HairCutAppAPI.Repositories
                                       appointment.Status == status && appointment.AppointmentDetails.Any(detail => detail.Staff.UserId == staffUserId))
                 .CountAsync();
         }
+        public async Task<int> GetAppointmentByStatusInMonthByCustomer(int month, int year, string status, int customerUserId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == status && appointment.Customer.UserId == customerUserId)
+                .CountAsync();
+        }
         
         public async Task<int> GetTotalAppointmentInMonth(int month, int year)
         {
@@ -310,6 +327,13 @@ namespace HairCutAppAPI.Repositories
         {
             return await _hdbContext.Appointments
                 .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year && appointment.AppointmentDetails.Any(detail => detail.Staff.UserId == staffUserId))
+                .CountAsync();;
+        }
+        
+        public async Task<int> GetAppointmentInMonthByCustomer(int month, int year, int customerUserId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year && appointment.Customer.UserId == customerUserId)
                 .CountAsync();;
         }
 

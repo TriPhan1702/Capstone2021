@@ -20,6 +20,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<decimal> GetTotalEarningInMonth(int month, int year);
         Task<decimal> GetTotalEarningInDay(DateTime date);
         Task<decimal> GetEarningInMonthBySalon(int month, int year, int salonId);
+        Task<decimal> GetTotalEarningInMonthByCustomer(int month, int year, int customerUserId);
         Task<decimal> GetTotalEarningInDay(DateTime date, int salonId);
         Task<int> GetTotalAppointmentByStatusInMonth(int month, int year, string status);
         Task<int> GetTotalAppointmentInMonth(int month, int year);
@@ -27,6 +28,8 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<int> GetAppointmentInMonthBySalon(int month, int year, int salonId);
         Task<int> GetAppointmentByStatusInMonthByStaff(int month, int year, string status, int staffUserId);
         Task<int> GetAppointmentInMonthByStaff(int month, int year, int staffUserId);
+        Task<int> GetAppointmentByStatusInMonthByCustomer(int month, int year, string status, int customerUserId);
+        Task<int> GetAppointmentInMonthByCustomer(int month, int year, int customerUserId);
         Task<List<Appointment>> GetOngoingAppointmentsWithChosenStaffAndCustomer();
     }
 }

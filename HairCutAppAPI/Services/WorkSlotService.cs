@@ -84,7 +84,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không tìm thấy Salon");
             }
 
-            var staffs = new List<FindWorkSlotOfDayBySalonStaffDTO>();
+            var staffResult = new List<FindWorkSlotOfDayBySalonStaffDTO>();
 
             //Tìm các staff của salon
             var staffList = (await _repositoryWrapper.Staff.FindByConditionAsync(sta =>
@@ -97,7 +97,7 @@ namespace HairCutAppAPI.Services
 
             foreach (var workSlot in slots)
             {
-                var staffFromDto = staffs.FirstOrDefault(sta => workSlot.StaffId == sta.StaffId);
+                var staffFromDto = staffResult.FirstOrDefault(sta => workSlot.StaffId == sta.StaffId);
                 if (staffFromDto == null)
                 {
                     var tempStaff = staffList.Find(sta => sta.Id == workSlot.StaffId);
@@ -109,7 +109,7 @@ namespace HairCutAppAPI.Services
                         WorkSlots = new List<FindWorkSlotOfDayBySalonWorkSlotDTO>()
                     };
                     
-                    staffs.Add(staffFromDto);
+                    staffResult.Add(staffFromDto);
                 }
                 
                 staffFromDto.WorkSlots.Add(new FindWorkSlotOfDayBySalonWorkSlotDTO()
@@ -126,7 +126,7 @@ namespace HairCutAppAPI.Services
             {
                 SalonId = dto.Id,
                 Date = dto.Date,
-                Staffs = staffs
+                Staffs = staffResult
             });
         }
         

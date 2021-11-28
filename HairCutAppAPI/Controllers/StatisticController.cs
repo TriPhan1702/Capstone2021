@@ -56,6 +56,25 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Tìm số tiền kiếm khách hàng đã tiêu trong 1 tháng
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_earning_in_month_by_customer")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetEarningInMonthByCustomer([FromBody]GetEarningInMonthByCustomerDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as GetEarningInMonthByCustomerDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            
+            return await _statisticService.GetEarningInMonthByCustomer(dto);
+        }
+        
+        /// <summary>
         /// Tìm số tiền kiếm đc trong 1 ngày của 1 salon
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
@@ -116,6 +135,23 @@ namespace HairCutAppAPI.Controllers
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
             return await _statisticService.GetAppointmentStatusStatInMonthByStaff(dto);
+        }
+        
+        /// <summary>
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_appointment_by_status_in_month_by_customer")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByCustomer([FromBody]GetAppointmentStatusStatInMonthByCustomerDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as GetAppointmentStatusStatInMonthByCustomerDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            return await _statisticService.GetAppointmentStatusStatInMonthByCustomer(dto);
         }
     }
 }
