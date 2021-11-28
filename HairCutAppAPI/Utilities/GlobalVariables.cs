@@ -35,13 +35,13 @@ namespace HairCutAppAPI.Utilities
         
         //Time variables
         //TG để tạo appointment trước
-        public const int TimeToCreateAppointmentInAdvanced = 120;
+        public const int TimeToCreateAppointmentInAdvanced = 60;
         //TG để approve appointment trước
-        public const int TimeToConfirmAppointmentInAdvanced = 60;
+        public const int TimeToConfirmAppointmentInAdvanced = 30;
         //TG để hoàn thành 1 appointment, nếu không, gửi notification đến manager
-        public const int TimeToFinishAppointment = 300;
+        public const int TimeToFinishAppointment = 120;
         //TG để nhắc khách hàng sắp tới cuộc hẹn
-        public const int TimeToRemindAppointment = 30;
+        public const int TimeToRemindAppointment = 15;
         
         //Name of roles
         public const string AdministratorRole = "administrator";

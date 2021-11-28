@@ -156,5 +156,6 @@ namespace HairCutAppAPI.Repositories
                 query.Select(combo => combo.ToAdvancedGetCombosResponseDTO()), advancedGetCombosDTO.PageNumber,
                 advancedGetCombosDTO.PageSize);
         }
+        
     }
 }
