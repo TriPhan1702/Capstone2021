@@ -141,10 +141,10 @@ namespace HairCutAppAPI.Services
             var now = DateTime.Now;
             
             //Check xem ngày có hơn [7] giờ trong tương lai ko
-            if (now.DayOfYear + GlobalVariables.MaximumCreateAppointmentDay - 1 >= chosenDate.DayOfYear)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không thể đặt lịch hơn {GlobalVariables.MaximumCreateAppointmentDay} ngày trong tương lai");
-            }
+            // if (now.DayOfYear + GlobalVariables.MaximumCreateAppointmentDay - 1 <= chosenDate.DayOfYear)
+            // {
+            //     throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không thể đặt lịch hơn {GlobalVariables.MaximumCreateAppointmentDay} ngày trong tương lai");
+            // }
 
             //Check if Combo is Empty
             if (!combo.ComboDetails.Any())
@@ -230,7 +230,7 @@ namespace HairCutAppAPI.Services
             var newAppointment = new Appointment()
             {
                 SalonId = createAppointmentDTO.SalonId,
-                CustomerId = currentUserId,
+                CustomerId = customer.Id,
                 Status = GlobalVariables.NewAppointmentStatus,
                 StartDate = chosenDate.Add(startSlotOfDay.StartTime),
                 EndDate = chosenDate.Add(endSlotOfDay.EndTime),
@@ -657,7 +657,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment(FinishAppointmentDTO dto)
         {
             var currentUserId = GetCurrentUserId();
-            var staff = _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.UserId == currentUserId);
+            var staff = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.UserId == currentUserId);
             if (staff is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Không tìm thấy staff vựa trên người dùng hiện tại");
