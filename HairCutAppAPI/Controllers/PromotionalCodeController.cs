@@ -32,7 +32,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// For admin to Create New Promotion Code
         /// </summary>
-        [Authorize(Policy = GlobalVariables.AdministratorRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_promotional_code")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreatePromotionalCode([FromBody]CreatePromotionalCodeDTO dto)
         {
@@ -51,7 +51,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Dùng để check trước nếu code sử cho appointment được không
         /// </summary>
-        [Authorize(Policy = GlobalVariables.CustomerRole)]
+        [Authorize(Roles = GlobalVariables.CustomerRole)]
         [HttpPost("validate_promotional_code")]
         public async Task<ActionResult<CustomHttpCodeResponse>> ValidatePromotionalCode([FromBody]ValidateCodeForAppointmentDTO dto)
         {
