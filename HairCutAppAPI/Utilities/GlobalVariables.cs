@@ -42,6 +42,7 @@ namespace HairCutAppAPI.Utilities
         public const int TimeToFinishAppointment = 120;
         //TG để nhắc khách hàng sắp tới cuộc hẹn
         public const int TimeToRemindAppointment = 15;
+        public const int MaximumCreateAppointmentDay = 7;
         
         //Name of roles
         public const string AdministratorRole = "administrator";

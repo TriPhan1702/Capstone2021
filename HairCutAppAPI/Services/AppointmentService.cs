@@ -49,6 +49,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateAppointment(
             CreateAppointmentDTO createAppointmentDTO)
         {
+            
             //Check Payment Type có đúng ko
             if (!GlobalVariables.PaymentTypes.Contains(createAppointmentDTO.PaymentType.ToLower()))
             {
@@ -138,6 +139,12 @@ namespace HairCutAppAPI.Services
                 CultureInfo.InvariantCulture);
             //Get Now Time
             var now = DateTime.Now;
+            
+            //Check xem ngày có hơn [7] giờ trong tương lai ko
+            if (now.DayOfYear + GlobalVariables.MaximumCreateAppointmentDay - 1 >= chosenDate.DayOfYear)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"Không thể đặt lịch hơn {GlobalVariables.MaximumCreateAppointmentDay} ngày trong tương lai");
+            }
 
             //Check if Combo is Empty
             if (!combo.ComboDetails.Any())
