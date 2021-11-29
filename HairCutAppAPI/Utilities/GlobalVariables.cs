@@ -16,7 +16,7 @@ namespace HairCutAppAPI.Utilities
         public const string PhoneNumberRegex = @"^(?:[0-9]{10})$";
         
         //Payment Types
-        public static readonly string[] PaymentTypes = {"direct", "momo"};
+        public static readonly string[] PaymentTypes = {"direct"};
         
         //Messages
         public const string DateRegexMessage = "dd/MM/yyyy";
