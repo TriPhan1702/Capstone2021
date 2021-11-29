@@ -87,7 +87,7 @@ namespace HairCutAppAPI.Services
             int? promotionalCodeId = null;
 
             //Nếu có promotional Code, check code
-            if (string.IsNullOrWhiteSpace(createAppointmentDTO.PromotionalCode))
+            if (!string.IsNullOrWhiteSpace(createAppointmentDTO.PromotionalCode))
             {
                 //Tìm code trong database
                 var promotionalCode = await GetPromotionalCode(createAppointmentDTO.PromotionalCode);
@@ -243,8 +243,9 @@ namespace HairCutAppAPI.Services
                 WorkSlots = chosenWorkSlots,
                 ComboPrice = combo.Price,
                 PaymentType = createAppointmentDTO.PaymentType.ToLower(),
-                PromotionalCodeId = promotionalCodeId,
+                PromotionalCodeId = promotionalCodeId
             };
+            
             foreach (var comboDetail in combo.ComboDetails)
             {
                 //Map một phần của appointment detail mới
