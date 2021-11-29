@@ -32,32 +32,22 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         /// </summary>
         public Combo CompareUpdateCombo(Combo combo)
         {
-            var hasChanged = false;
             if (!string.IsNullOrWhiteSpace(Name) && Name != combo.Name)
             {
                 combo.Name = Name;
-                hasChanged = true;
             }
             if (!string.IsNullOrWhiteSpace(Description) && Description != combo.Description)
             {
                 combo.Description = Description;
-                hasChanged = true;
             }
             if (!string.IsNullOrWhiteSpace(Status) && Status != combo.Status)
             {
                 combo.Status = Status.ToLower();
-                hasChanged = true;
             }
 
             if (Price >=0 && Price != combo.Price)
             {
                 combo.Price = Price;
-                hasChanged = true;
-            }
-
-            if (!hasChanged)
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không có gì thay đổi, dựa vào thông tin từ request");
             }
 
             return combo;
