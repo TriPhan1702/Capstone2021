@@ -242,7 +242,7 @@ namespace HairCutAppAPI.Services
                 foreach (var slot in activeWorkSlots)
                 {
                     var date = slot.Date.Add(slot.SlotOfDay.StartTime);
-                    if (date.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) <= DateTime.Now)
+                    if (DateTime.Now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) >= date)
                     {
                         slot.Status = GlobalVariables.NotAvailableWorkSlotStatus;
                         await _repositoryWrapper.WorkSlot.UpdateAsyncWithoutSave(slot, slot.Id);
