@@ -337,7 +337,7 @@ namespace HairCutAppAPI.Repositories
                 .CountAsync();;
         }
 
-        public async Task<List<Appointment>> GetOngoingAppointmentsWithChosenStaffAndCustomer()
+        public async Task<List<Appointment>> GetLateOngoingAppointmentsWithChosenStaffAndCustomer()
         {
             return await _hdbContext.Appointments.Where(appointment =>
                 appointment.Status == GlobalVariables.OnGoingAppointmentStatus && DateTime.Now >= appointment.EndDate.AddMinutes(GlobalVariables.TimeToFinishAppointment)).Include(appointment => appointment.ChosenStaff).Include(appointment => appointment.Customer).ToListAsync();

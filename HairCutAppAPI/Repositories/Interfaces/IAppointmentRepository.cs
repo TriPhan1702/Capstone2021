@@ -30,6 +30,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<int> GetAppointmentInMonthByStaff(int month, int year, int staffUserId);
         Task<int> GetAppointmentByStatusInMonthByCustomer(int month, int year, string status, int customerUserId);
         Task<int> GetAppointmentInMonthByCustomer(int month, int year, int customerUserId);
-        Task<List<Appointment>> GetOngoingAppointmentsWithChosenStaffAndCustomer();
+        Task<List<Appointment>> GetLateOngoingAppointmentsWithChosenStaffAndCustomer();
     }
 }

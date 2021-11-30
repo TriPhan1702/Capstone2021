@@ -118,7 +118,7 @@ namespace HairCutAppAPI.Services
         {
             //Get all appointments with ongoing status
             var ongoingAppointments =
-                await _repositoryWrapper.Appointment.GetOngoingAppointmentsWithChosenStaffAndCustomer();
+                await _repositoryWrapper.Appointment.GetLateOngoingAppointmentsWithChosenStaffAndCustomer();
             
             //If there are
             if (ongoingAppointments.Any())
