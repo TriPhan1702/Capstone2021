@@ -83,10 +83,16 @@ namespace HairCutAppAPI.Repositories
                 query = query.Where(combo => combo.Price <= advancedGetCombosDTO.MaxPrice);
             }
             
+            //If there's min duration filtering
+            if (advancedGetCombosDTO.MinDuration >= 0)
+            {
+                query = query.Where(combo => combo.ComboDetails.Sum(detail => detail.Service.Duration) >= advancedGetCombosDTO.MinDuration);
+            }
+            
             //If there's max duration filtering
             if (advancedGetCombosDTO.MaxDuration >= 0)
             {
-                query = query.Where(combo => combo.ComboDetails.Sum(detail => detail.Service.Price) <= advancedGetCombosDTO.MaxPrice);
+                query = query.Where(combo => combo.ComboDetails.Sum(detail => detail.Service.Duration) <= advancedGetCombosDTO.MaxDuration);
             }
 
             try

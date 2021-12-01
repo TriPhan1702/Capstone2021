@@ -7,7 +7,7 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal Price { get; set; }
+        public long Price { get; set; }
         public int Duration { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace HairCutAppAPI.Entities
         [MinLength(3), MaxLength(255)]
         public string Code { get; set; }
         [Required]
-        public decimal Percentage { get; set; }
+        public int Percentage { get; set; }
         [Required]
         public DateTime CreatedDate { get; set; }
         [Required]

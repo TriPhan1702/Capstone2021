@@ -7,7 +7,7 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
     {
         public int Id { get; set; }
         public string Code { get; set; }
-        public decimal Percentage { get; set; }
+        public int Percentage { get; set; }
         public string CreatedDate { get; set; }
         public string LastUpdate { get; set; }
         public string StartDate { get; set; }

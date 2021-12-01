@@ -21,7 +21,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         public string Status { get; set; }
         
         [Required]
-        public decimal Price { get; set; }
+        public long Price { get; set; }
         
         // public IFormFile AvatarFile { get; set; }
         

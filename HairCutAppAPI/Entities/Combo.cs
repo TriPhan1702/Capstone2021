@@ -24,7 +24,7 @@ namespace HairCutAppAPI.Entities
         public string Status { get; set; }
         
         [Required]
-        public decimal Price { get; set; }
+        public long Price { get; set; }
         
         public string AvatarUrl { get; set; }
         

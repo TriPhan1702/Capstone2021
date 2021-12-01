@@ -13,7 +13,7 @@ namespace HairCutAppAPI.Utilities
         //Regex
         public const string DateRegex = @"(((0|1)[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/((19|20)\d\d))$";
         public const string EmailRegex = @"^[a-z0-9](\.?[a-z0-9]){5,}@g(oogle)?mail\.com$";
-        public const string PhoneNumberRegex = @"^(?:[0-9]{10})$";
+        public const string PhoneNumberRegex = @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})";
         
         //Payment Types
         public static readonly string[] PaymentTypes = {"direct"};

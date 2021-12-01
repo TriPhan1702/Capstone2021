@@ -62,15 +62,15 @@ namespace HairCutAppAPI.Entities
         public string PaymentType { get; set; }
         
         [Required]
-        public decimal ComboPrice { get; set; }
+        public long ComboPrice { get; set; }
         
         [Required]
-        public decimal PaidAmount { get; set; }
+        public long PaidAmount { get; set; }
         
         [Url]
         public string ImageUrl { get; set; }
 
-        public CreateAppointmentResponseDTO ToCreateAppointmentResponseDTO(decimal comboPrice, decimal price, int? stylistId = null, string stylistName = null)
+        public CreateAppointmentResponseDTO ToCreateAppointmentResponseDTO(long comboPrice, long price, int? stylistId = null, string stylistName = null)
         {
             return new CreateAppointmentResponseDTO()
             {

@@ -16,7 +16,7 @@
         public string ComboName { get; set; }
         public string PaymentType { get; set; }
         
-        public decimal ComboPrice { get; set; }
-        public decimal TotalPrice { get; set; }
+        public long ComboPrice { get; set; }
+        public long TotalPrice { get; set; }
     }
 }

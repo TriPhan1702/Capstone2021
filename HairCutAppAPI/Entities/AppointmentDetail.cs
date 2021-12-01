@@ -37,6 +37,6 @@ namespace HairCutAppAPI.Entities
         public virtual ICollection<WorkSlot> WorkSlots { get; set; }
         
         [Required]
-        public decimal Price { get; set; }
+        public long Price { get; set; }
     }
 }

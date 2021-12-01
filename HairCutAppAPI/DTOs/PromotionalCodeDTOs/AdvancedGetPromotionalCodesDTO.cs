@@ -23,8 +23,8 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
         public string Code { get; set; }
         public int IsUniversal { get; set; }
         public List<string> Statuses { get; set; }
-        public decimal MinPercentage { get; set; }
-        public decimal MaxPercentage { get; set; }
+        public int MinPercentage { get; set; }
+        public int MaxPercentage { get; set; }
         public string MinCreatedDate { get; set; }
         public string MaxCreatedDate { get; set; }
         public string MinLastUpdate { get; set; }

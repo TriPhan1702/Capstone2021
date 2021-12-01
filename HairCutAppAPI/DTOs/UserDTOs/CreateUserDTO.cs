@@ -40,7 +40,7 @@ namespace HairCutAppAPI.DTOs.UserDTOs
         public AppUser ToNewUser( string role)
         {
             using var hmac = new HMACSHA512();
-            return new AppUser()
+            var result = new AppUser()
             {
                 Email = Email,
                 FullName = FullName,
@@ -50,6 +50,14 @@ namespace HairCutAppAPI.DTOs.UserDTOs
                 PhoneNumber = PhoneNumber,
                 Role = role.ToLower()
             };
+
+            if (role == GlobalVariables.AdministratorRole)
+            {
+                result.EmailConfirmed = true;
+                result.PhoneConfirmed = true;
+            }
+
+            return result;
         }
     }
 }

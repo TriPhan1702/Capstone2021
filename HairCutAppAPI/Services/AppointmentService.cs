@@ -120,7 +120,7 @@ namespace HairCutAppAPI.Services
                 }
 
                 //Round tới 500 VND
-                payingPrice = RoundingTo(decimal.Floor(combo.Price - (combo.Price / 100 * promotionalCode.Percentage)), 500);
+                payingPrice = RoundingTo(combo.Price - (combo.Price / 100 * promotionalCode.Percentage), 500);
             }
 
             //Check if this customer already have an active appointment
@@ -851,7 +851,7 @@ namespace HairCutAppAPI.Services
         /// <summary>
         /// Calculate the price of a combo base on comboId from its services
         /// </summary>
-        private async Task<decimal> CalculateComboPrice(int comboId)
+        private async Task<long> CalculateComboPrice(int comboId)
         {
             var comboDetails = await _repositoryWrapper.ComboDetail.FindComboDetailWithService(comboId);
             if (comboDetails is null)
@@ -1119,9 +1119,8 @@ namespace HairCutAppAPI.Services
             return promotionalCode;
         }
         
-        private decimal RoundingTo(decimal myNum, int roundTo)
+        long RoundingTo(long myNum, long roundTo)
         {
-            myNum = decimal.Floor(myNum);
             if (roundTo <= 0) return myNum;
             return (myNum + roundTo / 2) / roundTo * roundTo;
         }

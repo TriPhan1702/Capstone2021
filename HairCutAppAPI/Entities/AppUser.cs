@@ -12,8 +12,7 @@ namespace HairCutAppAPI.Entities
     {
         [Key]
         public int Id { get; set; }
-
-        [Required]
+        
         public string Email { get; set; }
         public byte[] PasswordHash { get; set; }
         
@@ -34,8 +33,6 @@ namespace HairCutAppAPI.Entities
         public virtual ICollection<Staff> Staffs { get; set; }
         
         public virtual ICollection<Device> Devices { get; set; }
-        
-        public virtual ICollection<Token> Tokens { get; set; }
         
         public bool EmailConfirmed { get; set; }
         public bool PhoneConfirmed { get; set; }

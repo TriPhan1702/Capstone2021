@@ -28,7 +28,7 @@ namespace HairCutAppAPI.Entities
         public DateTime LastUpdated { get; set; }
         
         [Required]
-        public decimal Price { get; set; }
+        public long Price { get; set; }
         
         //Many-Many
         public virtual ICollection<ComboDetail> ComboDetails { get; set; }

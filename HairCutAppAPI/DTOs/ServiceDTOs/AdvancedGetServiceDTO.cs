@@ -21,10 +21,10 @@ namespace HairCutAppAPI.DTOs.ServiceDTOs
         public string MaxCreatedDate { get; set; }
         public string MinLastUpdate { get; set; }
         public string MaxLastUpdate { get; set; }
-        public decimal MinPrice { get; set; }
-        public decimal MaxPrice { get; set; }
-        public decimal MinDuration { get; set; }
-        public decimal MaxDuration { get; set; }
+        public long MinPrice { get; set; }
+        public long MaxPrice { get; set; }
+        public int MinDuration { get; set; }
+        public int MaxDuration { get; set; }
         public string SortBy { get; set; }
     }
 }

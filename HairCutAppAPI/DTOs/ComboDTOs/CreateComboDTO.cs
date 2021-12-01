@@ -26,7 +26,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         // public CreateUpdateComboDetailDTO[] Details { get; set;}
         
         [Required]
-        public decimal Price { get; set; }
+        public long Price { get; set; }
 
         public Combo ToNewCombo(string avatarUrl)
         {

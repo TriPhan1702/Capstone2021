@@ -2,6 +2,6 @@
 {
     public class ValidateCodeForAppointmentResponseDTO
     {
-        public decimal PayingPrice { get; set; }
+        public long PayingPrice { get; set; }
     }
 }

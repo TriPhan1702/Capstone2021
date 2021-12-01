@@ -8,7 +8,7 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         public string Name { get; set; }
         public string Description { get; set; }
         public string Status { get; set; }
-        public decimal Price { get; set; }
+        public long Price { get; set; }
         public string AvatarUrl { get; set; }
         public ICollection<ComboDetailServiceDTO> Services { get; set; }
     }
@@ -18,6 +18,6 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public decimal Price { get; set; }
+        public long Price { get; set; }
     }
 }

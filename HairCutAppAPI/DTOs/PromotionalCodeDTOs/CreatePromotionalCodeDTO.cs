@@ -13,7 +13,7 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
         [MinLength(3), MaxLength(255)]
         public string Code { get; set; }
         [Required]
-        public decimal Percentage { get; set; }
+        public int Percentage { get; set; }
         [Required]
         public string StartDate { get; set; }
         [Required]

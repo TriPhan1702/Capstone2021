@@ -207,7 +207,7 @@ namespace HairCutAppAPI.Services
                 }
             }
 
-            var payingPrice = decimal.Floor(combo.Price - (combo.Price / 100 * promotionalCode.Percentage));
+            var payingPrice = combo.Price - (combo.Price / 100 * promotionalCode.Percentage);
 
             return new CustomHttpCodeResponse(200,"Code có thể sủ dụng được", new ValidateCodeForAppointmentResponseDTO()
             {
@@ -274,9 +274,8 @@ namespace HairCutAppAPI.Services
             return promotionalCode;
         }
         
-        private decimal RoundingTo(decimal myNum, int roundTo)
+        long RoundingTo(long myNum, long roundTo)
         {
-            myNum = decimal.Floor(myNum);
             if (roundTo <= 0) return myNum;
             return (myNum + roundTo / 2) / roundTo * roundTo;
         }

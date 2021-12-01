@@ -35,8 +35,8 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public string MaxLastUpdate { get; set; }
         public string MinDate { get; set; }
         public string MaxDate { get; set; }
-        public decimal MinTotalPrice { get; set; }
-        public decimal MaxTotalPrice { get; set; }
+        public long MinTotalPrice { get; set; }
+        public long MaxTotalPrice { get; set; }
         public string SortBy { get; set; }
 
         public AdvancedGetAppointmentsDTO ToAdvancedGetAppointmentsResponseDTO(int customerUserId)
