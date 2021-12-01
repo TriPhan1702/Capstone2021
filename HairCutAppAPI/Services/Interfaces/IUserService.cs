@@ -24,5 +24,6 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar(UploadImageDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> UploadOwnAvatar(UploadCurrentUserAvatarDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> DeactivateUser(int userId);
+        Task<ActionResult<CustomHttpCodeResponse>> ActivateUser(int userId);
     }
 }

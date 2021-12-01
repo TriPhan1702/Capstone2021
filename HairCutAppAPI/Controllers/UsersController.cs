@@ -196,5 +196,17 @@ namespace HairCutAppAPI.Controllers
         {
             return await _userService.DeactivateUser(id);
         }
+        
+        /// <summary>
+        /// For admin to activate a user's account
+        /// </summary>
+        /// <param name="id">UserId</param>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
+        [HttpPut("activate_user/{id}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> ActivateUser(int id)
+        {
+            return await _userService.ActivateUser(id);
+        }
     }
 }

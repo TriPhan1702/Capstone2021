@@ -311,6 +311,25 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "User deactivated", result.Status);
         }
         
+        public async Task<ActionResult<CustomHttpCodeResponse>> ActivateUser(int userId)
+        {
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Id == userId);
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"User with id {userId} not found");
+            }
+
+            if (user.Status.ToLower() == GlobalVariables.ActiveUserStatus.ToLower())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, $"User is already active");
+            }
+
+            user.Status = GlobalVariables.ActiveUserStatus;
+            var result = await _repositoryWrapper.User.UpdateAsync(user, user.Id);
+            
+            return new CustomHttpCodeResponse(200, "User Activated", result.Status);
+        }
+        
         #region private functions
         
         private int GetCurrentUserId()
