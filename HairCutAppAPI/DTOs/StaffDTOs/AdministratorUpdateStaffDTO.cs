@@ -13,6 +13,8 @@ namespace HairCutAppAPI.DTOs.StaffDTOs
         public string Status { get; set; }
         public int SalonId { get; set; }
         
+        public string Description { get; set; }
+        
         public Staff CompareAndUpdateStaff(Staff staff)
         {
             var hasChanged = false;
@@ -22,9 +24,14 @@ namespace HairCutAppAPI.DTOs.StaffDTOs
                 hasChanged = true;
             }
 
-            if (!string.IsNullOrWhiteSpace(Status) && Status.ToLower() != staff.User.Status)
+            if (!string.IsNullOrWhiteSpace(Status) && Status.ToLower() != staff.User.Status.ToLower())
             {
                 staff.User.Status = Status.ToLower();
+            }
+            
+            if (!string.IsNullOrWhiteSpace(Description) && Description.ToLower() != staff.Description.ToLower())
+            {
+                staff.User.Status = staff.Description.ToLower();
             }
             
             if (SalonId > 0 && staff.SalonId != SalonId)
