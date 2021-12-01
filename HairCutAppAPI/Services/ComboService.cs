@@ -57,6 +57,11 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy được Com với Id {updateComboDTO.Id}");
             }
 
+            if (!string.IsNullOrWhiteSpace(updateComboDTO.Name) && await _repositoryWrapper.Combo.AnyAsync(comb => comb.Id != combo.Id && comb.Name.ToLower() == updateComboDTO.Name.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Đã có Combo trước trùng tên");
+            }
+
             //Upload hình
             // string avatarUrl = null;
             // if (updateComboDTO.AvatarFile != null)
@@ -233,6 +238,7 @@ namespace HairCutAppAPI.Services
         {
             ValidateComboStatus(dto.Status.ToLower());
             ValidateComboPrice(dto.Price);
+            await ValidateComboName(dto.Name);
 
             //Upload hình
             string avatarUrl = null;
@@ -381,6 +387,14 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     "Combo Status phải là: " + string.Join(", ", GlobalVariables.ComboStatuses));
+            }
+        }
+        
+        private async Task ValidateComboName(string name)
+        {
+            if (await _repositoryWrapper.Combo.AnyAsync(combo => combo.Name.ToLower() == name.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Đã có combo khác trùng tên");
             }
         }
     }

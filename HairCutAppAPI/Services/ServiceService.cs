@@ -31,6 +31,16 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     $"không tìm thấy được Service với id {updateServiceDto.Id}");
             }
+
+            //Nếu trong thông tin muốn đổi có tên
+            if (!string.IsNullOrWhiteSpace(updateServiceDto.Name) && 
+                await _repositoryWrapper.Service.AnyAsync(ser =>
+                ser.Id != service.Id && 
+                ser.Name.ToLower() == updateServiceDto.Name.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Đã có service khác trùng tên");
+            }
+            
             //Map the different fields to service entity
             service = updateServiceDto.CompareUpdateService(service);
             //Update to database
@@ -62,6 +72,7 @@ namespace HairCutAppAPI.Services
             //Validate request
             ValidateServicePrice(createServiceDTO.Price);
             ValidateServiceDuration(createServiceDTO.Duration);
+            await ValidateServiceName(createServiceDTO.Name);
 
             var newService = createServiceDTO.ToNewService();
 
@@ -99,6 +110,14 @@ namespace HairCutAppAPI.Services
             if (duration <= 0)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Chiều dài Service phải > 0");
+            }
+        }
+        
+        private async Task ValidateServiceName(string name)
+        {
+            if (await _repositoryWrapper.Service.AnyAsync(service => service.Name.ToLower() == name.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Đã có service khác trùng tên");
             }
         }
     }

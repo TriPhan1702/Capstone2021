@@ -72,6 +72,11 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy mã khuyến mãi với Id {dto.Id}");
             }
+
+            if (!string.IsNullOrWhiteSpace(dto.Code) && await _repositoryWrapper.PromotionalCode.AnyAsync(promotionalCode => promotionalCode.Id != code.Id && promotionalCode.Code.ToLower() == dto.Code.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Đã có code trùng");
+            }
             
             code = dto.CompareUpdatePromotionalCode(code);
 
