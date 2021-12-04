@@ -54,6 +54,7 @@ namespace HairCutAppAPI.Entities
                 Longitude = Longitude?.ToString(),
                 AvatarUrl = AvatarUrl,
                 Address = Address,
+                Status = Status
             };
 
             return result;
@@ -108,6 +109,8 @@ namespace HairCutAppAPI.Entities
                 Latitude = Latitude,
                 Longitude = Longitude,
                 AvatarUrl = AvatarUrl,
+                Address = Address,
+                Status = Status
             };
         }
 

@@ -17,9 +17,5 @@ namespace HairCutAppAPI.Entities
         public virtual PromotionalCode Code { get; set; }
         
         public int TimesUsed { get; set; }
-        
-        [Required]
-        [MaxLength(20)]
-        public string Status { get; set; }
     }
 }
