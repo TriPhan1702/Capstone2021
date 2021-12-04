@@ -50,7 +50,7 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
                 hasChanged = true;
             }
             
-            if (!string.IsNullOrWhiteSpace(Address) && Address.ToLower() != salon.Address.ToLower())
+            if (!string.IsNullOrWhiteSpace(Address) && Address.ToLower() != salon.Address?.ToLower())
             {
                 salon.Address = Address;
                 hasChanged = true;
