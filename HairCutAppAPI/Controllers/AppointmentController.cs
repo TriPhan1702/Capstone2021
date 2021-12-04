@@ -170,7 +170,7 @@ namespace HairCutAppAPI.Controllers
         /// For Manager to finish an appointment
         /// </summary>
         [Authorize(Roles = GlobalVariables.ManagerRole)]
-        [HttpPost("finish_appointment")]
+        [HttpPost("manage_finish_appointment")]
         public async Task<ActionResult<CustomHttpCodeResponse>> ManagerFinishAppointment([FromBody] int appointmentId)
         {
             return await _appointmentService.ManagerFinishAppointment(appointmentId);
