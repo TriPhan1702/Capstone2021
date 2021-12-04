@@ -66,6 +66,7 @@ namespace HairCutAppAPI.Utilities
         public const string ApprovedAppointmentStatus = "approved";
         public const string CompleteAppointmentStatus = "completed";
         public const string CanceledAppointmentStatus = "canceled";
+        public const string StaffConfirmedAppointmentStatus = "staff_confirmed";
         public const string OnGoingAppointmentStatus = "ongoing";
         public const string NewAppointmentStatus = PendingAppointmentStatus;
         //Các status có thể bị cancel
@@ -75,6 +76,7 @@ namespace HairCutAppAPI.Utilities
             ApprovedAppointmentStatus,
             OnGoingAppointmentStatus,
             CanceledAppointmentStatus,
+            StaffConfirmedAppointmentStatus,
             CompleteAppointmentStatus};
         
         // Work Slot status

@@ -152,7 +152,7 @@ namespace HairCutAppAPI.Controllers
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("finish_appointment")]
-        public async Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment([FromForm] FinishAppointmentDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> StaffFinishAppointment([FromForm] FinishAppointmentDTO dto)
         {
             //Trim All Strings in object
             dto = ObjectTrimmer.TrimObject(dto) as FinishAppointmentDTO;
@@ -163,7 +163,17 @@ namespace HairCutAppAPI.Controllers
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
 
-            return await _appointmentService.FinishAppointment(dto);
+            return await _appointmentService.StaffFinishAppointment(dto);
+        }
+        
+        /// <summary>
+        /// For Manager to finish an appointment
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.ManagerRole)]
+        [HttpPost("finish_appointment")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> ManagerFinishAppointment([FromBody] int appointmentId)
+        {
+            return await _appointmentService.ManagerFinishAppointment(appointmentId);
         }
 
         /// <summary>

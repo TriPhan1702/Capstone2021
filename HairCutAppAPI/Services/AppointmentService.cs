@@ -324,7 +324,8 @@ namespace HairCutAppAPI.Services
 
             //Can't cancel already canceled or completed appointments
             if (appointment.Status == GlobalVariables.CanceledAppointmentStatus ||
-                appointment.Status == GlobalVariables.CompleteAppointmentStatus)
+                appointment.Status == GlobalVariables.CompleteAppointmentStatus || 
+                appointment.Status == GlobalVariables.StaffConfirmedAppointmentStatus)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     $"Can't cancel already canceled or completed appointments");
@@ -655,7 +656,7 @@ namespace HairCutAppAPI.Services
             return new CustomHttpCodeResponse(200, "", true);
         }
 
-        public async Task<ActionResult<CustomHttpCodeResponse>> FinishAppointment(FinishAppointmentDTO dto)
+        public async Task<ActionResult<CustomHttpCodeResponse>> StaffFinishAppointment(FinishAppointmentDTO dto)
         {
             var currentUserId = GetCurrentUserId();
             var staff = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.UserId == currentUserId);
@@ -693,16 +694,47 @@ namespace HairCutAppAPI.Services
             }
 
             //Change Appointment
-            appointment.Status = GlobalVariables.CompleteAppointmentStatus;
+            appointment.Status = GlobalVariables.StaffConfirmedAppointmentStatus;
             appointment.Note = dto.Note;
             appointment.ImageUrl = imageUploadResult.SecureUrl.AbsoluteUri;
             appointment.LastUpdated = DateTime.Now;
 
             var result = await _repositoryWrapper.Appointment.UpdateAsync(appointment, appointment.Id);
 
-            await SendAppointmentFinishNotifications(appointment);
+            await SendStaffAppointmentFinishNotifications(result);
 
-            return new CustomHttpCodeResponse(200, "Appointment is completed", true);
+            return new CustomHttpCodeResponse(200, "Appointment is confirmed by staff", true);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> ManagerFinishAppointment(int appointmentId)
+        {
+            var currentUserId = GetCurrentUserId();
+            var manager = await _repositoryWrapper.Staff.FindSingleByConditionAsync(staff =>
+                staff.UserId == currentUserId && staff.StaffType == GlobalVariables.ManagerRole);
+            if (manager is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Manager not found");
+            }
+            var appointment =
+                await _repositoryWrapper.Appointment.FindSingleByConditionAsync(app => app.Id == appointmentId);
+            if (appointment is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment not found");
+            }
+
+            if (appointment.Status != GlobalVariables.OnGoingAppointmentStatus && appointment.Status != GlobalVariables.StaffConfirmedAppointmentStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment status is not valid");
+            }
+            
+            appointment.Status = GlobalVariables.StaffConfirmedAppointmentStatus;
+            appointment.LastUpdated = DateTime.Now;
+            
+            var result = await _repositoryWrapper.Appointment.UpdateAsync(appointment, appointment.Id);
+            
+            await SendManagerAppointmentFinishNotifications(result);
+            
+            return new CustomHttpCodeResponse(200, "Appointment is confirmed by manager", true);
         }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> CheckCustomerHasCompletedAppointment()
@@ -1034,7 +1066,46 @@ namespace HairCutAppAPI.Services
             }
         }
         
-        private async Task SendAppointmentFinishNotifications(Appointment appointment)
+        private async Task SendStaffAppointmentFinishNotifications(Appointment appointment)
+        {
+            //Prepare Customer's Notifications
+            var customer =
+                (await _repositoryWrapper.Customer.FindSingleByConditionAsync(cus => cus.Id == appointment.CustomerId));
+            if (customer != null)
+            {
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Buỗi hẹn của bạn đã kết thúc",
+                        $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của bạn đã được xác nhận kết thúc, chúc bạn một ngày vui vẻ",
+                        customer.UserId, GlobalVariables.AppointmentCanceledNotification));
+            }
+            
+            var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
+                    staff.StaffType == GlobalVariables.ManagerRole &&
+                    staff.User.Status == GlobalVariables.ActiveUserStatus && staff.SalonId == appointment.SalonId))
+                .ToList();
+            foreach (var manager in managers)
+            {
+                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                    appointment,
+                    $"Buổi hẹn của {customer.FullName} đã kết thúc",
+                    $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã được xác nhận kết thúc",
+                    manager.UserId , GlobalVariables.AppointmentCanceledNotification));
+            }
+
+            try
+            {
+                //Save all changes above to database 
+                await _repositoryWrapper.SaveAllAsync();
+            }
+            catch (Exception e)
+            {
+                //clear pending changes if fail
+                _repositoryWrapper.DeleteChanges();
+            }
+        }
+        
+        private async Task SendManagerAppointmentFinishNotifications(Appointment appointment)
         {
             //Prepare Customer's Notifications
             var customer =
