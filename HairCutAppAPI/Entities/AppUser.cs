@@ -33,9 +33,6 @@ namespace HairCutAppAPI.Entities
         public virtual ICollection<Staff> Staffs { get; set; }
         
         public virtual ICollection<Device> Devices { get; set; }
-        
-        public bool EmailConfirmed { get; set; }
-        public bool PhoneConfirmed { get; set; }
 
         //Numeric only, length 10
         [StringLength(10)]

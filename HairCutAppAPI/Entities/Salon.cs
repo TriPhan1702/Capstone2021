@@ -37,7 +37,6 @@ namespace HairCutAppAPI.Entities
         public double? Latitude { get; set; }
         
         public virtual ICollection<Staff> Staffs { get; set; }
-        public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; }
         
         //Many-Many

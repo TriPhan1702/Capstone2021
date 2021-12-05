@@ -51,12 +51,6 @@ namespace HairCutAppAPI.DTOs.UserDTOs
                 Role = role.ToLower()
             };
 
-            if (role == GlobalVariables.AdministratorRole)
-            {
-                result.EmailConfirmed = true;
-                result.PhoneConfirmed = true;
-            }
-
             return result;
         }
     }

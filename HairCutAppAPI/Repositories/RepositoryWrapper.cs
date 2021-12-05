@@ -18,7 +18,6 @@ namespace HairCutAppAPI.Repositories
         private ISalonRepository _salon;
         private IServiceRepository _service;
         private IComboRepository _combo;
-        private IReviewRepository _review;
         private IDeviceRepository _device;
         private IComboDetailRepository _comboDetail;
         private ISlotOfDayRepository _slotOfDay;
@@ -46,7 +45,6 @@ namespace HairCutAppAPI.Repositories
         public ISalonRepository Salon => _salon ??= new SalonRepository(_context);
         public IServiceRepository Service => _service ??= new ServiceRepository(_context);
         public IComboRepository Combo => _combo ??= new ComboRepository(_context);
-        public IReviewRepository Review => _review ??= new ReviewRepository(_context);
         public IDeviceRepository Device => _device ??= new DeviceRepository(_context);
         public IComboDetailRepository ComboDetail => _comboDetail ??= new ComboDetailRepository(_context);
         public ISlotOfDayRepository SlotOfDay => _slotOfDay ??= new SlotOfDayRepository(_context);

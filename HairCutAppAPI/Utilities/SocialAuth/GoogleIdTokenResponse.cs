@@ -6,6 +6,10 @@ namespace HairCutAppAPI.Utilities.GoogleAuth
     {
         [JsonProperty("email")]
         public string Email;
+        [JsonProperty("name")]
+        public string Name;
+        [JsonProperty("picture")] 
+        public string Picture;
         //The Issuer Identifier for the Issuer of the response. Always https://accounts.google.com or accounts.google.com for Google ID tokens.
         [JsonProperty("iss")]
         public string Iss;

@@ -60,8 +60,6 @@ namespace HairCutAppAPI.DTOs.StaffDTOs
                     Status = GlobalVariables.NewUserStatus,
                     PhoneNumber = PhoneNumber,
                     Role = staffType,
-                    EmailConfirmed = true,
-                    PhoneConfirmed = true
                 },
                 Description = Description,
                 FullName = FullName,

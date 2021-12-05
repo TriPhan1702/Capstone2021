@@ -183,55 +183,99 @@ namespace HairCutAppAPI.Services
             //Check if user is found in database
             if (user is null)
             {
-                return new BadRequestObjectResult("This account doesn't exist");
-                
                 // from Dto to AppUser
-                // var newUser = new AppUser()
-                // {
-                //     Role = GlobalVariables.CustomerRole,
-                //     Email = idTokenResponse.Email,
-                //     Status = GlobalVariables.NewUserStatus,
-                //     
-                // };
-                //
-                // var customer = new Customer()
-                // {
-                //     User = newUser,
-                //     FullName = dto.FullName,
-                // };
-                //
-                // //Save New User to Database
-                // var result = await _repositoryWrapper.Customer.CreateAsync(customer);
-                // var user =  await _repositoryWrapper.User.FindSingleByConditionAsync(u =>u.Id == result.Id);
+                var newUser = new AppUser()
+                {
+                    Role = GlobalVariables.CustomerRole,
+                    Email = idTokenResponse.Email,
+                    Status = GlobalVariables.NewUserStatus,
+                    FullName = idTokenResponse.Name,
+                    AvatarUrl = idTokenResponse.Picture,
+                    
+                };
+                
+                var customer = new Customer()
+                {
+                    User = newUser,
+                    FullName = idTokenResponse.Name,
+                };
+                
+                //Save New User to Database
+                var result = await _repositoryWrapper.Customer.CreateAsync(customer);
+                var userResult =  await _repositoryWrapper.User.FindSingleByConditionAsync(u =>u.Id == result.Id);
+                
+                return new CustomHttpCodeResponse(200,"",new CurrentUserDTO()
+                {
+                    Email = userResult.Email,
+                    Role = userResult.Role,
+                    AvatarUrl = userResult.AvatarUrl,
+                    FullName = userResult.FullName,
+                    Token = await _tokenService.CreateToken(userResult)
+                }); 
             }
             
             //Return Ok Result
             return new CustomHttpCodeResponse(200,"",new CurrentUserDTO()
             {
                 Email = user.Email,
+                Role = user.Role,
+                AvatarUrl = user.AvatarUrl,
+                FullName = user.FullName,
                 Token = await _tokenService.CreateToken(user)
             }); 
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken)
         {
-            // var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
-            //
-            // if (!tokenValidationResult)
-            // {
-            //     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Access Token is not from a valid app");
-            // }
+            var tokenValidationResult = await ValidateFacebookAccessToken(accessToken);
+            
+            if (!tokenValidationResult)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Access Token is not from a valid app");
+            }
         
-            var user = await CheckFacebookAccessToken(accessToken);
+            var facebookUserInfoResponse = await CheckFacebookAccessToken(accessToken);
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser =>
+                appUser.Email.ToLower() == facebookUserInfoResponse.Email);
             if (user is null)
             {
-                // return new BadRequestObjectResult("User with this email not found");
+                // from Dto to AppUser
+                var newUser = new AppUser()
+                {
+                    Role = GlobalVariables.CustomerRole,
+                    Email = facebookUserInfoResponse.Email,
+                    Status = GlobalVariables.NewUserStatus,
+                    FullName = facebookUserInfoResponse.Name,
+                    AvatarUrl = facebookUserInfoResponse.Picture,
+                };
+                
+                var customer = new Customer()
+                {
+                    User = newUser,
+                    FullName = facebookUserInfoResponse.Name,
+                };
+                
+                //Save New User to Database
+                var result = await _repositoryWrapper.Customer.CreateAsync(customer);
+                var userResult =  await _repositoryWrapper.User.FindSingleByConditionAsync(u =>u.Id == result.Id);
+                
+                return new CustomHttpCodeResponse(200,"",new CurrentUserDTO()
+                {
+                    Email = userResult.Email,
+                    Role = userResult.Role,
+                    AvatarUrl = userResult.AvatarUrl,
+                    FullName = userResult.FullName,
+                    Token = await _tokenService.CreateToken(userResult)
+                }); 
             }
             
             //Return Ok Result
             return new CustomHttpCodeResponse(200,"", new CurrentUserDTO()
             {
                 Email = user.Email,
+                Role = user.Role,
+                AvatarUrl = user.AvatarUrl,
+                FullName = user.FullName,
                 Token = await _tokenService.CreateToken(user)
             });
         }
@@ -446,15 +490,6 @@ namespace HairCutAppAPI.Services
             {
                 //Covert Json to IdToken
                 var idTokenResponse = JsonConvert.DeserializeObject<GoogleIdTokenResponse>(idTokenResponseJson);
-        
-                //Check if AppId for response is the same as AppId of client app
-                // if (idTokenResponse.Aud != _configuration["GoogleClientId"])
-                // {
-                //     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Google API Token Info aud not containing the required client i");
-                // }
-                
-                //Find User with the same email in database
-                // return await _repositoryWrapper.User.GetUserByEmailAsync(idTokenResponse.Email);
 
                 return idTokenResponse;
             }
@@ -481,7 +516,7 @@ namespace HairCutAppAPI.Services
                 var accessTokenValidationResponse = JsonConvert.DeserializeObject<FacebookTokenValidationResponse>(idTokenValidationResponseJson);
         
                 //True if the app id matches
-                result = accessTokenValidationResponse.Data.AppId == _configuration["FacebookAppId"];
+                // result = accessTokenValidationResponse.Data.AppId == _configuration["FacebookAppId"];
             }
             catch (JsonSerializationException)
             {
@@ -491,7 +526,7 @@ namespace HairCutAppAPI.Services
             return result;
         }
         
-        private async Task<AppUser> CheckFacebookAccessToken(string accessToken)
+        private async Task<FacebookAccessTokenResponse> CheckFacebookAccessToken(string accessToken)
         {
             var url = string.Format(_configuration["FacebookApiTokenInfoUrl"] + accessToken);
         
@@ -500,10 +535,7 @@ namespace HairCutAppAPI.Services
             try
             {
                 //Covert Json
-                var accessTokenResponse = JsonConvert.DeserializeObject<FacebookAccessTokenResponse>(accessTokenResponseJson);
-        
-                //Find User with the same email in database
-                return await _repositoryWrapper.User.GetUserByEmailAsync(accessTokenResponse.Email);
+                return JsonConvert.DeserializeObject<FacebookAccessTokenResponse>(accessTokenResponseJson);
             }
             catch (JsonSerializationException)
             {

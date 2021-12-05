@@ -17,7 +17,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
         ISalonRepository Salon { get; }
         IServiceRepository Service { get; }
         IComboRepository Combo { get; }
-        IReviewRepository Review { get;}
         IDeviceRepository Device { get; }
         IComboDetailRepository ComboDetail { get; }
         ISlotOfDayRepository SlotOfDay { get; }

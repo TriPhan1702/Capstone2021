@@ -17,7 +17,6 @@ namespace HairCutAppAPI.Data
         public DbSet<Salon> Salons { get; set; }
         public DbSet<Staff> Staff { get; set; }
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<Review> Reviews { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Service> Services { get; set; }
         public DbSet<Combo> Combos { get; set; }
