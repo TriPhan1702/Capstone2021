@@ -21,7 +21,7 @@ namespace HairCutAppAPI.Controllers
         /// Get staff types
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [Authorize]
         [HttpGet("get_staff_types")]
         public  ActionResult<CustomHttpCodeResponse> GetStaffTypes()
         {
@@ -98,7 +98,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="id">StaffId</param>
         /// <returns></returns>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]
-        [HttpPut("add_staff_to_salon/{id}")]
+        [HttpPut("remove_staff_from_salon/{id}")]
         public async Task<ActionResult<CustomHttpCodeResponse>> RemoveStaffFromSalon(int id)
         {
             

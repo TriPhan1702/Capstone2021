@@ -270,7 +270,7 @@ namespace HairCutAppAPI.Repositories
                 .SumAsync(appointment => appointment.PaidAmount);
         }
         
-        public async Task<decimal> GetTotalEarningInDay(DateTime date, int salonId)
+        public async Task<decimal> GetTotalEarningInDayBySalon(DateTime date, int salonId)
         {
             return await _hdbContext.Appointments
                 .Where(appointment => appointment.StartDate.DayOfYear == date.DayOfYear &&
@@ -290,6 +290,14 @@ namespace HairCutAppAPI.Repositories
         {
             return await _hdbContext.Appointments
                 .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year &&
+                                      appointment.Status == status && appointment.SalonId == salonId)
+                .CountAsync();
+        }
+        
+        public async Task<int> GetAppointmentByStatusInDayBySalon(DateTime date, string status, int salonId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.DayOfYear == date.DayOfYear && appointment.StartDate.Year == date.Year &&
                                       appointment.Status == status && appointment.SalonId == salonId)
                 .CountAsync();
         }
@@ -320,6 +328,13 @@ namespace HairCutAppAPI.Repositories
         {
             return await _hdbContext.Appointments
                 .Where(appointment => appointment.StartDate.Month == month && appointment.StartDate.Year == year && appointment.SalonId == salonId)
+                .CountAsync();;
+        }
+        
+        public async Task<int> GetAppointmentInDayBySalon(DateTime date, int salonId)
+        {
+            return await _hdbContext.Appointments
+                .Where(appointment => appointment.StartDate.DayOfYear == date.DayOfYear && appointment.StartDate.Year == date.Year && appointment.SalonId == salonId)
                 .CountAsync();;
         }
         

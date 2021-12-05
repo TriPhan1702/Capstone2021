@@ -1,6 +1,6 @@
 ﻿namespace HairCutAppAPI.DTOs.StatisticDTOs
 {
-    public class GetAppointmentStatusStatInMonthResponseDTO
+    public class GetAppointmentStatusStatResponseDTO
     {
         public int PendingAppointments { get; set; }
         public int ApprovedAppointments { get; set; }

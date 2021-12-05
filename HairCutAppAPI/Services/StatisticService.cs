@@ -58,7 +58,7 @@ namespace HairCutAppAPI.Services
             
             var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
             
-            return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInDay(dateTime));
+            return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInDayBySalon(dateTime, dto.SalonId));
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonth(string date)
@@ -79,7 +79,7 @@ namespace HairCutAppAPI.Services
             var totalAppointment =
                 await _repositoryWrapper.Appointment.GetTotalAppointmentInMonth(dateTime.Month, dateTime.Year);
             
-            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatInMonthResponseDTO()
+            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatResponseDTO()
             {
                 PendingAppointments = pendingAppointments,
                 ApprovedAppointments = approvedAppointments,
@@ -108,7 +108,36 @@ namespace HairCutAppAPI.Services
             var totalAppointment =
                 await _repositoryWrapper.Appointment.GetAppointmentInMonthBySalon(dateTime.Month, dateTime.Year, dto.SalonId);
             
-            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatInMonthResponseDTO()
+            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatResponseDTO()
+            {
+                PendingAppointments = pendingAppointments,
+                ApprovedAppointments = approvedAppointments,
+                OnGoingAppointments = ongoingAppointments,
+                CancelAppointments = canceledAppointments,
+                TotalAppointments = totalAppointment,
+            });
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInDayBySalon(GetAppointmentStatusStatInDayBySalonDTO dto)
+        {
+            await SalonExists(dto.SalonId);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var pendingAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInDayBySalon(dateTime,
+                    GlobalVariables.PendingAppointmentStatus, dto.SalonId);
+            var approvedAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInDayBySalon(dateTime,
+                    GlobalVariables.ApprovedAppointmentStatus, dto.SalonId);
+            var ongoingAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInDayBySalon(dateTime,
+                    GlobalVariables.OnGoingAppointmentStatus, dto.SalonId);
+            var canceledAppointments =
+                await _repositoryWrapper.Appointment.GetAppointmentByStatusInDayBySalon(dateTime,
+                    GlobalVariables.CanceledAppointmentStatus, dto.SalonId);
+            var totalAppointment =
+                await _repositoryWrapper.Appointment.GetAppointmentInDayBySalon(dateTime, dto.SalonId);
+            
+            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatResponseDTO()
             {
                 PendingAppointments = pendingAppointments,
                 ApprovedAppointments = approvedAppointments,
@@ -137,7 +166,7 @@ namespace HairCutAppAPI.Services
             var totalAppointment =
                 await _repositoryWrapper.Appointment.GetAppointmentInMonthByStaff(dateTime.Month, dateTime.Year, dto.StaffUserId);
             
-            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatInMonthResponseDTO()
+            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatResponseDTO()
             {
                 PendingAppointments = pendingAppointments,
                 ApprovedAppointments = approvedAppointments,
@@ -166,7 +195,7 @@ namespace HairCutAppAPI.Services
             var totalAppointment =
                 await _repositoryWrapper.Appointment.GetAppointmentInMonthByCustomer(dateTime.Month, dateTime.Year, dto.CustomerUserId);
             
-            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatInMonthResponseDTO()
+            return new CustomHttpCodeResponse(200,"", new GetAppointmentStatusStatResponseDTO()
             {
                 PendingAppointments = pendingAppointments,
                 ApprovedAppointments = approvedAppointments,

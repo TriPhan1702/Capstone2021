@@ -55,6 +55,9 @@ namespace HairCutAppAPI.Utilities
         public static readonly string[] AppointmentPerformingRoles = {StylistRole, BeauticianRole};
         public static readonly string[] StaffTypes = {StylistRole, BeauticianRole, ManagerRole};
 
+        public const string EmailConfirmationTokenType = "email_confirm";
+        public const string PasswordChangeTokenType = "password_change";
+        
         //Statuses
         public const string ActiveUserStatus = "active";
         public const string InActiveUserStatus = "inactive";

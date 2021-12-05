@@ -123,6 +123,23 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_appointment_by_status_in_day_by_salon")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentByStatusInDayBySalon([FromBody]GetAppointmentStatusStatInDayBySalonDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as GetAppointmentStatusStatInDayBySalonDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            return await _statisticService.GetAppointmentStatusStatInDayBySalon(dto);
+        }
+        
+        /// <summary>
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("get_appointment_by_status_in_month_by_staff")]
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByStaff([FromBody]GetAppointmentStatusStatInMonthByStaffDTO dto)
         {

@@ -15,6 +15,8 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonth(string date);
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthBySalon(
             GetAppointmentStatusStatInMonthBySalonDTO dto);
+        Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInDayBySalon(
+            GetAppointmentStatusStatInDayBySalonDTO dto);
         Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByStaff(
             GetAppointmentStatusStatInMonthByStaffDTO dto);
 

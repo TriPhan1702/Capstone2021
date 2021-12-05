@@ -126,7 +126,7 @@ namespace HairCutAppAPI.Controllers
         /// <param name="id">Salon's id</param>
         /// <returns></returns>
         [Authorize(Roles = GlobalVariables.AdministratorRole)]
-        [HttpPut("deactivate_user/{id}")]
+        [HttpPut("deactivate_salon/{id}")]
         public async Task<ActionResult<CustomHttpCodeResponse>> DeactivateSalon(int id)
         {
             return await _salonService.DeactivateSalon(id);
