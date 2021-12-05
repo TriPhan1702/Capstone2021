@@ -980,15 +980,16 @@ namespace HairCutAppAPI.Services
             var appointmentStaffUserIds =
                 (await _repositoryWrapper.AppointmentDetail.FindByConditionAsyncWithInclude(
                     detail => detail.AppointmentId == appointment.Id, detail => detail.Staff))
-                .Select(detail => detail.Staff.UserId).ToHashSet();
+                .Select(detail => detail.Staff?.UserId).ToHashSet();
 
             foreach (var staffUserId in appointmentStaffUserIds)
             {
-                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
-                    appointment,
-                    "Bạn đã được xếp vào một buổi hẹn",
-                    $"Bạn đã được xếp vào buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName}, click vào để xem chi tiết",
-                    staffUserId, GlobalVariables.AppointmentApprovedNotification));
+                if (staffUserId != null)
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Bạn đã được xếp vào một buổi hẹn",
+                        $"Bạn đã được xếp vào buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName}, click vào để xem chi tiết",
+                        staffUserId.Value, GlobalVariables.AppointmentApprovedNotification));
             }
 
             try
@@ -1128,15 +1129,16 @@ namespace HairCutAppAPI.Services
             var appointmentStaffUserIds =
                 (await _repositoryWrapper.AppointmentDetail.FindByConditionAsyncWithInclude(
                     detail => detail.AppointmentId == appointment.Id, detail => detail.Staff))
-                .Select(detail => detail.Staff.UserId).ToHashSet();
+                .Select(detail => detail.Staff?.UserId).ToHashSet();
 
             foreach (var staffUserId in appointmentStaffUserIds)
             {
-                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
-                    appointment,
-                    "Buổi hẹn của khách hàng {customer.FullName} đã được xác nhận kết thúc bởi nhân viên quản lý",
-                    $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã được xác nhận kết thúc bởi nhân viên quản lý",
-                    staffUserId, GlobalVariables.AppointmentCanceledNotification));
+                if (staffUserId != null)
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Buổi hẹn của khách hàng {customer.FullName} đã được xác nhận kết thúc bởi nhân viên quản lý",
+                        $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã được xác nhận kết thúc bởi nhân viên quản lý",
+                        staffUserId.Value, GlobalVariables.AppointmentCanceledNotification));
             }
 
             try
