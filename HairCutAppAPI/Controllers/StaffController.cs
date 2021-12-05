@@ -18,6 +18,17 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Get staff types
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("get_staff_types")]
+        public  ActionResult<CustomHttpCodeResponse> GetStaffTypes()
+        {
+            return new CustomHttpCodeResponse(200,"", GlobalVariables.StaffTypes);
+        }
+        
+        /// <summary>
         /// Get profile of a staff
         /// </summary>
         /// <param name="id">UserId</param>
