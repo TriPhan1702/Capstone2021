@@ -1020,15 +1020,16 @@ namespace HairCutAppAPI.Services
             var appointmentStaffUserIds =
                 (await _repositoryWrapper.AppointmentDetail.FindByConditionAsyncWithInclude(
                     detail => detail.AppointmentId == appointment.Id, detail => detail.Staff))
-                .Select(detail => detail.Staff.UserId).ToHashSet();
+                .Select(detail => detail.Staff?.UserId).ToHashSet();
 
             foreach (var staffUserId in appointmentStaffUserIds)
             {
-                await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
-                    appointment,
-                    "Buỗi hẹn của bạn đã bị hủy",
-                    $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã bị hủy",
-                    staffUserId, GlobalVariables.AppointmentCanceledNotification));
+                if (staffUserId != null)
+                    await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
+                        appointment,
+                        "Buỗi hẹn của bạn đã bị hủy",
+                        $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã bị hủy",
+                        staffUserId.Value, GlobalVariables.AppointmentCanceledNotification));
             }
             
             var managers = (await _repositoryWrapper.Staff.FindByConditionAsync(staff =>
