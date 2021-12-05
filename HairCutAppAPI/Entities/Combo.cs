@@ -93,6 +93,9 @@ namespace HairCutAppAPI.Entities
                     Name = detail.Service.Name,
                     Description = detail.Service.Description,
                     Price = detail.Service.Price,
+                    ServiceOrder = detail.ServiceOrder,
+                    IsDoneByStylist = detail.IsDoneByStylist,
+                    Duration = detail.Service.Duration
                 }).ToList(),
             };
         }

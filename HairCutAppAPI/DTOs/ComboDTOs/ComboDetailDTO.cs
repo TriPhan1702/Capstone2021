@@ -19,5 +19,8 @@ namespace HairCutAppAPI.DTOs.ComboDTOs
         public string Name { get; set; }
         public string Description { get; set; }
         public long Price { get; set; }
+        public bool IsDoneByStylist { get; set; }
+        public int ServiceOrder { get; set; }
+        public int Duration { get; set; }
     }
 }
