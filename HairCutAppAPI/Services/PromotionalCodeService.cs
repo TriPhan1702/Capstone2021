@@ -181,7 +181,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Không sử dụng được Code này");
             }
 
-            var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(com => com.Id == dto.SalonId);
+            var combo = await _repositoryWrapper.Combo.FindSingleByConditionAsync(com => com.Id == dto.ComboId);
             if (combo is null)
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,$"Không tìm thấy Combo với Id {dto.ComboId}");
@@ -207,7 +207,7 @@ namespace HairCutAppAPI.Services
                 }
             }
 
-            var payingPrice = combo.Price - (combo.Price / 100 * promotionalCode.Percentage);
+            var payingPrice = combo.Price - ((combo.Price / 100) * promotionalCode.Percentage);
 
             return new CustomHttpCodeResponse(200,"Code có thể sủ dụng được", new ValidateCodeForAppointmentResponseDTO()
             {
@@ -274,11 +274,12 @@ namespace HairCutAppAPI.Services
             return promotionalCode;
         }
         
-        long RoundingTo(long myNum, long roundTo)
+        private long RoundingTo(long myNum, long roundTo)
         {
             if (roundTo <= 0) return myNum;
             return (myNum + roundTo / 2) / roundTo * roundTo;
         }
+        
         
         #endregion private functions
     }
