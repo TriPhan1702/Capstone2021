@@ -44,7 +44,7 @@ namespace HairCutAppAPI.DTOs.SalonDTOs
                 hasChanged = true;
             }
 
-            if (!string.IsNullOrWhiteSpace(Status) && Status.ToLower() != salon.Status.ToLower())
+            if (!string.IsNullOrWhiteSpace(Status) && Status.ToLower() != salon.Status?.ToLower())
             {
                 salon.Status = Status;
                 hasChanged = true;
