@@ -7,6 +7,8 @@
         public string AvatarUrl { get; set; }
         public string Token { get; set; }
         
+        public int? SalonId { get; set; }
+        
         public string FullName { get; set; }
     }
 }

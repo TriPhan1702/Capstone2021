@@ -160,15 +160,23 @@ namespace HairCutAppAPI.Services
                      await _repositoryWrapper.Device.UpdateAsync(device, device.Id);
                  }
              }
+
+             var result = new CurrentUserDTO()
+             {
+                 Email = user.Email,
+                 Role = user.Role,
+                 AvatarUrl = user.AvatarUrl,
+                 Token = await _tokenService.CreateToken(user),
+                 FullName = user.FullName
+             };
+
+             if (GlobalVariables.StaffTypes.Contains(user.Role))
+             {
+                 var staff = await _repositoryWrapper.Staff.FindSingleByConditionAsync(sta => sta.UserId == user.Id);
+                 result.SalonId = staff.SalonId;
+             }
             
-            return new CustomHttpCodeResponse(200, "User Logged in", new CurrentUserDTO()
-            {
-                Email = user.Email,
-                Role = user.Role,
-                AvatarUrl = user.AvatarUrl,
-                Token = await _tokenService.CreateToken(user),
-                FullName = user.FullName
-            });
+            return new CustomHttpCodeResponse(200, "User Logged in", result);
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken)
