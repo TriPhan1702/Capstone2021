@@ -19,6 +19,11 @@ namespace HairCutAppAPI.Services
         {
             _repositoryWrapper = repositoryWrapper;
         }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTotalCustomerBySalon(int salonId)
+        {
+            return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalCustomerBySalon(salonId));
+        }
 
         public async Task<ActionResult<CustomHttpCodeResponse>> GetTotalEarningInMonth(string date)
         {

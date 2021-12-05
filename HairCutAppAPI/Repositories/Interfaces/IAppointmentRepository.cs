@@ -17,6 +17,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<PagedList<AdvancedGetAppointmentsResponseDTO>> AdvancedGetAppointments(AdvancedGetAppointmentsDTO advancedGetAppointmentsDTO);
         Task<Appointment> GetAppointmentWithCustomerDetail(int appointmentId);
         Task<Appointment> GetOneAppointmentWithCustomerAndSalonAndComboAndRatingAndCode(int appointmentId);
+        Task<int> GetTotalCustomerBySalon(int salonId);
         Task<decimal> GetTotalEarningInMonth(int month, int year);
         Task<decimal> GetTotalEarningInDay(DateTime date);
         Task<decimal> GetEarningInMonthBySalon(int month, int year, int salonId);

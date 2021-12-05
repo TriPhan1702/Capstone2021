@@ -7,6 +7,7 @@ namespace HairCutAppAPI.Services.Interfaces
 {
     public interface IStatisticService
     {
+        Task<ActionResult<CustomHttpCodeResponse>> GetTotalCustomerBySalon(int salonId);
         Task<ActionResult<CustomHttpCodeResponse>> GetTotalEarningInMonth(string date);
         Task<ActionResult<CustomHttpCodeResponse>> GetTotalEarningInDay(string date);
         Task<ActionResult<CustomHttpCodeResponse>> GetEarningInMonthBySalon(GetEarningInMonthBySalonDTO dto);
