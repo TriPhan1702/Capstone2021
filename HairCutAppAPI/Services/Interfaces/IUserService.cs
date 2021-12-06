@@ -17,6 +17,8 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(AdvancedGetUserDTO advancedGetUserDTO);
         Task<ActionResult<AppUser>> FindById(int id);
         Task<ActionResult<CustomHttpCodeResponse>> Login(LoginDTO loginDto);
+        Task<ActionResult<CustomHttpCodeResponse>> SendConfirmEmail(string email);
+        Task<ActionResult<CustomHttpCodeResponse>> ConfirmEmail(string confirmToken);
         Task<ActionResult<CustomHttpCodeResponse>> ChangePassword();
         Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email);
         Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO);

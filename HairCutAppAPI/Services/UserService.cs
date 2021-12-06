@@ -124,6 +124,11 @@ namespace HairCutAppAPI.Services
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"This account is not active");
             }
+            
+            if (user.Status.ToLower() == GlobalVariables.UnconfirmedUserStatus.ToLower())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"This account has not been confirmed");
+            }
 
             //Check Password
             using var hmac = new HMACSHA512(user.PasswordSalt);
@@ -199,7 +204,6 @@ namespace HairCutAppAPI.Services
                     Status = GlobalVariables.NewUserStatus,
                     FullName = idTokenResponse.Name,
                     AvatarUrl = idTokenResponse.Picture,
-                    
                 };
                 
                 var customer = new Customer()
@@ -221,6 +225,13 @@ namespace HairCutAppAPI.Services
                     Token = await _tokenService.CreateToken(userResult)
                 }); 
             }
+
+            if (user.Status == GlobalVariables.UnconfirmedUserStatus)
+            {
+                user.Status = GlobalVariables.NewUserStatus;
+            }
+
+            await _repositoryWrapper.User.UpdateAsync(user, user.Id);
             
             //Return Ok Result
             return new CustomHttpCodeResponse(200,"",new CurrentUserDTO()
@@ -421,6 +432,73 @@ namespace HairCutAppAPI.Services
         //     }
         // }
         //
+        public async Task<ActionResult<CustomHttpCodeResponse>> SendConfirmEmail(string email)
+        {
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser =>
+                appUser.Email.ToLower() == email.ToLower());
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "User not found");
+            }
+
+            if (user.Status == GlobalVariables.InActiveUserStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "This account has been deactivated");
+            }
+            
+            if (user.Status == GlobalVariables.ActiveUserStatus)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "This account has already been activated");
+            }
+            
+            var key = _configuration["AuthenticationKey"];
+            
+            //Generate Password Reset Token
+            var token = AesOperation.EncryptString(key, JsonConvert.SerializeObject(new AuthenticationToken()
+            {
+                Email = user.Email,
+                Type = GlobalVariables.EmailConfirmationTokenType,
+                CreatedDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddHours(GlobalVariables.AuthenticationTokenLifeTime)
+            }));
+            
+            //Encode token again because the generated token sometimes contain special characters
+            var validToken = EncodeToken(token);
+            
+            //Generate Url to change password an sen it to user's email
+            //TODO: Change AppUrl to a valid one once the front end web site is up 
+            var url = $"{_configuration["AppUrl"]}/ConfirmEmail?email={user.Email}&token={validToken}";
+            var message = new EmailMessage(user.Email, "Confirm Email for HairCut App", $"To confirm your email go to the following link: <a href='{url}'>Click Here</a>");
+            await _emailSender.SendEmailAsync(message);
+            
+            return new CustomHttpCodeResponse(200, "Email Sent");
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> ConfirmEmail(string confirmToken)
+        {
+            var key = _configuration["AuthenticationKey"];
+            var token = DecodeToken(confirmToken);
+            var decryptToken = AesOperation.DecryptString(key, token);
+            var authenticationToken = JsonConvert.DeserializeObject<AuthenticationToken>(decryptToken);
+
+            if (DateTime.Now >= authenticationToken.ExpirationDate)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"This Token has expired");
+            }
+            
+            //Find if user exists
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Email.ToLower() == authenticationToken.Email.ToLower());
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"User with this email doesn't exist");
+            }
+
+            user.Status = GlobalVariables.ActiveUserStatus;
+            await _repositoryWrapper.User.UpdateAsync(user, user.Id);
+            
+            return new CustomHttpCodeResponse(200,"User's email confirmed");
+        }
+        
         public async Task<ActionResult<CustomHttpCodeResponse>> ChangePassword()
         {
             var currentUserId = GetCurrentUserId();

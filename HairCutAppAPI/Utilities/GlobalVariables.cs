@@ -60,10 +60,12 @@ namespace HairCutAppAPI.Utilities
         public const int AuthenticationTokenLifeTime = 1;
         
         //Statuses
+        public const string UnconfirmedUserStatus = "unconfirmed";
         public const string ActiveUserStatus = "active";
         public const string InActiveUserStatus = "inactive";
         public const string NewUserStatus = ActiveUserStatus;
-        public static readonly string[] UserStatuses = {ActiveUserStatus, InActiveUserStatus};
+        public const string NewCustomerStatus = UnconfirmedUserStatus;
+        public static readonly string[] UserStatuses = {ActiveUserStatus, InActiveUserStatus, UnconfirmedUserStatus};
         
         //Appointment Status
         public const string PendingAppointmentStatus = "pending";

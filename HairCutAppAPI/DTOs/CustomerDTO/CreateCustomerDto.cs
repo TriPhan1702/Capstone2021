@@ -51,7 +51,7 @@ namespace HairCutAppAPI.DTOs
                 FullName = fullName,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                Status = GlobalVariables.NewUserStatus,
+                Status = GlobalVariables.NewCustomerStatus,
                 PhoneNumber = PhoneNumber,
                 Role = GlobalVariables.CustomerRole,
             };

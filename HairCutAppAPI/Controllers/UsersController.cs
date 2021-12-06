@@ -110,6 +110,42 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// send email confirmation to user
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("send_confirm_email/{email}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> SendConfirmEmail(string email)
+        {
+            //Check input server side
+            if (string.IsNullOrEmpty(email.Trim()))
+            {
+                return new CustomHttpCodeResponse(400,"Email is Blank");
+            }
+            
+            return await _userService.SendConfirmEmail(email.Trim());
+        }
+        
+        /// <summary>
+        /// confirm email for user
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("confirm_email")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> ConfirmEmail(string token)
+        {
+            //Check input server side
+            if (string.IsNullOrEmpty(token.Trim()))
+            {
+                return new CustomHttpCodeResponse(400,"Token is Blank");
+            }
+            
+            return await _userService.ConfirmEmail(token.Trim());
+        }
+        
+        /// <summary>
         /// Reset User's Password
         /// </summary>
         /// <param name="resetPasswordDTO"></param>
