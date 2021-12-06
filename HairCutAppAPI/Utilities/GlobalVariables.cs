@@ -57,6 +57,7 @@ namespace HairCutAppAPI.Utilities
 
         public const string EmailConfirmationTokenType = "email_confirm";
         public const string PasswordChangeTokenType = "password_change";
+        public const int AuthenticationTokenLifeTime = 1;
         
         //Statuses
         public const string ActiveUserStatus = "active";

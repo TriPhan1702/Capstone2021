@@ -8,10 +8,6 @@ namespace HairCutAppAPI.DTOs.UserDTOs
         public string Token { get; set; }
         
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-        
-        [Required]
         [MinLength(3), MaxLength(50)]
         [DataType(DataType.Password)]
         public string NewPassword { get; set; }

@@ -79,36 +79,56 @@ namespace HairCutAppAPI.Controllers
             
             return await _userService.Login(loginDto);
         }
-        //
-        // /// <summary>
-        // /// Generate Change Password Token And Email user
-        // /// </summary>
-        // /// <param name="email"></param>
-        // /// <returns></returns>
-        // [AllowAnonymous]
-        // [HttpPost("forget_password/{email}")]
-        // public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
-        // {
-        //     //Check input server side
-        //     if (string.IsNullOrEmpty(email.Trim()))
-        //     {
-        //         return new CustomHttpCodeResponse(400,"Email is Blank");
-        //     }
-        //     
-        //     return await _userService.ForgetPassword(email.Trim());
-        // }
-        //
-        // /// <summary>
-        // /// Reset User's Password
-        // /// </summary>
-        // /// <param name="resetPasswordDTO"></param>
-        // /// <returns></returns>
-        // [AllowAnonymous]
-        // [HttpPost("reset_password")]
-        // public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
-        // {
-        //     return await _userService.ResetPassword(resetPasswordDTO);
-        // }
+        
+        /// <summary>
+        /// Send Change Password Email to logged in user
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
+        [HttpGet("change_password")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> ChangePassword()
+        {
+            return await _userService.ChangePassword();
+        }
+        
+        /// <summary>
+        /// Generate Change Password Token And Email user
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("forget_password/{email}")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
+        {
+            //Check input server side
+            if (string.IsNullOrEmpty(email.Trim()))
+            {
+                return new CustomHttpCodeResponse(400,"Email is Blank");
+            }
+            
+            return await _userService.ForgetPassword(email.Trim());
+        }
+        
+        /// <summary>
+        /// Reset User's Password
+        /// </summary>
+        /// <param name="resetPasswordDTO"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("reset_password")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
+        {
+            //Trim All Strings in object
+            resetPasswordDTO = ObjectTrimmer.TrimObject(resetPasswordDTO) as ResetPasswordDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            
+            return await _userService.ResetPassword(resetPasswordDTO);
+        }
 
         // [AllowAnonymous]
         // [HttpPost("google_login")]

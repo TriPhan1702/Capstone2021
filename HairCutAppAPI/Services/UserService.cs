@@ -421,48 +421,97 @@ namespace HairCutAppAPI.Services
         //     }
         // }
         //
-        // public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
-        // {
-        //     //Search if user with this email exists
-        //     var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Email == email);
-        //     if (user is null)
-        //     {
-        //         throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Invalid Password");
-        //     }
-        //     
-        //     //Generate Password Reset Token
-        //     var token = await _repositoryWrapper.User.GeneratePasswordResetTokenAsync(user);
-        //      //Encode token again because the generated token sometimes contain special characters
-        //     var validToken = EncodeToken(token);
-        //     
-        //     //Generate Url to change password an sen it to user's email
-        //     //TODO: Change AppUrl to a valid one once the front end web site is up 
-        //     var url = $"{_configuration["AppUrl"]}/ResetPassword?email={email}&token={validToken}";
-        //     var message = new EmailMessage(email, "Forget Password for HairCut App", $"To change your password go to the following link: <a href='{url}'>Click Here</a>");
-        //     await _emailSender.SendEmailAsync(message);
-        //     return new CustomHttpCodeResponse(200, "Email Sent");
-        // }
-        //
+        public async Task<ActionResult<CustomHttpCodeResponse>> ChangePassword()
+        {
+            var currentUserId = GetCurrentUserId();
+            //Search if user with this email exists
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Id == currentUserId);
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"User not found");
+            }
+
+            var key = _configuration["AuthenticationKey"];
+            
+            //Generate Password Reset Token
+            var token = AesOperation.EncryptString(key, JsonConvert.SerializeObject(new AuthenticationToken()
+            {
+                Email = user.Email,
+                Type = GlobalVariables.PasswordChangeTokenType,
+                CreatedDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddHours(GlobalVariables.AuthenticationTokenLifeTime)
+            }));
+            
+            //Encode token again because the generated token sometimes contain special characters
+            var validToken = EncodeToken(token);
+            
+            //Generate Url to change password an sen it to user's email
+            //TODO: Change AppUrl to a valid one once the front end web site is up 
+            var url = $"{_configuration["AppUrl"]}/ResetPassword?email={user.Email}&token={validToken}";
+            var message = new EmailMessage(user.Email, "Change Password for HairCut App", $"To change your password go to the following link: <a href='{url}'>Click Here</a>");
+            await _emailSender.SendEmailAsync(message);
+            return new CustomHttpCodeResponse(200, "Email Sent");
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email)
+        {
+            //Search if user with this email exists
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(u => u.Email == email);
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"User not found");
+            }
+
+            var key = _configuration["AuthenticationKey"];
+            
+            //Generate Password Reset Token
+            var token = AesOperation.EncryptString(key, JsonConvert.SerializeObject(new AuthenticationToken()
+            {
+                Email = user.Email,
+                Type = GlobalVariables.PasswordChangeTokenType,
+                CreatedDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddHours(GlobalVariables.AuthenticationTokenLifeTime)
+            }));
+            
+             //Encode token again because the generated token sometimes contain special characters
+            var validToken = EncodeToken(token);
+            
+            //Generate Url to change password an sen it to user's email
+            //TODO: Change AppUrl to a valid one once the front end web site is up 
+            var url = $"{_configuration["AppUrl"]}/ResetPassword?email={email}&token={validToken}";
+            var message = new EmailMessage(email, "Change Password for HairCut App", $"To change your password go to the following link: <a href='{url}'>Click Here</a>");
+            await _emailSender.SendEmailAsync(message);
+            return new CustomHttpCodeResponse(200, "Email Sent");
+        }
+        
         // //Reset user's password
-        // public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO)
-        // {
-        //     //Find if user exists
-        //     var user = await _repositoryWrapper.User.FindByEmailAsync(resetPasswordDTO.Email);
-        //     if (user is null)
-        //     {
-        //         return new BadRequestObjectResult("User with this email doesn't exist");
-        //     }
-        //
-        //     //Change password through UserManager
-        //     var result =
-        //         await _repositoryWrapper.User.ResetPasswordAsync(user, DecodeToken(resetPasswordDTO.Token),
-        //             resetPasswordDTO.NewPassword);
-        //     if (!result.Succeeded)
-        //     {
-        //         return new BadRequestObjectResult(result.Errors);
-        //     }
-        //     return new CustomHttpCodeResponse(200,"User's Password Changed");
-        // }
+        public async Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            var key = _configuration["AuthenticationKey"];
+            var token = DecodeToken(resetPasswordDTO.Token);
+            var decryptToken = AesOperation.DecryptString(key, token);
+            var authenticationToken = JsonConvert.DeserializeObject<AuthenticationToken>(decryptToken);
+
+            if (DateTime.Now >= authenticationToken.ExpirationDate)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"This Token has expired");
+            }
+            
+            //Find if user exists
+            var user = await _repositoryWrapper.User.FindSingleByConditionAsync(appUser => appUser.Email.ToLower() == authenticationToken.Email.ToLower());
+            if (user is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"User with this email doesn't exist");
+            }
+            
+            using var hmac = new HMACSHA512();
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(resetPasswordDTO.NewPassword));
+            user.PasswordSalt = hmac.Key;
+        
+            //Change password through UserManager
+            await _repositoryWrapper.User.UpdateAsync(user, user.Id);
+            return new CustomHttpCodeResponse(200,"User's Password Changed");
+        }
         
         //Check if user exists by username and email
         

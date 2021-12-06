@@ -17,8 +17,9 @@ namespace HairCutAppAPI.Services.Interfaces
         Task<ActionResult<CustomHttpCodeResponse>> AdvancedGetUsers(AdvancedGetUserDTO advancedGetUserDTO);
         Task<ActionResult<AppUser>> FindById(int id);
         Task<ActionResult<CustomHttpCodeResponse>> Login(LoginDTO loginDto);
-        // Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email);
-        // Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO);
+        Task<ActionResult<CustomHttpCodeResponse>> ChangePassword();
+        Task<ActionResult<CustomHttpCodeResponse>> ForgetPassword(string email);
+        Task<ActionResult<CustomHttpCodeResponse>> ResetPassword(ResetPasswordDTO resetPasswordDTO);
         Task<ActionResult<CustomHttpCodeResponse>> LoginByGoogle(string idToken);
         Task<ActionResult<CustomHttpCodeResponse>> LoginByFacebook(string accessToken);
         Task<ActionResult<CustomHttpCodeResponse>> UploadAvatar(UploadImageDTO dto);
