@@ -28,14 +28,14 @@ namespace HairCutAppAPI.Services
 
         public async Task<ActionResult<CustomHttpCodeResponse>> GetTotalEarningInMonth(string date)
         {
-            var dateTime = DateTime.ParseExact(date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             
             return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInMonth(dateTime.Month, dateTime.Year));
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> GetTotalEarningInDay(string date)
         {
-            var dateTime = DateTime.ParseExact(date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             
             return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInDay(dateTime));
         }
@@ -44,7 +44,7 @@ namespace HairCutAppAPI.Services
         {
             await SalonExists(dto.SalonId);
             
-            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             
             return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetEarningInMonthBySalon(dateTime.Month, dateTime.Year, dto.SalonId));
         }
@@ -53,7 +53,7 @@ namespace HairCutAppAPI.Services
         {
             await CustomerExists(dto.CustomerUserId);
             
-            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             
             return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInMonthByCustomer(dateTime.Month, dateTime.Year, dto.CustomerUserId));
         }
@@ -62,14 +62,14 @@ namespace HairCutAppAPI.Services
         {
             await SalonExists(dto.SalonId);
             
-            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             
             return new CustomHttpCodeResponse(200,"", await _repositoryWrapper.Appointment.GetTotalEarningInDayBySalon(dateTime, dto.SalonId));
         }
         
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonth(string date)
         {
-            var dateTime = DateTime.ParseExact(date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             var pendingAppointments =
                 await _repositoryWrapper.Appointment.GetTotalAppointmentByStatusInMonth(dateTime.Month, dateTime.Year,
                     GlobalVariables.PendingAppointmentStatus);
@@ -98,7 +98,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthBySalon(GetAppointmentStatusStatInMonthBySalonDTO dto)
         {
             await SalonExists(dto.SalonId);
-            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             var pendingAppointments =
                 await _repositoryWrapper.Appointment.GetAppointmentByStatusInMonthBySalon(dateTime.Month, dateTime.Year,
                     GlobalVariables.PendingAppointmentStatus, dto.SalonId);
@@ -127,7 +127,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInDayBySalon(GetAppointmentStatusStatInDayBySalonDTO dto)
         {
             await SalonExists(dto.SalonId);
-            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             var pendingAppointments =
                 await _repositoryWrapper.Appointment.GetAppointmentByStatusInDayBySalon(dateTime,
                     GlobalVariables.PendingAppointmentStatus, dto.SalonId);
@@ -156,7 +156,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByStaff(GetAppointmentStatusStatInMonthByStaffDTO dto)
         {
             await StaffExists(dto.StaffUserId);
-            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             var pendingAppointments =
                 await _repositoryWrapper.Appointment.GetAppointmentByStatusInMonthByStaff(dateTime.Month, dateTime.Year,
                     GlobalVariables.PendingAppointmentStatus, dto.StaffUserId);
@@ -185,7 +185,7 @@ namespace HairCutAppAPI.Services
         public async Task<ActionResult<CustomHttpCodeResponse>> GetAppointmentStatusStatInMonthByCustomer(GetAppointmentStatusStatInMonthByCustomerDTO dto)
         {
             await StaffExists(dto.CustomerUserId);
-            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DateRegex, CultureInfo.InvariantCulture);
+            var dateTime = DateTime.ParseExact(dto.Date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
             var pendingAppointments =
                 await _repositoryWrapper.Appointment.GetAppointmentByStatusInMonthByCustomer(dateTime.Month, dateTime.Year,
                     GlobalVariables.PendingAppointmentStatus, dto.CustomerUserId);
@@ -239,6 +239,27 @@ namespace HairCutAppAPI.Services
                     Id = salon.Id,
                     Name = salon.Name,
                     CustomerCount = await _repositoryWrapper.Appointment.CountCustomerBySalon(salon.Id)
+                });
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetEarningByEachSalonInDay(string date)
+        {
+            var dateTime = DateTime.ParseExact(date, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+
+            var salons = await _repositoryWrapper.Salon.GetAllSalons();
+            
+            var result = new List<GetEarningInDayBySalonResponseDTO>();
+
+            foreach (var salon in salons)
+            {
+                result.Add(new GetEarningInDayBySalonResponseDTO()
+                {
+                    Id = salon.Id,
+                    Name = salon.Name,
+                    Amount = await _repositoryWrapper.Appointment.GetTotalEarningInDayBySalon(dateTime, salon.Id)
                 });
             }
             

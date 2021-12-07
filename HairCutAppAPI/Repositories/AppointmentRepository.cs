@@ -277,7 +277,7 @@ namespace HairCutAppAPI.Repositories
                 .SumAsync(appointment => appointment.PaidAmount);
         }
         
-        public async Task<decimal> GetTotalEarningInDayBySalon(DateTime date, int salonId)
+        public async Task<long> GetTotalEarningInDayBySalon(DateTime date, int salonId)
         {
             return await _hdbContext.Appointments
                 .Where(appointment => appointment.StartDate.DayOfYear == date.DayOfYear &&

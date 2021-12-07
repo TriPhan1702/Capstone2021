@@ -26,5 +26,6 @@ namespace HairCutAppAPI.Services.Interfaces
 
         Task<ActionResult<CustomHttpCodeResponse>> GetCombosUsage();
         Task<ActionResult<CustomHttpCodeResponse>> GetSalonsCustomerCount();
+        Task<ActionResult<CustomHttpCodeResponse>> GetEarningByEachSalonInDay(string date);
     }
 }

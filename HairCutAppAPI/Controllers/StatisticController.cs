@@ -124,6 +124,16 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Tìm số tiền kiếm đc trong 1 ngày của từng salon
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_earning_in_day_by_each_salon")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetEarningByEachSalonInDay([FromBody]string date)
+        {
+            return await _statisticService.GetEarningByEachSalonInDay(date);
+        }
+        
+        /// <summary>
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
         [HttpPost("get_appointment_by_status_in_month")]

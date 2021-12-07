@@ -22,7 +22,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<decimal> GetTotalEarningInDay(DateTime date);
         Task<decimal> GetEarningInMonthBySalon(int month, int year, int salonId);
         Task<decimal> GetTotalEarningInMonthByCustomer(int month, int year, int customerUserId);
-        Task<decimal> GetTotalEarningInDayBySalon(DateTime date, int salonId);
+        Task<long> GetTotalEarningInDayBySalon(DateTime date, int salonId);
         
         Task<int> GetTotalAppointmentByStatusInMonth(int month, int year, string status);
         Task<int> GetTotalAppointmentInMonth(int month, int year);
