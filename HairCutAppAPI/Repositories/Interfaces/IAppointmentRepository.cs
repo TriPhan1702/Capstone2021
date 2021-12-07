@@ -40,5 +40,6 @@ namespace HairCutAppAPI.Repositories.Interfaces
         Task<int> GetAppointmentInDayBySalon(DateTime date, int salonId);
         
         Task<List<Appointment>> GetLateOngoingAppointmentsWithChosenStaffAndCustomer();
+        Task<int> CountComboUsage(int comboId);
     }
 }

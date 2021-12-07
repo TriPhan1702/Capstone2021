@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 using System.Threading.Tasks;
@@ -208,6 +209,23 @@ namespace HairCutAppAPI.Services
                 CancelAppointments = canceledAppointments,
                 TotalAppointments = totalAppointment,
             });
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetCombosUsage()
+        {
+            var combos = await _repositoryWrapper.Combo.GetAllCombos();
+            var result = new List<ComboUsageResponseDTO>();
+            foreach (var combo in combos)
+            {
+                result.Add(new ComboUsageResponseDTO()
+                {
+                    Id = combo.Id,
+                    Name = combo.Name,
+                    TimesUsed = await _repositoryWrapper.Appointment.CountComboUsage(combo.Id)
+                });
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
         }
 
         private async Task SalonExists(int salonId)

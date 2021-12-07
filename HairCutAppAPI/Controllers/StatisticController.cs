@@ -17,6 +17,16 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Lấy số lần sử dụng của tất cả combo (Đếm các appointment ko phải canceled)
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("get_combos_usage")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetCombosUsage()
+        {
+            return await _statisticService.GetCombosUsage();
+        }
+        
+        /// <summary>
         /// Tìm số tất cả khách hàng theo salon
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
