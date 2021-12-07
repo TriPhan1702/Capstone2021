@@ -227,6 +227,23 @@ namespace HairCutAppAPI.Services
             
             return new CustomHttpCodeResponse(200,"",result);
         }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetSalonsCustomerCount()
+        {
+            var salons = await _repositoryWrapper.Salon.GetAllSalons();
+            var result = new List<SalonCustomerCountResponseDTO>();
+            foreach (var salon in salons)
+            {
+                result.Add(new SalonCustomerCountResponseDTO()
+                {
+                    Id = salon.Id,
+                    Name = salon.Name,
+                    CustomerCount = await _repositoryWrapper.Appointment.CountCustomerBySalon(salon.Id)
+                });
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
 
         private async Task SalonExists(int salonId)
         {

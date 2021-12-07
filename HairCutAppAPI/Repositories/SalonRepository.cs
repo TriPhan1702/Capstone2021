@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -9,6 +10,7 @@ using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Utilities;
 using HairCutAppAPI.Utilities.Errors;
+using Microsoft.EntityFrameworkCore;
 
 namespace HairCutAppAPI.Repositories
 {
@@ -100,6 +102,11 @@ namespace HairCutAppAPI.Repositories
             return await PagedList<AdvancedGetSalonResponseDTO>.CreateAsync(
                 query.Select(salon => salon.ToAdvancedGetSalonResponseDTO()), advancedGetSalonDTO.PageNumber,
                 advancedGetSalonDTO.PageSize);
+        }
+
+        public async Task<IEnumerable<Salon>> GetAllSalons()
+        {
+            return await _hdbContext.Salons.ToListAsync();
         }
     }
 }

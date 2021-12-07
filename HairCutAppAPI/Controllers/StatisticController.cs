@@ -27,6 +27,16 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Lấy số khách hàng của tất cả salon
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpGet("get_salons_customer_count")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetSalonsCustomerCount()
+        {
+            return await _statisticService.GetSalonsCustomerCount();
+        }
+        
+        /// <summary>
         /// Tìm số tất cả khách hàng theo salon
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]

@@ -369,5 +369,11 @@ namespace HairCutAppAPI.Repositories
         {
             return await _hdbContext.Appointments.CountAsync(appointment => appointment.ComboId == comboId && appointment.Status != GlobalVariables.CanceledAppointmentStatus);
         }
+
+        public async Task<int> CountCustomerBySalon(int salonId)
+        {
+            return (await _hdbContext.Appointments.Where(appointment => appointment.SalonId == salonId).Select(appointment => appointment.CustomerId).ToListAsync())
+                .ToHashSet().Count;
+        }
     }
 }

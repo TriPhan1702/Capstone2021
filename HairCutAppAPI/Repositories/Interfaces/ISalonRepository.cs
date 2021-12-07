@@ -8,6 +8,7 @@ namespace HairCutAppAPI.Repositories.Interfaces
 {
     public interface ISalonRepository : IRepositoryBase<Salon>
     {
+        Task<IEnumerable<Salon>> GetAllSalons();
         Task<PagedList<AdvancedGetSalonResponseDTO>> AdvancedGetSalons(AdvancedGetSalonDTO advancedGetUserDTO);
     }
 }
