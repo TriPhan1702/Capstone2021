@@ -1136,7 +1136,7 @@ namespace HairCutAppAPI.Services
                 if (staffUserId != null)
                     await _repositoryWrapper.Notification.CreateWithoutSaveAsync(ToNewNotification(
                         appointment,
-                        "Buổi hẹn của khách hàng {customer.FullName} đã được xác nhận kết thúc bởi nhân viên quản lý",
+                        $"Buổi hẹn của khách hàng {customer.FullName} đã được xác nhận kết thúc bởi nhân viên quản lý",
                         $"Buỗi hẹn lúc {appointment.StartDate.ToString(GlobalVariables.DateTimeFormat)} đến {appointment.EndDate.ToString(GlobalVariables.DateTimeFormat)} của khách hàng {customer.FullName} đã được xác nhận kết thúc bởi nhân viên quản lý",
                         staffUserId.Value, GlobalVariables.AppointmentCanceledNotification));
             }
