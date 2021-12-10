@@ -727,7 +727,7 @@ namespace HairCutAppAPI.Services
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Appointment status is not valid");
             }
             
-            appointment.Status = GlobalVariables.StaffConfirmedAppointmentStatus;
+            appointment.Status = GlobalVariables.CompleteAppointmentStatus;
             appointment.LastUpdated = DateTime.Now;
             
             var result = await _repositoryWrapper.Appointment.UpdateAsync(appointment, appointment.Id);

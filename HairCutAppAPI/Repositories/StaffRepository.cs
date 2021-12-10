@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.DTOs.StaffDTOs;
@@ -8,6 +9,7 @@ using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Utilities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace HairCutAppAPI.Repositories
 {
@@ -97,6 +99,16 @@ namespace HairCutAppAPI.Repositories
             
             return await PagedList<AdvancedGetStaffResponseDTO>.CreateAsync(query.Select(staff => staff.ToAdvancedGetStaffResponseDTO()), advancedGetStaffsDTO.PageNumber,
                 advancedGetStaffsDTO.PageSize);
+        }
+
+        public async Task<IEnumerable<Staff>> GetAllStylistOfSalon(int salonId)
+        {
+            return await _hdbContext.Staff.Where(staff => staff.SalonId == salonId).Select(staff => new Staff()
+            {
+                Id = staff.Id,
+                UserId = staff.UserId,
+                FullName = staff.FullName
+            }).ToListAsync();
         }
     }
 }
