@@ -47,6 +47,42 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Tìm top các khách hàng
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_top_customer")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTopCustomers([FromBody]TopCustomerDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as TopCustomerDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            return await _statisticService.GetTopCustomers(dto);
+        }
+        
+        /// <summary>
+        /// Tìm top các staff
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_top_staff")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTopStaff([FromBody]GetTopStaffDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as GetTopStaffDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            return await _statisticService.GetTopStaff(dto);
+        }
+        
+        /// <summary>
         /// Tìm số tiền kiếm đc trong 1 tháng của tất cả salon
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
@@ -124,6 +160,25 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// Tìm số tiền kiếm đc theo từng ngày 1 ngày của 1 salon
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_earning_by_salon_in_time_span")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetEarningBySalonInTimeSpan([FromBody]GetSalonEarningPerDayDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as GetSalonEarningPerDayDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            
+            return await _statisticService.GetSalonEarningPerDay(dto);
+        }
+        
+        /// <summary>
         /// Tìm số tiền kiếm đc trong 1 ngày của từng salon
         /// </summary>
         [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
@@ -175,6 +230,23 @@ namespace HairCutAppAPI.Controllers
                 return new CustomHttpCodeResponse(400,"",ModelState);
             }
             return await _statisticService.GetAppointmentStatusStatInDayBySalon(dto);
+        }
+        
+        /// <summary>
+        /// </summary>
+        [Authorize(Roles = GlobalVariables.AdministratorRole + ", " + GlobalVariables.ManagerRole + ", " + GlobalVariables.StylistRole + ", " + GlobalVariables.BeauticianRole)]
+        [HttpPost("get_total_appointment_by_salon_in_time_span")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTotalAppointmentBySalonInTimeSpan([FromBody]GetTotalAppointmentBySalonDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as GetTotalAppointmentBySalonDTO;
+            
+            //Check input server side
+            if (!ModelState.IsValid)
+            {
+                return new CustomHttpCodeResponse(400,"",ModelState);
+            }
+            return await _statisticService.GetTotalAppointmentBySalonInTimeSpan(dto);
         }
         
         /// <summary>

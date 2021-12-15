@@ -29,6 +29,8 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
         public ICollection<int> CustomerUserIds { get; set; }
         public ICollection<int> ComboIds { get; set; }
         public ICollection<int> SalonIds { get; set; }
+        public int StaffId { get; set; }
+        public int StaffUserIds { get; set; }
         public string CustomerName { get; set; }
         public string ComboName { get; set; }
         public string SalonName { get; set; }

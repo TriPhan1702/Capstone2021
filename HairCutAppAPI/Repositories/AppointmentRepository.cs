@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using HairCutAppAPI.Data;
 using HairCutAppAPI.DTOs.AppointmentDTOs;
 using HairCutAppAPI.DTOs.ComboDTOs;
+using HairCutAppAPI.DTOs.StatisticDTOs;
 using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Utilities;
@@ -96,6 +97,30 @@ namespace HairCutAppAPI.Repositories
             if (advancedGetAppointmentsDTO.CustomerIds != null && advancedGetAppointmentsDTO.CustomerIds.Any())
             {
                 query = query.Where(appointment => advancedGetAppointmentsDTO.CustomerIds.Contains(appointment.Customer.Id));
+            }
+            
+            //If There's CustomerId Filtering
+            if (advancedGetAppointmentsDTO.SalonIds != null && advancedGetAppointmentsDTO.SalonIds.Any())
+            {
+                query = query.Where(appointment => advancedGetAppointmentsDTO.SalonIds.Contains(appointment.SalonId));
+            }
+            
+            //If There's CustomerId Filtering
+            if (advancedGetAppointmentsDTO.SalonIds != null && advancedGetAppointmentsDTO.SalonIds.Any())
+            {
+                query = query.Where(appointment => advancedGetAppointmentsDTO.SalonIds.Contains(appointment.SalonId));
+            }
+            
+            //If There's CustomerId Filtering
+            if (advancedGetAppointmentsDTO.StaffId >0)
+            {
+                query = query.Where(appointment => appointment.AppointmentDetails.Any(detail => detail.StaffId == advancedGetAppointmentsDTO.StaffId));
+            }
+            
+            //If There's CustomerId Filtering
+            if (advancedGetAppointmentsDTO.StaffUserIds >0)
+            {
+                query = query.Where(appointment => appointment.AppointmentDetails.Any(detail => detail.Staff.UserId == advancedGetAppointmentsDTO.StaffUserIds));
             }
 
             //If There's Customer Name Filtering
@@ -374,6 +399,17 @@ namespace HairCutAppAPI.Repositories
         {
             return (await _hdbContext.Appointments.Where(appointment => appointment.SalonId == salonId).Select(appointment => appointment.CustomerId).ToListAsync())
                 .ToHashSet().Count;
+        }
+
+        public async Task<long> GetCustomerTotalPaymentOfSalonInTimSpan(int salonId, DateTime fromDate, DateTime toDate, int customerId)
+        {
+             return await _hdbContext.Appointments
+                .Where(appointment => appointment.CustomerId == customerId &&
+                                      appointment.Status == GlobalVariables.CompleteAppointmentStatus &&
+                                      appointment.SalonId == salonId &&
+                                      appointment.StartDate >= fromDate &&
+                                      appointment.EndDate <= toDate)
+                .SumAsync(appointment => appointment.PaidAmount);
         }
     }
 }

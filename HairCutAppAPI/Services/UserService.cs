@@ -465,9 +465,9 @@ namespace HairCutAppAPI.Services
             //Encode token again because the generated token sometimes contain special characters
             var validToken = EncodeToken(token);
             
-            //Generate Url to change password an sen it to user's email
+            //Generate Url to confirm emal an send it to user's email
             //TODO: Change AppUrl to a valid one once the front end web site is up 
-            var url = $"{_configuration["AppUrl"]}/ConfirmEmail?email={user.Email}&token={validToken}";
+            var url = $"{_configuration["AppUrl"]}/confirm_email?email={user.Email}&token={validToken}";
             var message = new EmailMessage(user.Email, "Confirm Email for HairCut App", $"To confirm your email go to the following link: <a href='{url}'>Click Here</a>");
             await _emailSender.SendEmailAsync(message);
             
@@ -556,7 +556,7 @@ namespace HairCutAppAPI.Services
             
             //Generate Url to change password an sen it to user's email
             //TODO: Change AppUrl to a valid one once the front end web site is up 
-            var url = $"{_configuration["AppUrl"]}/ResetPassword?email={email}&token={validToken}";
+            var url = $"{_configuration["AppUrl"]}/change_password?email={email}&token={validToken}";
             var message = new EmailMessage(email, "Change Password for HairCut App", $"To change your password go to the following link: <a href='{url}'>Click Here</a>");
             await _emailSender.SendEmailAsync(message);
             return new CustomHttpCodeResponse(200, "Email Sent");

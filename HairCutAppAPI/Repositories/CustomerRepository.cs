@@ -20,6 +20,11 @@ namespace HairCutAppAPI.Repositories
             _hdbContext = hdbContext;
         }
 
+        public async Task<IEnumerable<Customer>> GetAllCustomersOfSalon(int salonId)
+        {
+            return await _hdbContext.Customers.Where(customer => customer.Appointments.Any(appointment => appointment.SalonId == salonId)).ToListAsync();
+        }
+
         public async Task<Customer> GetCustomerDetailFromUserId(int userId)
         {
             return await _hdbContext.Customers.Include(customer => customer.User).FirstOrDefaultAsync(customer => customer.UserId == userId);

@@ -61,7 +61,37 @@ namespace HairCutAppAPI.DTOs.AppointmentDTOs
                 MaxTotalPrice = MaxTotalPrice,
                 MinCreatedDate = MinCreatedDate,
                 MinLastUpdate = MinLastUpdate,
-                MinTotalPrice = MinTotalPrice
+                MinTotalPrice = MinTotalPrice,
+                StaffId = -1,
+                StaffUserIds = -1
+            };
+        }
+        
+        public AdvancedGetAppointmentsDTO StaffToAdvancedGetAppointmentsResponseDTO(int customerUserId)
+        {
+            return new AdvancedGetAppointmentsDTO()
+            {
+                Statuses = Statuses,
+                ComboIds = ComboIds,
+                SalonIds = SalonIds,
+                ComboName = ComboName,
+                CustomerName = null,
+                CustomerIds = null,
+                MaxDate = MaxDate,
+                MinDate = MinDate,
+                PageNumber = PageNumber,
+                PageSize = PageSize,
+                SalonName = SalonName,
+                SortBy = SortBy,
+                CustomerUserIds = null,
+                MaxCreatedDate = MaxCreatedDate,
+                MaxLastUpdate = MaxLastUpdate,
+                MaxTotalPrice = MaxTotalPrice,
+                MinCreatedDate = MinCreatedDate,
+                MinLastUpdate = MinLastUpdate,
+                MinTotalPrice = MinTotalPrice,
+                StaffUserIds = customerUserId,
+                StaffId = -1
             };
         }
     }

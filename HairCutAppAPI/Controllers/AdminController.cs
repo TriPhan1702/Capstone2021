@@ -36,7 +36,7 @@ namespace HairCutAppAPI.Controllers
         /// <summary>
         /// Used by admin to create other admin accounts
         /// </summary>
-        [Authorize(Policy = GlobalVariables.AdministratorRole)]
+        [Authorize(Roles = GlobalVariables.AdministratorRole)]
         [HttpPost("create_admin")]
         public async Task<ActionResult<CustomHttpCodeResponse>> CreateAdmin([FromForm]CreateUserDTO dto)
         {
@@ -49,6 +49,12 @@ namespace HairCutAppAPI.Controllers
             }
             
             return new CustomHttpCodeResponse(200,"", await _userService.CreateUser(dto, GlobalVariables.AdministratorRole));
+        }
+        
+        [HttpGet("get_time")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTime()
+        {
+            return new CustomHttpCodeResponse(200,"", DateTime.Now);
         }
         
         [HttpGet("test_token")]

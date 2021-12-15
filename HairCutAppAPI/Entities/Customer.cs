@@ -14,9 +14,6 @@ namespace HairCutAppAPI.Entities
         [ForeignKey("User")]
         public int UserId { get; set; }
         public virtual AppUser User { get; set; }
-
-        public bool EmailConfirmed { get; set; }
-        public bool PhoneConfirmed { get; set; }
         
         [Required]
         [MinLength(3)]

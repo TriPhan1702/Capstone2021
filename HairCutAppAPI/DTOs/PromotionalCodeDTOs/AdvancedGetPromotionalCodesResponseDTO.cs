@@ -13,5 +13,6 @@ namespace HairCutAppAPI.DTOs.PromotionalCodeDTOs
         public string StartDate { get; set; }
         public string ExpirationDate { get; set; }
         public bool IsUniversal { get; set; }
+        public string Status { get; set; }
     }
 }

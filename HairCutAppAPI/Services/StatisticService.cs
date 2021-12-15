@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using HairCutAppAPI.DTOs.StatisticDTOs;
+using HairCutAppAPI.Entities;
 using HairCutAppAPI.Repositories.Interfaces;
 using HairCutAppAPI.Services.Interfaces;
 using HairCutAppAPI.Utilities;
@@ -260,6 +262,162 @@ namespace HairCutAppAPI.Services
                     Id = salon.Id,
                     Name = salon.Name,
                     Amount = await _repositoryWrapper.Appointment.GetTotalEarningInDayBySalon(dateTime, salon.Id)
+                });
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTopCustomers(TopCustomerDTO dto)
+        {
+            var fromDate = DateTime.ParseExact(dto.FromDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var toDate = DateTime.ParseExact(dto.ToDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var customers = (await _repositoryWrapper.Customer.GetAllCustomersOfSalon(dto.SalonId)).ToList();
+            if (!customers.Any())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Customers not found");
+            }
+            var result = new List<TopCustomerResponseDTO>();
+            foreach (var customer in customers)
+            {
+                var totalAppointment = await _repositoryWrapper.Appointment.CountAsync(appointment =>
+                    //Có đúng Customer Id
+                    appointment.CustomerId == customer.Id &&
+                    //Complete
+                    appointment.Status == GlobalVariables.CompleteAppointmentStatus &&
+                    appointment.SalonId == dto.SalonId && 
+                    appointment.StartDate >= fromDate &&
+                    appointment.EndDate <= toDate);
+                var totalPayment = await _repositoryWrapper.Appointment.GetCustomerTotalPaymentOfSalonInTimSpan(dto.SalonId, fromDate, toDate, customer.Id);
+                
+                result.Add(new TopCustomerResponseDTO()
+                {
+                    Id = customer.Id,
+                    UserId = customer.UserId,
+                    TotalAppointment = totalAppointment,
+                    TotalPayment = totalPayment,
+                    FullName = customer.FullName
+                });
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTopStaff(GetTopStaffDTO dto)
+        {
+            var fromDate = DateTime.ParseExact(dto.FromDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var toDate = DateTime.ParseExact(dto.ToDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            List<Staff> staffs;
+            //Nếu ko có role
+            if (string.IsNullOrWhiteSpace(dto.Role))
+            {
+                staffs = (await _repositoryWrapper.Staff.FindByConditionAsync(sta => sta.SalonId == dto.SalonId)).ToList();
+            }
+            else
+            {
+                if (!GlobalVariables.StaffTypes.Contains(dto.Role))
+                {
+                    throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Role has to be: stylist, beautician");
+                }
+                staffs = (await _repositoryWrapper.Staff.FindByConditionAsync(sta => sta.SalonId == dto.SalonId &&
+                                                                                    sta.StaffType == dto.Role)).ToList();
+            }
+
+            if (!staffs.Any())
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Staffs not found");
+            }
+
+            var result = new List<GetTopStaffResponseDTO>();
+            foreach (var staff in staffs)
+            {
+                var totalAppointment = await _repositoryWrapper.Appointment.CountAsync(appointment =>
+                    appointment.AppointmentDetails.Any(detail => detail.StaffId == staff.Id) &&
+                    appointment.Status == GlobalVariables.CompleteAppointmentStatus &&
+                    appointment.StartDate >= fromDate && 
+                    appointment.EndDate <= toDate &&
+                    appointment.SalonId == dto.SalonId
+                    );
+                result.Add(new GetTopStaffResponseDTO()
+                {
+                    StaffId = staff.Id,
+                    FullName = staff.FullName,
+                    StaffType = staff.StaffType,
+                    TotalAppointment = totalAppointment,
+                    StaffUserId = staff.UserId
+                });
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
+
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetSalonEarningPerDay(GetSalonEarningPerDayDTO dto)
+        {
+            var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(sal => sal.Id == dto.SalonId);
+            if (salon is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Salon not found");
+            }
+            var fromDate = DateTime.ParseExact(dto.FromDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var toDate = DateTime.ParseExact(dto.ToDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var datesBetween = new List<DateTime>();
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                datesBetween.Add(date);
+            }
+            
+            var result = new GetSalonEarningPerDayResponseDTO()
+            {
+                SalonId = dto.SalonId,
+                SalonName = salon.Name,
+                DayInfos = new List<GetSalonEarningPerDayResponseDayInfoDTO>()
+            };
+
+            foreach (var date in datesBetween)
+            {
+                var earning = await _repositoryWrapper.Appointment.GetTotalEarningInDayBySalon(date, salon.Id);
+                result.DayInfos.Add(new GetSalonEarningPerDayResponseDayInfoDTO()
+                {
+                    Date = date.ToString(GlobalVariables.DayFormat),
+                    TotalEarning = earning
+                });
+            }
+            
+            return new CustomHttpCodeResponse(200,"",result);
+        }
+        
+        public async Task<ActionResult<CustomHttpCodeResponse>> GetTotalAppointmentBySalonInTimeSpan(GetTotalAppointmentBySalonDTO dto)
+        {
+            var salon = await _repositoryWrapper.Salon.FindSingleByConditionAsync(sal => sal.Id == dto.SalonId);
+            if (salon is null)
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest, "Salon not found");
+            }
+            var fromDate = DateTime.ParseExact(dto.FromDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var toDate = DateTime.ParseExact(dto.ToDate, GlobalVariables.DayFormat, CultureInfo.InvariantCulture);
+            var datesBetween = new List<DateTime>();
+            for (var date = fromDate; date <= toDate; date = date.AddDays(1))
+            {
+                datesBetween.Add(date);
+            }
+            
+            var result = new GetTotalAppointmentBySalonResponseDTO()
+            {
+                SalonId = dto.SalonId,
+                SalonName = salon.Name,
+                DayInfos = new List<GetTotalAppointmentBySalonResponseDayInfoDTO>()
+            };
+
+            foreach (var date in datesBetween)
+            {
+                var totalAppointment = await _repositoryWrapper.Appointment.CountAsync(appointment => appointment.SalonId == salon.Id && 
+                                                                                             appointment.Status == GlobalVariables.CompleteAppointmentStatus && 
+                                                                                             appointment.StartDate.DayOfYear == date.DayOfYear && 
+                                                                                             appointment.StartDate.Year == date.Year);
+                result.DayInfos.Add(new GetTotalAppointmentBySalonResponseDayInfoDTO()
+                {
+                    Date = date.ToString(GlobalVariables.DayFormat),
+                    TotalAppointment = totalAppointment
                 });
             }
             

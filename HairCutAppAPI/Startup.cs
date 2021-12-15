@@ -50,11 +50,11 @@ namespace HairCutAppAPI
             //Middleware to handle errors
             app.UseMiddleware<ExceptionMiddleWare>();
 
-            if (env.IsDevelopment())
-            {
+            // if (env.IsDevelopment())
+            // {
                 app.UseSwagger();
                 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "HairCutAPI v1"); });
-            }
+            // }
             
             app.UseHangfireDashboard();
 

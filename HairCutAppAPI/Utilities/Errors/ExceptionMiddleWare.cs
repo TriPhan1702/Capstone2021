@@ -34,9 +34,7 @@ namespace HairCutAppAPI.Utilities.Errors
                 //Write out error to the response
                 context.Response.ContentType = "apllication/json";
                 //If is in development mode, send stack trace
-                var response = _env.IsDevelopment()
-                    ? new CustomHttpCodeResponse((int)e.StatusCode, e.Message, e.StackTrace?.ToString())
-                    : new CustomHttpCodeResponse(500, "Internal Server Error");
+                var response = new CustomHttpCodeResponse((int) e.StatusCode, e.Message, e.StackTrace?.ToString());
 
                 //Make sure Json in response is sent back is in camel case
                 var options = new JsonSerializerOptions

@@ -108,6 +108,20 @@ namespace HairCutAppAPI.Controllers
         }
         
         /// <summary>
+        /// For staff to view appointment history
+        /// </summary>
+        [Authorize]
+        [HttpPost("staff_advanced_get_appointments")]
+        public async Task<ActionResult<CustomHttpCodeResponse>> StaffAdvancedGetAppointments(
+            CustomerAdvancedGetAppointmentDTO dto)
+        {
+            //Trim All Strings in object
+            dto = ObjectTrimmer.TrimObject(dto) as CustomerAdvancedGetAppointmentDTO;
+            var appointments = await _appointmentService.StaffAdvancedGetAppointments(dto);
+            return appointments;
+        }
+        
+        /// <summary>
         /// For Customer to create appointment
         /// </summary>
         /// <param name="createAppointmentDTO">Stylist Id can be null, StylistId<0 => null</param>

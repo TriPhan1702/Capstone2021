@@ -31,5 +31,6 @@ namespace HairCutAppAPI.Services.Interfaces
             CustomerAdvancedGetAppointmentDTO dto);
 
         Task<ActionResult<CustomHttpCodeResponse>> CheckCustomerHasCompletedAppointment();
+        Task<ActionResult<CustomHttpCodeResponse>> StaffAdvancedGetAppointments(CustomerAdvancedGetAppointmentDTO dto);
     }
 }

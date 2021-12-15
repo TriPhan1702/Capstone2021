@@ -50,7 +50,8 @@ namespace HairCutAppAPI.Entities
                 LastUpdate = LastUpdate.ToString(GlobalVariables.DateTimeFormat),
                 IsUniversal = IsUniversal,
                 StartDate = StartDate.ToString(GlobalVariables.DateTimeFormat),
-                ExpirationDate = ExpirationDate.ToString(GlobalVariables.DateTimeFormat)
+                ExpirationDate = ExpirationDate.ToString(GlobalVariables.DateTimeFormat),
+                Status = Status
             };
         }
 

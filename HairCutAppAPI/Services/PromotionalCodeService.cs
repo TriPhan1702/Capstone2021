@@ -36,10 +36,10 @@ namespace HairCutAppAPI.Services
             }
 
             //If the code is universal but still have list of salon, abort
-            if (createPromotionalCodeDTO.IsUniversal && createPromotionalCodeDTO.SalonIds.Any())
-            {
-                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Universal code can't have list of salon ids ");
-            }
+            // if (createPromotionalCodeDTO.IsUniversal && createPromotionalCodeDTO.SalonIds.Any())
+            // {
+            //     throw new HttpStatusCodeException(HttpStatusCode.BadRequest,"Universal code can't have list of salon ids ");
+            // }
 
             var startDate = DateTime.ParseExact(createPromotionalCodeDTO.StartDate, GlobalVariables.DateTimeFormat,
                 CultureInfo.InvariantCulture);

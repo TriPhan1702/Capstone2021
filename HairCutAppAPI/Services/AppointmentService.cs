@@ -22,14 +22,16 @@ namespace HairCutAppAPI.Services
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPhotoService _photoService;
+        private readonly IBackgroundJobService _backgroundJobService;
         private readonly IRepositoryWrapper _repositoryWrapper;
 
         public AppointmentService(IRepositoryWrapper repositoryWrapper, IHttpContextAccessor httpContextAccessor,
-            IPhotoService photoService)
+            IPhotoService photoService, IBackgroundJobService backgroundJobService)
         {
             _repositoryWrapper = repositoryWrapper;
             _httpContextAccessor = httpContextAccessor;
             _photoService = photoService;
+            _backgroundJobService = backgroundJobService;
         }
 
         /// <summary>
@@ -119,8 +121,8 @@ namespace HairCutAppAPI.Services
                     }
                 }
 
-                //Round tới 500 VND
-                payingPrice = RoundingTo(combo.Price - (combo.Price / 100 * promotionalCode.Percentage), 500);
+                var tempPayingPrice = combo.Price - ((combo.Price / 100) * promotionalCode.Percentage);
+                payingPrice = RoundingTo(tempPayingPrice, 500);
             }
 
             //Check if this customer already have an active appointment
@@ -174,8 +176,7 @@ namespace HairCutAppAPI.Services
 
 
             //If chosen date less than TimeToCreateAppointmentInAdvanced(Default 2) hours away, abort
-            if (chosenDate.Add(startSlotOfDay.StartTime) <
-                now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced))
+            if (now.AddMinutes(GlobalVariables.TimeToCreateAppointmentInAdvanced) >= chosenDate.Add(startSlotOfDay.StartTime))
             {
                 throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
                     $"Thời gian được đặt phải cách hiện tại {GlobalVariables.TimeToCreateAppointmentInAdvanced} phút");
@@ -437,6 +438,10 @@ namespace HairCutAppAPI.Services
                     "Current user is not the owner of this appointment");
             }
 
+            if (appointment.AppointmentRatings.Any())
+            {
+                return new CustomHttpCodeResponse(200, "", appointment.ToGetAppointmentDetailResponseDTO(appointment.AppointmentRatings.First()));
+            }
             return new CustomHttpCodeResponse(200, "", appointment.ToGetAppointmentDetailResponseDTO());
         }
 
@@ -469,6 +474,23 @@ namespace HairCutAppAPI.Services
             var result =
                 await _repositoryWrapper.Appointment.AdvancedGetAppointments(
                     dto.ToAdvancedGetAppointmentsResponseDTO(currentUserId));
+            return new CustomHttpCodeResponse(200, "", result);
+        }
+        public async Task<ActionResult<CustomHttpCodeResponse>> StaffAdvancedGetAppointments(
+            CustomerAdvancedGetAppointmentDTO dto)
+        {
+            var currentUserId = GetCurrentUserId();
+
+            if (!string.IsNullOrWhiteSpace(dto.SortBy) &&
+                !CustomerAdvancedGetAppointmentDTO.OrderingParams.Contains(dto.SortBy.ToLower()))
+            {
+                throw new HttpStatusCodeException(HttpStatusCode.BadRequest,
+                    "OrderBy phải là: " + string.Join(", ", CustomerAdvancedGetAppointmentDTO.OrderingParams));
+            }
+
+            var result =
+                await _repositoryWrapper.Appointment.AdvancedGetAppointments(
+                    dto.StaffToAdvancedGetAppointmentsResponseDTO(currentUserId));
             return new CustomHttpCodeResponse(200, "", result);
         }
 
@@ -955,6 +977,8 @@ namespace HairCutAppAPI.Services
                 //clear pending changes if fail
                 _repositoryWrapper.DeleteChanges();
             }
+
+            await _backgroundJobService.SendNotifications();
         }
         
         private async Task SendAppointmentApprovedNotifications(Appointment appointment)
@@ -1002,6 +1026,8 @@ namespace HairCutAppAPI.Services
                 //clear pending changes if fail
                 _repositoryWrapper.DeleteChanges();
             }
+            
+            await _backgroundJobService.SendNotifications();
         }
         
         private async Task SendAppointmentCanceledNotifications(Appointment appointment)
@@ -1066,6 +1092,8 @@ namespace HairCutAppAPI.Services
                 //clear pending changes if fail
                 _repositoryWrapper.DeleteChanges();
             }
+            
+            await _backgroundJobService.SendNotifications();
         }
         
         private async Task SendStaffAppointmentFinishNotifications(Appointment appointment)
@@ -1097,6 +1125,8 @@ namespace HairCutAppAPI.Services
                 //clear pending changes if fail
                 _repositoryWrapper.DeleteChanges();
             }
+            
+            await _backgroundJobService.SendNotifications();
         }
         
         private async Task SendManagerAppointmentFinishNotifications(Appointment appointment)
@@ -1151,6 +1181,8 @@ namespace HairCutAppAPI.Services
                 //clear pending changes if fail
                 _repositoryWrapper.DeleteChanges();
             }
+            
+            await _backgroundJobService.SendNotifications();
         }
 
         private Notification ToNewNotification(Appointment appointment, string title, string detail,
@@ -1199,7 +1231,7 @@ namespace HairCutAppAPI.Services
             return promotionalCode;
         }
         
-        long RoundingTo(long myNum, long roundTo)
+        private long RoundingTo(long myNum, long roundTo)
         {
             if (roundTo <= 0) return myNum;
             return (myNum + roundTo / 2) / roundTo * roundTo;
